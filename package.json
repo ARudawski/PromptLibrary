@@ -14,11 +14,11 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "format:check": "biome format .",
-    "test": "vitest run",
+    "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "test:unit": "vitest run test/unit",
-    "test:contract": "vitest run test/contract",
-    "test:golden": "vitest run test/golden",
+    "test:unit": "vitest run test/unit --passWithNoTests",
+    "test:contract": "vitest run test/contract --passWithNoTests",
+    "test:golden": "vitest run test/golden --passWithNoTests",
     "validate-prompts": "tsx scripts/validate-prompts.ts"
   },
   "dependencies": {
@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.0.0",
+    "@types/node": "^22.15.0",
     "tsx": "^4.20.0",
     "typescript": "^5.8.0",
     "vitest": "^3.2.0"
