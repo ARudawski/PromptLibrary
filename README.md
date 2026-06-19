@@ -45,6 +45,12 @@ Start here:
 
 The TypeScript/Node implementation currently supports deterministic local fixture invocation for Slice 1.
 
+## CI quality gate
+
+Pull requests and pushes to `main` run `.github/workflows/ci.yml` on Node 22 using the repository lockfile with `npm ci`, `npm run typecheck`, `npm run lint`, `npm run format:check`, `npm run test`, and `npm run validate-prompts`.
+
+This is the deterministic default gate only. Live GitHub prompt-source checks, ChatGPT/tunnel checks, hosted endpoint checks, and deployment readiness smoke tests remain outside default CI.
+
 ## Non-goals for the current phase
 
 Do not add:
