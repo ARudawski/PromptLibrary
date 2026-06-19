@@ -2,13 +2,33 @@
 
 Projection code converts validated prompt definitions into runtime output shapes.
 
-Expected future files:
+Current files:
 
 ```text
 toInvocationPayload.ts
+```
+
+Expected future files:
+
+```text
 toPromptInspection.ts
 toPromptSummary.ts
 ```
+
+## Current ALJ-17 behavior
+
+`toInvocationPayload` returns exactly:
+
+```text
+title
+lifecycle
+input_mode
+prompt_body
+```
+
+The projection intentionally excludes prompt metadata that must not appear in a
+normal invocation payload, including slug, aliases, description, status, source
+paths, hashes, timestamps, diagnostics, debug markers, and versions.
 
 Rules:
 
