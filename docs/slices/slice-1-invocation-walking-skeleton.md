@@ -135,7 +135,14 @@ payload:
 
 Do not add success wrapper fields such as `ok`, `type`, or `payload`.
 
-Failure responses may use a distinct fail-closed shape:
+Failure responses must fail closed and include `no_prompt_invoked: true`. The
+current MCP SDK cannot publish or validate a top-level success/failure union
+`outputSchema` for `structuredContent`; it normalizes tool output schemas as
+object schemas, and SDK clients validate any returned `structuredContent` after
+caching `listTools`.
+
+For the current Slice 1 adapter contract, failures therefore use `isError: true`
+with compact model-visible text content rather than `structuredContent`:
 
 ```json
 {
@@ -149,22 +156,19 @@ Failure responses may use a distinct fail-closed shape:
 Failure responses must not include `prompt_body`. Suggestions, when present,
 must be non-executing.
 
-The MCP `outputSchema` must describe the actual `structuredContent` shape. If
-the SDK cannot cleanly model both the success and failure shapes without adding
-success wrapper metadata, stop for a technical spike or architecture
-clarification before hardening the contract.
+The MCP `outputSchema` describes only successful `structuredContent`, with all
+four success fields required. If a future SDK version can cleanly model both
+success and failure shapes without success wrapper metadata, the failure channel
+can be revisited through an explicit contract change.
 
 ALJ-14 technical preflight result: the current MCP SDK accepts a strict Zod
 object `outputSchema` for the unwrapped success `structuredContent` payload. The
 registered server publishes that schema through `listTools`, and SDK clients
 cache the advertised schema. When `structuredContent` is present, SDK clients
-validate it even on `isError` tool results, so the Slice 0 compatibility schema
-also admits the current fail-closed error fields. Successful invocation results
-must still contain only `title`, `lifecycle`, `input_mode`, and `prompt_body`.
-Slice 1 failure-shape hardening should either model ordinary domain failures as
-non-`isError` structured results that fit an approved schema, or stop for a small
-technical spike if the SDK cannot model success and failure cleanly without
-success wrapper metadata.
+validate it even on `isError` tool results. The post-ALJ-18 contract hardening
+keeps successful invocation results strict and moves ordinary failure details to
+model-visible text content so SDK clients observe fail-closed results instead of
+schema-validation exceptions.
 
 Note: the accepted ALJ-13 review amendment supersedes earlier wrapper-style
 success examples. Future standards cleanup may remove those stale examples, but

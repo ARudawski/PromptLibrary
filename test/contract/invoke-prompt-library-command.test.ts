@@ -36,6 +36,19 @@ function asRecord(value: unknown): Record<string, unknown> {
   return value as Record<string, unknown>;
 }
 
+function textContent(result: unknown): string {
+  const resultRecord = asRecord(result);
+  const content = resultRecord.content;
+  expect(content).toEqual(expect.any(Array));
+  const firstContent = (content as readonly unknown[])[0];
+  const firstContentRecord = asRecord(firstContent);
+
+  expect(firstContentRecord.type).toBe("text");
+  expect(firstContentRecord.text).toBeTypeOf("string");
+
+  return firstContentRecord.text as string;
+}
+
 async function withClient<T>(server: McpServer, run: (client: Client) => Promise<T>): Promise<T> {
   const client = new Client({
     name: "slice-1-contract-test",
@@ -83,18 +96,19 @@ describe("invoke_prompt_library_command MCP adapter", () => {
       expect(inputProperties).not.toHaveProperty("refresh");
 
       expect(Object.keys(outputProperties).sort()).toEqual([
-        "error_code",
         "input_mode",
         "lifecycle",
-        "message",
-        "no_prompt_invoked",
         "prompt_body",
-        "suggestions",
         "title",
       ]);
+      expect(outputSchema.required).toEqual(["title", "lifecycle", "input_mode", "prompt_body"]);
       expect(outputProperties).not.toHaveProperty("ok");
       expect(outputProperties).not.toHaveProperty("type");
       expect(outputProperties).not.toHaveProperty("payload");
+      expect(outputProperties).not.toHaveProperty("error_code");
+      expect(outputProperties).not.toHaveProperty("message");
+      expect(outputProperties).not.toHaveProperty("no_prompt_invoked");
+      expect(outputProperties).not.toHaveProperty("suggestions");
       expect(outputSchema.additionalProperties).toBe(false);
     });
   });
@@ -158,19 +172,15 @@ describe("invoke_prompt_library_command MCP adapter", () => {
       });
 
       expect(result.isError).toBe(true);
-      expect(result.structuredContent).toEqual({
-        no_prompt_invoked: true,
-        error_code: "PROMPT_NOT_FOUND",
-        message: 'Command "active" was not found.',
-        suggestions: ["active-basic", "active-with-alias"],
-      });
-      expect(result.structuredContent).not.toHaveProperty("prompt_body");
-      expect(result.content).toEqual([
-        {
-          type: "text",
-          text: 'No prompt invoked: Command "active" was not found.',
-        },
-      ]);
+      expect(result.structuredContent).toBeUndefined();
+
+      const text = textContent(result);
+      expect(text).toContain("No prompt invoked.");
+      expect(text).toContain("no_prompt_invoked: true");
+      expect(text).toContain("error_code: PROMPT_NOT_FOUND");
+      expect(text).toContain('message: Command "active" was not found.');
+      expect(text).toContain("suggestions: active-basic, active-with-alias");
+      expect(text).not.toContain("prompt_body");
     });
   });
 
@@ -182,12 +192,13 @@ describe("invoke_prompt_library_command MCP adapter", () => {
       });
 
       expect(result.isError).toBe(true);
-      expect(result.structuredContent).toEqual({
-        no_prompt_invoked: true,
-        error_code: "PROMPT_NOT_INVOKABLE",
-        message: 'Command "draft-valid" is not invokable.',
-      });
-      expect(result.structuredContent).not.toHaveProperty("prompt_body");
+      expect(result.structuredContent).toBeUndefined();
+
+      const text = textContent(result);
+      expect(text).toContain("no_prompt_invoked: true");
+      expect(text).toContain("error_code: PROMPT_NOT_INVOKABLE");
+      expect(text).toContain('message: Command "draft-valid" is not invokable.');
+      expect(text).not.toContain("prompt_body");
     });
   });
 
@@ -206,12 +217,15 @@ describe("invoke_prompt_library_command MCP adapter", () => {
       });
 
       expect(result.isError).toBe(true);
-      expect(result.structuredContent).toEqual({
-        no_prompt_invoked: true,
-        error_code: "PROMPT_AMBIGUOUS",
-        message: 'Command "conflict-target" is ambiguous and no prompt was invoked.',
-      });
-      expect(result.structuredContent).not.toHaveProperty("prompt_body");
+      expect(result.structuredContent).toBeUndefined();
+
+      const text = textContent(result);
+      expect(text).toContain("no_prompt_invoked: true");
+      expect(text).toContain("error_code: PROMPT_AMBIGUOUS");
+      expect(text).toContain(
+        'message: Command "conflict-target" is ambiguous and no prompt was invoked.',
+      );
+      expect(text).not.toContain("prompt_body");
     });
   });
 
