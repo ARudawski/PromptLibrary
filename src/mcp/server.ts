@@ -17,6 +17,15 @@ const invokeInputSchema = {
   attached_input: z.string().optional().describe("Optional user text attached to the command."),
 };
 
+export const invokeOutputSchema = z
+  .object({
+    title: z.string(),
+    lifecycle: z.string(),
+    input_mode: z.string(),
+    prompt_body: z.string(),
+  })
+  .strict();
+
 type InvokePromptInput = {
   command: string;
   attached_input?: string | undefined;
@@ -68,6 +77,7 @@ export function createPromptLibraryProofServer(): McpServer {
       description:
         "Slice 0 proof tool for explicit Prompt Library commands such as @pl proof. Supports only command: proof.",
       inputSchema: invokeInputSchema,
+      outputSchema: invokeOutputSchema,
     },
     (input) => invokePromptLibraryCommand(input),
   );
