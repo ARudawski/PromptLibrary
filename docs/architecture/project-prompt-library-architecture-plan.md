@@ -699,19 +699,15 @@ Success result:
 ```json
 {
   "structuredContent": {
-    "ok": true,
-    "type": "prompt_invocation",
-    "payload": {
-      "title": "Grill Me",
-      "lifecycle": "interactive_workflow",
-      "input_mode": "either",
-      "prompt_body": "..."
-    }
+    "title": "Grill Me",
+    "lifecycle": "interactive_workflow",
+    "input_mode": "either",
+    "prompt_body": "..."
   },
   "content": [
     {
       "type": "text",
-      "text": "Prompt loaded and applied."
+      "text": "Prompt invoked: Grill Me."
     }
   ]
 }
@@ -721,26 +717,25 @@ Failure result:
 
 ```json
 {
-  "structuredContent": {
-    "ok": false,
-    "type": "prompt_invocation_error",
-    "error_code": "PROMPT_NOT_FOUND",
-    "message": "No active prompt matched the requested command.",
-    "no_prompt_invoked": true,
-    "suggestions": ["grill-me"]
-  },
+  "isError": true,
   "content": [
     {
       "type": "text",
-      "text": "No prompt was invoked. No active prompt matched the requested command."
+      "text": "No prompt invoked.\nno_prompt_invoked: true\nerror_code: PROMPT_NOT_FOUND\nmessage: No active prompt matched the requested command.\nsuggestions: grill-me"
     }
   ]
 }
 ```
 
+Slice 1 implementation note: the merged outputSchema hardening keeps successful
+`structuredContent` strict and unwrapped. Failure details are currently returned
+as compact model-visible text content without `structuredContent`, because the
+current MCP SDK validates any returned `structuredContent` against the advertised
+success `outputSchema` after clients cache `listTools`.
+
 Important:
 
-- `payload.prompt_body` is model-visible.
+- `structuredContent.prompt_body` is model-visible.
 - `content.text` stays compact.
 - Normal invocation does not return slug/hash/source/version/debug metadata.
 
@@ -2104,7 +2099,9 @@ Context:
 Exactness is central. Unknown or ambiguous commands must not result in guessed prompt execution.
 
 Decision:  
-Failed invocation returns structured error envelope inside `structuredContent` with `no_prompt_invoked: true`.
+Failed invocation must fail closed with `no_prompt_invoked: true` in model-visible tool result data.
+
+Slice 1 implementation note: current MCP SDK outputSchema validation makes a top-level success/failure `structuredContent` union unsafe without adding wrapper metadata to successful invocation. The accepted fixture-backed contract therefore returns failure details as compact text content and omits failure `structuredContent`.
 
 Consequences:  
 Positive: unambiguous failure; golden-testable.  

@@ -456,19 +456,15 @@ Success:
 ```json
 {
   "structuredContent": {
-    "ok": true,
-    "type": "prompt_invocation",
-    "payload": {
-      "title": "Grill Me",
-      "lifecycle": "interactive_workflow",
-      "input_mode": "either",
-      "prompt_body": "..."
-    }
+    "title": "Grill Me",
+    "lifecycle": "interactive_workflow",
+    "input_mode": "either",
+    "prompt_body": "..."
   },
   "content": [
     {
       "type": "text",
-      "text": "Prompt loaded and applied."
+      "text": "Prompt invoked: Grill Me."
     }
   ]
 }
@@ -478,26 +474,24 @@ Failure:
 
 ```json
 {
-  "structuredContent": {
-    "ok": false,
-    "type": "prompt_invocation_error",
-    "error_code": "PROMPT_NOT_FOUND",
-    "message": "No active prompt matched the requested command.",
-    "no_prompt_invoked": true,
-    "suggestions": ["grill-me"]
-  },
+  "isError": true,
   "content": [
     {
       "type": "text",
-      "text": "No prompt was invoked. No active prompt matched the requested command."
+      "text": "No prompt invoked.\nno_prompt_invoked: true\nerror_code: PROMPT_NOT_FOUND\nmessage: No active prompt matched the requested command.\nsuggestions: grill-me"
     }
   ]
 }
 ```
 
+Current Slice 1 failure results omit `structuredContent` because SDK clients
+validate any returned `structuredContent` against the advertised success
+`outputSchema` after caching `listTools`. Failure details remain model-visible in
+compact text content and must not include `prompt_body`.
+
 ### 7.8 Invocation payload context hygiene
 
-`invoke_prompt_library_command.structuredContent.payload` may contain only:
+`invoke_prompt_library_command.structuredContent` may contain only:
 
 ```text
 title

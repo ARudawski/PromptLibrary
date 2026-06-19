@@ -14,4 +14,9 @@ Slice implementation baselines:
 
 - `slices/slice-1-invocation-walking-skeleton.md`
 
+Authoritative Slice 1 contract docs:
+
+- `invocation-contract.md`
+- `prompt-schema.md`
+
 The repository has passed the Slice 0 proof gate through recorded Linear evidence and is currently implementing Slice 1. Do not treat later-slice source/cache, inspect/list, real prompt, or hosted behavior as implemented code.
