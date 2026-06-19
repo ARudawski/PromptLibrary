@@ -19,10 +19,12 @@ const invokeInputSchema = {
 
 export const invokeOutputSchema = z
   .object({
-    title: z.string(),
-    lifecycle: z.string(),
-    input_mode: z.string(),
-    prompt_body: z.string(),
+    title: z.string().optional(),
+    lifecycle: z.string().optional(),
+    input_mode: z.string().optional(),
+    prompt_body: z.string().optional(),
+    no_prompt_invoked: z.literal(true).optional(),
+    error: z.string().optional(),
   })
   .strict();
 

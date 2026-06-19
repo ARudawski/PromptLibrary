@@ -156,12 +156,15 @@ clarification before hardening the contract.
 
 ALJ-14 technical preflight result: the current MCP SDK accepts a strict Zod
 object `outputSchema` for the unwrapped success `structuredContent` payload. The
-registered server publishes that schema through `listTools`, and SDK tool calls
-validate successful non-`isError` results against it. The current SDK skips
-output validation for `isError` tool results, so Slice 1 failure-shape hardening
-must either model ordinary domain failures as non-`isError` structured results
-that fit an approved schema, or stop for a small technical spike if the SDK
-cannot model success and failure cleanly without success wrapper metadata.
+registered server publishes that schema through `listTools`, and SDK clients
+cache the advertised schema. When `structuredContent` is present, SDK clients
+validate it even on `isError` tool results, so the Slice 0 compatibility schema
+also admits the current fail-closed error fields. Successful invocation results
+must still contain only `title`, `lifecycle`, `input_mode`, and `prompt_body`.
+Slice 1 failure-shape hardening should either model ordinary domain failures as
+non-`isError` structured results that fit an approved schema, or stop for a small
+technical spike if the SDK cannot model success and failure cleanly without
+success wrapper metadata.
 
 Note: the accepted ALJ-13 review amendment supersedes earlier wrapper-style
 success examples. Future standards cleanup may remove those stale examples, but
