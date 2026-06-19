@@ -2,7 +2,7 @@
 
 Domain types and invariants live here.
 
-Expected future files:
+Current files:
 
 ```text
 PromptDefinition.ts
@@ -12,6 +12,8 @@ InputMode.ts
 PromptStatus.ts
 PromptErrors.ts
 PromptResult.ts
+PromptInvocationPayload.ts
+index.ts
 ```
 
 Rules:
