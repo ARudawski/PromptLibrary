@@ -10,4 +10,8 @@ Start with:
 4. `standards/README.md`
 5. `slice-0-proof.md`
 
+Slice implementation baselines:
+
+- `slices/slice-1-invocation-walking-skeleton.md`
+
 The repository is currently proof-first. Do not treat the later architecture directories as implemented code.
