@@ -80,14 +80,18 @@ describe("prompt domain vocabulary", () => {
   });
 
   it("lists the initial Markdown fixture harness files", () => {
-    expect(PROMPT_FIXTURES).toHaveLength(12);
+    expect(PROMPT_FIXTURES).toHaveLength(16);
 
     for (const fixture of PROMPT_FIXTURES) {
       const rawMarkdown = readFileSync(resolve(repoRoot, fixture.relativePath), "utf8");
       const loadedFixture = { ...fixture, rawMarkdown } satisfies LoadedPromptFixture;
 
       expect(loadedFixture.fileName.endsWith(".md")).toBe(true);
-      expect(loadedFixture.rawMarkdown.startsWith("---")).toBe(true);
+      expect(loadedFixture.rawMarkdown.length).toBeGreaterThan(0);
+
+      if (loadedFixture.fileName !== "missing-frontmatter.md") {
+        expect(loadedFixture.rawMarkdown.startsWith("---")).toBe(true);
+      }
     }
   });
 });
