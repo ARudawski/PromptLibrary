@@ -11,6 +11,15 @@ Source handoff:
 - `docs/standards/project-prompt-library-codex-agent-standards.md`
 - `docs/qa/test-strategy.md`
 
+Authoritative ALJ-19 docs:
+
+- `docs/invocation-contract.md`
+- `docs/prompt-schema.md`
+
+After ALJ-19, use those two docs as the current GitHub reference for the
+fixture-backed invocation contract and prompt schema draft. This baseline remains
+the implementation history and scope boundary for Slice 1.
+
 ## Slice 0 Gate Evidence
 
 Slice 1 work is allowed only because Slice 0 was accepted through recorded
