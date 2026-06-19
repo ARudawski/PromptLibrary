@@ -47,6 +47,8 @@ Implemented checks:
 - duplicate slugs across the collection fail closed;
 - active aliases that conflict with another active prompt slug fail closed;
 - duplicate active aliases fail closed, including repeated aliases on one prompt;
+- active commands that conflict with draft or status-less prompt commands fail
+  closed;
 - draft and status-less prompts remain valid authoring data but are excluded from
   active invocation by the prompt index;
 - conflict analysis records the involved command and prompt indexes so the index

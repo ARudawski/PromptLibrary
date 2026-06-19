@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { createInvokePromptUseCase } from "../../../src/application/index.js";
+import type { PromptDefinition, PromptMetadata } from "../../../src/domain/index.js";
 import {
+  loadValidatedPromptFixture,
   loadValidatedPromptFixtures,
   promptFixtureFailsDefinitionValidation,
 } from "../promptFixtures.js";
@@ -77,6 +79,25 @@ describe("InvokePromptUseCase", () => {
     });
   });
 
+  it("fails closed when an active alias collides with a draft slug", () => {
+    const activePrompt = promptWithMetadata(
+      loadValidatedPromptFixture("test/fixtures/prompts-valid/active-with-alias.md"),
+      {
+        aliases: ["draft-valid"],
+      },
+    );
+    const draftPrompt = loadValidatedPromptFixture("test/fixtures/prompts-valid/draft-valid.md");
+    const useCase = createInvokePromptUseCase([activePrompt, draftPrompt]);
+
+    expect(useCase.execute({ command: "draft-valid" })).toEqual({
+      kind: "failure",
+      error: {
+        reason: "command_ambiguous",
+        message: 'Command "draft-valid" is ambiguous and no prompt was invoked.',
+      },
+    });
+  });
+
   it("keeps invalid prompt files outside the invoke index", () => {
     expect(
       promptFixtureFailsDefinitionValidation("test/fixtures/prompts-invalid/invalid-enum.md"),
@@ -102,4 +123,17 @@ function createUseCaseWithValidFixtures() {
       "test/fixtures/prompts-valid/draft-valid.md",
     ]),
   );
+}
+
+function promptWithMetadata(
+  prompt: PromptDefinition,
+  metadata: Partial<PromptMetadata>,
+): PromptDefinition {
+  return {
+    metadata: {
+      ...prompt.metadata,
+      ...metadata,
+    },
+    promptBody: prompt.promptBody,
+  };
 }

@@ -4,6 +4,7 @@ export const PROMPT_COLLECTION_ISSUE_CODES = [
   "duplicate_slug",
   "alias_conflicts_with_slug",
   "duplicate_alias",
+  "active_not_invokable_command_conflict",
 ] as const;
 
 export type PromptCollectionIssueCode = (typeof PROMPT_COLLECTION_ISSUE_CODES)[number];
@@ -108,15 +109,25 @@ export function analyzePromptCollection(
   const activePromptIndexes = prompts
     .map((prompt, promptIndex) => ({ prompt, promptIndex }))
     .filter(({ prompt }) => prompt.metadata.status === "active");
+  const notInvokablePromptIndexes = prompts
+    .map((prompt, promptIndex) => ({ prompt, promptIndex }))
+    .filter(({ prompt }) => prompt.metadata.status !== "active");
   const activeSlugOwners = new Map<string, number[]>();
   const activeAliasOwners = new Map<string, number[]>();
   const repeatedAliasOwners = new Map<string, number[]>();
+  const activeCommandOwners = new Map<string, number[]>();
+  const notInvokableCommandOwners = new Map<string, number[]>();
 
   for (const { prompt, promptIndex } of activePromptIndexes) {
     const slugOwnersForPrompt = activeSlugOwners.get(prompt.metadata.slug) ?? [];
     activeSlugOwners.set(prompt.metadata.slug, [...slugOwnersForPrompt, promptIndex]);
 
     const seenPromptAliases = new Set<string>();
+
+    for (const command of promptCommands(prompt)) {
+      const owners = activeCommandOwners.get(command) ?? [];
+      activeCommandOwners.set(command, [...owners, promptIndex]);
+    }
 
     for (const alias of prompt.metadata.aliases) {
       if (seenPromptAliases.has(alias)) {
@@ -128,6 +139,13 @@ export function analyzePromptCollection(
 
       const aliasOwners = activeAliasOwners.get(alias) ?? [];
       activeAliasOwners.set(alias, [...aliasOwners, promptIndex]);
+    }
+  }
+
+  for (const { prompt, promptIndex } of notInvokablePromptIndexes) {
+    for (const command of promptCommands(prompt)) {
+      const owners = notInvokableCommandOwners.get(command) ?? [];
+      notInvokableCommandOwners.set(command, [...owners, promptIndex]);
     }
   }
 
@@ -173,6 +191,20 @@ export function analyzePromptCollection(
     });
   }
 
+  for (const [command, activeIndexes] of activeCommandOwners) {
+    const notInvokableIndexes = notInvokableCommandOwners.get(command) ?? [];
+
+    if (notInvokableIndexes.length > 0) {
+      addIssue({
+        code: "active_not_invokable_command_conflict",
+        command,
+        promptIndexes: [...activeIndexes, ...notInvokableIndexes],
+        prompts,
+        message: `Active command ${command} conflicts with a draft or status-less prompt command.`,
+      });
+    }
+  }
+
   return {
     issues,
     conflictedPromptIndexes,
@@ -186,4 +218,8 @@ function uniqueNumbers(values: readonly number[]): readonly number[] {
 
 function uniqueStrings(values: readonly string[]): readonly string[] {
   return [...new Set(values)];
+}
+
+function promptCommands(prompt: PromptDefinition): readonly string[] {
+  return uniqueStrings([prompt.metadata.slug, ...prompt.metadata.aliases]);
 }

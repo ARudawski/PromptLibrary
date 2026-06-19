@@ -27,6 +27,8 @@ Implemented behavior:
 - draft and status-less prompt commands resolve as not invokable;
 - duplicate slugs, duplicate active aliases, and active alias-vs-active slug
   conflicts are recorded as conflicted commands;
+- active command collisions with draft or status-less prompt commands are
+  recorded as conflicted commands;
 - conflicted prompts are not indexed by slug or alias;
 - conflict resolution never uses file order, priority, or best-guess matching.
 
