@@ -5,6 +5,7 @@ Use cases live here.
 Current files:
 
 ```text
+createFixtureBackedInvokePromptUseCase.ts
 InvokePromptUseCase.ts
 ```
 
@@ -38,3 +39,13 @@ Rules:
 - must not parse raw `@pl` text;
 - must not perform direct network calls;
 - must return typed success/failure results for adapters to map.
+
+## Current ALJ-18 behavior
+
+`createFixtureBackedInvokePromptUseCase` composes the local fixture source,
+Markdown parser, prompt definition validator, and `InvokePromptUseCase` for the
+Slice 1 MCP adapter.
+
+Invalid or unparsable fixture files do not enter the use-case index. Collection
+conflicts are still handled by the derived prompt index and fail closed at
+invocation time.

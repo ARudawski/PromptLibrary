@@ -9,7 +9,8 @@ This directory holds standards for Codex agents and QA agents.
 - Keep domain/application logic framework-independent.
 - Do not parse raw `@pl` text inside connector logic.
 - Do not add ChatGPT-facing admin, draft, cache-refresh, prompt-editing, auth, DB, or private-suite features in V1.
-- Do not implement real prompt-library infrastructure before Slice 0 passes.
+- Do not implement work beyond the currently approved slice.
+- Slice 0 has passed with caveats; current implementation remains bounded to Slice 1 fixture-backed invocation.
 
 ## Approved ChatGPT-facing tools
 

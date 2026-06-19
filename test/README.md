@@ -6,16 +6,18 @@ The full QA strategy lives in [`docs/qa/test-strategy.md`](../docs/qa/test-strat
 
 ## Current phase
 
-The repository is still in proof-first bootstrap.
+The repository is in Slice 1: fixture-backed invocation walking skeleton.
 
-Slice 0 is validated manually through [`docs/slice-0-proof.md`](../docs/slice-0-proof.md), because the important behavior is ChatGPT platform behavior:
+Slice 0 was validated manually through Linear gate evidence. The local
+[`docs/slice-0-proof.md`](../docs/slice-0-proof.md) remains the proof checklist
+and template because the important Slice 0 behavior was ChatGPT platform behavior:
 
 - can ChatGPT route `@pl proof` into the local connector tool;
 - can it receive a hardcoded model-visible prompt;
 - can it apply that prompt as behavior;
 - can this be reproduced in three cooperative fresh chats.
 
-Automated core tests start with Slice 1, after Slice 0 passes.
+Automated core tests have started in Slice 1 and must remain deterministic.
 
 ## Required deterministic test categories
 
@@ -149,7 +151,7 @@ npm run test:golden
 npm run validate-prompts
 ```
 
-During bootstrap, some commands may be placeholders or fail because the corresponding directories/scripts do not exist yet. Agents must report that honestly. Do not pretend green checks happened.
+Some commands may still be placeholders while their later-slice behavior is not implemented. Agents must report that honestly. Do not pretend green checks happened.
 
 ## Slice gates
 

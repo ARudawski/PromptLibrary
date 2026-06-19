@@ -21,9 +21,11 @@ Slice 6: Hosted deployment, only after local MVP proves useful
 
 If Slice 0 fails, do not proceed to parser/cache/GitHub implementation.
 
+Slice 0 was accepted with caveats through recorded Linear gate evidence. Slice 1 work remains bounded to local fixture-backed invocation.
+
 ## Current focus
 
-This repository is currently set up for Slice -1 and Slice 0 only.
+This repository is currently set up for Slice 1 fixture-backed invocation only.
 
 ## Future full document
 
