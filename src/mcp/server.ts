@@ -2,93 +2,34 @@ import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-import type { CallToolResult } from "@modelcontextprotocol/sdk/types.js";
-import { z } from "zod";
+import {
+  createFixtureBackedInvokePromptUseCase,
+  type FixtureBackedInvokePromptUseCaseOptions,
+  type InvokePromptUseCase,
+} from "../application/index.js";
+import { registerInvokePromptLibraryCommandTool } from "./invokePromptLibraryCommandTool.js";
 
-const PROOF_COMMAND = "proof";
-
-export const PROOF_PROMPT = `You are running the Project Prompt Library proof workflow.
-Ask exactly one clarifying question about the user's input.
-Do not answer or solve the user's topic yet.
-End your response with: PPL-PROOF-001`;
-
-const invokeInputSchema = {
-  command: z.string().describe("Prompt Library command to invoke. Slice 0 supports only proof."),
-  attached_input: z.string().optional().describe("Optional user text attached to the command."),
-};
-
-export const invokeOutputSchema = z
-  .object({
-    title: z.string().optional(),
-    lifecycle: z.string().optional(),
-    input_mode: z.string().optional(),
-    prompt_body: z.string().optional(),
-    no_prompt_invoked: z.literal(true).optional(),
-    error: z.string().optional(),
-  })
-  .strict();
-
-type InvokePromptInput = {
-  command: string;
-  attached_input?: string | undefined;
-};
-
-export function invokePromptLibraryCommand(input: InvokePromptInput): CallToolResult {
-  if (input.command !== PROOF_COMMAND) {
-    return {
-      isError: true,
-      structuredContent: {
-        no_prompt_invoked: true,
-        error: "Unknown prompt-library command. Slice 0 supports only command: proof.",
-      },
-      content: [
-        {
-          type: "text",
-          text: "No prompt invoked: unknown command.",
-        },
-      ],
-    };
-  }
-
-  return {
-    structuredContent: {
-      title: "Project Prompt Library Proof",
-      lifecycle: "one_shot_proof",
-      input_mode: "optional_attached_input",
-      prompt_body: PROOF_PROMPT,
-    },
-    content: [
-      {
-        type: "text",
-        text: `Proof prompt retrieved.\n\n${PROOF_PROMPT}`,
-      },
-    ],
-  };
+export interface PromptLibraryServerOptions extends FixtureBackedInvokePromptUseCaseOptions {
+  readonly invokeUseCase?: InvokePromptUseCase;
 }
 
-export function createPromptLibraryProofServer(): McpServer {
+export async function createPromptLibraryServer(
+  options: PromptLibraryServerOptions = {},
+): Promise<McpServer> {
   const server = new McpServer({
-    name: "project-prompt-library-slice-0",
+    name: "project-prompt-library",
     version: "0.0.0",
   });
+  const invokeUseCase =
+    options.invokeUseCase ?? (await createFixtureBackedInvokePromptUseCase(options));
 
-  server.registerTool(
-    "invoke_prompt_library_command",
-    {
-      title: "Invoke Prompt Library Command",
-      description:
-        "Slice 0 proof tool for explicit Prompt Library commands such as @pl proof. Supports only command: proof.",
-      inputSchema: invokeInputSchema,
-      outputSchema: invokeOutputSchema,
-    },
-    (input) => invokePromptLibraryCommand(input),
-  );
+  registerInvokePromptLibraryCommandTool(server, invokeUseCase);
 
   return server;
 }
 
 async function main(): Promise<void> {
-  const server = createPromptLibraryProofServer();
+  const server = await createPromptLibraryServer();
   const transport = new StdioServerTransport();
   await server.connect(transport);
 }

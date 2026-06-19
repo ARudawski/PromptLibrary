@@ -2,16 +2,19 @@
 
 Project Prompt Library is a small ChatGPT Apps / MCP connector for invoking exact, externally maintained prompt workflows from normal ChatGPT conversations using command-style requests such as `@pl grill-me`.
 
-This repository is currently in the **proof-first bootstrap phase**. Do not build the full prompt-library architecture before Slice 0 proves the core premise:
+This repository has passed the Slice 0 proof gate through recorded Linear evidence and is now in **Slice 1: fixture-backed invocation walking skeleton**.
+
+The Slice 0 premise was:
 
 > ChatGPT can route `@pl proof` into the local connector, receive a hardcoded model-visible prompt, and apply that prompt as behavior.
 
 ## Current implementation stage
 
 - Slice -1: minimal repository/workflow bootstrap.
-- Slice 0: local hardcoded MCP premise proof.
+- Slice 0: local hardcoded MCP premise proof, accepted with caveats in the Linear gate evidence referenced by [`docs/slices/slice-1-invocation-walking-skeleton.md`](./docs/slices/slice-1-invocation-walking-skeleton.md).
+- Slice 1: fixture-backed invocation walking skeleton, in progress.
 
-The real prompt-library implementation starts only after Slice 0 passes.
+The current local MCP server registers `invoke_prompt_library_command` against local fixture prompt files. It does not use GitHub source, runtime cache, real prompt files, inspect/list tools, or hosted deployment.
 
 ## Core V1 boundaries
 
@@ -40,18 +43,17 @@ Start here:
 
 ## Local development status
 
-The TypeScript/Node skeleton is intentionally minimal. Slice 0 should add the disposable local MCP proof server before any parser/cache/GitHub implementation begins.
+The TypeScript/Node implementation currently supports deterministic local fixture invocation for Slice 1.
 
 ## Non-goals for the current phase
 
 Do not add:
 
 - GitHub prompt source;
-- Markdown/frontmatter parser;
 - runtime cache;
 - real prompt files;
 - inspect/list tools;
 - hosted deployment;
 - private-suite/auth/database design.
 
-Those belong to later slices after the proof passes.
+Those belong to later slices after the fixture-backed invocation contract is reviewed.

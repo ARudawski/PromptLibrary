@@ -14,4 +14,4 @@ Slice implementation baselines:
 
 - `slices/slice-1-invocation-walking-skeleton.md`
 
-The repository is currently proof-first. Do not treat the later architecture directories as implemented code.
+The repository has passed the Slice 0 proof gate through recorded Linear evidence and is currently implementing Slice 1. Do not treat later-slice source/cache, inspect/list, real prompt, or hosted behavior as implemented code.
