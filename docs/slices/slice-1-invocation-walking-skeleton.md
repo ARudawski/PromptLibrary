@@ -11,6 +11,36 @@ Source handoff:
 - `docs/standards/project-prompt-library-codex-agent-standards.md`
 - `docs/qa/test-strategy.md`
 
+## Slice 0 Gate Evidence
+
+Slice 1 work is allowed only because Slice 0 was accepted through recorded
+Linear gate evidence.
+
+The repository-local `docs/slice-0-proof.md` still reads as a checklist and
+template. It is not the final proof evidence record at the time this baseline
+was written. ALJ-14 and later agents must treat the following Linear records as
+the current Slice 0 gate evidence unless a newer GitHub document or coordinator
+decision supersedes them:
+
+- [ALJ-12](https://linear.app/aljoscha-rudawski/issue/ALJ-12/004-slice-0-human-gate-run-manual-pl-proof-validation):
+  human manual proof result recorded as PASS WITH CAVEATS. It records an
+  explicit invocation sanity check, three passing cooperative fresh-chat
+  command-style proof runs when counting Run 4 as the replacement for failed Run
+  2, and the connector-name / blocked-call caveats.
+- [ALJ-10](https://linear.app/aljoscha-rudawski/issue/ALJ-10/005-slice-0-qa-agent-validate-pl-proof-premise):
+  QA verdict recorded as PASS WITH MINOR ISSUES after reviewing the ALJ-12
+  evidence.
+- [ALJ-11](https://linear.app/aljoscha-rudawski/issue/ALJ-11/006-slice-0-humancoordinator-gate-decide-proceed-or-stop):
+  Human/Coordinator decision recorded as proceed to Slice 1, carrying forward
+  formatting/lint, outputSchema, and connector-name caveats.
+- [ALJ-26](https://linear.app/aljoscha-rudawski/issue/ALJ-26/005a-slice-0-qacoordinator-gate-review-validation-evidence-and-approve):
+  explicit process-correction gate recorded as approved with caveats.
+
+If these Linear records are unavailable, are contradicted by a newer coordinator
+decision, or are revised to a non-passing outcome, stop before parser, schema,
+cache, GitHub source, or real prompt implementation. This baseline does not
+bypass the Slice 0 hard gate.
+
 ## Goal
 
 Build the first real `invoke_prompt_library_command` path from local fixture
@@ -195,8 +225,8 @@ cache diagnostics, debug markers, prompt versions, and timestamps.
   1 must prove this through the registered MCP server before treating the invoke
   contract as stable.
 - Command UX: Slice 0 proved the platform premise with recorded caveats around
-  command-style routing and connector naming. Slice 1 does not re-prove ChatGPT
-  routing behavior.
+  command-style routing and connector naming in the Linear gate evidence listed
+  above. Slice 1 does not re-prove ChatGPT routing behavior.
 - Process states: implementation complete, automated tests, manual/platform
   validation, QA review, QA Coordinator review, and coordinator approval remain
   separate states.
@@ -220,7 +250,8 @@ Manual/human gate for Slice 1: not required.
 Reason: Slice 1 is a deterministic local implementation milestone. It can be
 verified through typecheck, lint/format, unit tests, contract tests, golden
 tests, no-network checks, code review, QA agent audit, and QA Coordinator /
-coordinator approval. The ChatGPT platform premise was handled by Slice 0.
+coordinator approval. The ChatGPT platform premise was handled by the recorded
+Slice 0 Linear gate evidence above, not by this Slice 1 baseline alone.
 
 Required gates remain:
 
