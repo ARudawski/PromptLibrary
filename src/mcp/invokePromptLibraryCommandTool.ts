@@ -21,20 +21,16 @@ const INVOKE_ERROR_CODES = [
 
 export const invokeOutputSchema = z
   .object({
-    title: z.string().optional(),
-    lifecycle: z.enum(PROMPT_LIFECYCLES).optional(),
-    input_mode: z.enum(INPUT_MODES).optional(),
-    prompt_body: z.string().optional(),
-    no_prompt_invoked: z.literal(true).optional(),
-    error_code: z.enum(INVOKE_ERROR_CODES).optional(),
-    message: z.string().optional(),
-    suggestions: z.array(z.string()).optional(),
+    title: z.string(),
+    lifecycle: z.enum(PROMPT_LIFECYCLES),
+    input_mode: z.enum(INPUT_MODES),
+    prompt_body: z.string(),
   })
   .strict();
 
 type InvokePromptFailureErrorCode = (typeof INVOKE_ERROR_CODES)[number];
 
-export interface InvokePromptFailureStructuredContent extends Record<string, unknown> {
+export interface InvokePromptFailureContent {
   readonly no_prompt_invoked: true;
   readonly error_code: InvokePromptFailureErrorCode;
   readonly message: string;
@@ -81,7 +77,7 @@ export function invokePromptLibraryCommand(
     };
   }
 
-  const structuredContent: InvokePromptFailureStructuredContent = {
+  const failureContent: InvokePromptFailureContent = {
     no_prompt_invoked: true,
     error_code: errorCodeForReason(result.error.reason),
     message: result.error.message,
@@ -90,14 +86,27 @@ export function invokePromptLibraryCommand(
 
   return {
     isError: true,
-    structuredContent,
     content: [
       {
         type: "text",
-        text: `No prompt invoked: ${result.error.message}`,
+        text: formatFailureContent(failureContent),
       },
     ],
   };
+}
+
+function formatFailureContent(failureContent: InvokePromptFailureContent): string {
+  const suggestions =
+    failureContent.suggestions === undefined
+      ? ""
+      : `\nsuggestions: ${failureContent.suggestions.join(", ")}`;
+
+  return [
+    "No prompt invoked.",
+    "no_prompt_invoked: true",
+    `error_code: ${failureContent.error_code}`,
+    `message: ${failureContent.message}${suggestions}`,
+  ].join("\n");
 }
 
 function errorCodeForReason(reason: PromptErrorReason): InvokePromptFailureErrorCode {
