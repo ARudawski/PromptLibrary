@@ -2,6 +2,19 @@
 
 Unknown-command suggestion logic lives here.
 
+## Current ALJ-17 behavior
+
+`suggestCommands` uses simple command-text matching against the active command
+list supplied by the prompt index.
+
+Implemented behavior:
+
+- suggestions are returned only for unknown commands;
+- suggestions are drawn only from active invokable commands;
+- suggestions are capped at three commands;
+- low-confidence input returns no suggestions;
+- suggestions are strings only and never invoke a prompt.
+
 Rules:
 
 - suggestions are optional;

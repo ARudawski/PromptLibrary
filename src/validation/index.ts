@@ -1,4 +1,13 @@
 export {
+  analyzePromptCollection,
+  PROMPT_COLLECTION_ISSUE_CODES,
+  type PromptCollectionAnalysis,
+  type PromptCollectionIssue,
+  type PromptCollectionIssueCode,
+  type PromptCollectionValidationResult,
+  validatePromptCollection,
+} from "./PromptCollectionValidation.js";
+export {
   PROMPT_VALIDATION_ISSUE_CODES,
   type PromptValidationIssue,
   type PromptValidationIssueCode,
