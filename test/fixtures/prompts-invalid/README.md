@@ -4,6 +4,10 @@ Use this folder for prompts expected to fail per-prompt validation, such as miss
 
 Current fixtures:
 
+- `missing-frontmatter.md`
 - `missing-required-field.md`
 - `malformed-frontmatter.md`
+- `invalid-enum.md`
+- `invalid-slug.md`
+- `invalid-alias.md`
 - `empty-body.md`
