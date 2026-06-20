@@ -30,12 +30,13 @@ If these sources conflict, follow the source-of-truth rules in `AGENTS.md`. Stop
 
 ## Queue selection contract
 
-Automation must not infer readiness from issue order alone.
+Automation must prefer explicit `Todo` work, but it may promote the top
+unblocked matching Backlog item when no matching `Todo` issue exists.
 
 Default rule:
 
 ```text
-Executable issue = Linear state Todo + expected agent label + expected title marker + unblocked dependency state.
+Executable issue = (Linear state Todo or top unblocked matching Backlog item) + expected agent label + expected title marker + unblocked dependency state + current allowed slice/lane.
 ```
 
 Role markers:
@@ -58,7 +59,7 @@ agent:auto          recurring automation may pick this without manual target
 gate:manual         manual or coordinator decision required
 ```
 
-Backlog means known future work, not executable work. Keep exactly one next executable Coding Agent issue at a time unless the user explicitly opens a parallel lane.
+Backlog pickup must use roadmap/current-state order and must not skip gates or jump to later slices. Keep exactly one next executable Coding Agent issue at a time unless the user explicitly opens a parallel lane.
 
 ## Review evidence pattern
 

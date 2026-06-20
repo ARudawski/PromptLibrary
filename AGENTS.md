@@ -216,7 +216,7 @@ If checks cannot be run or evidence is unavailable, say so plainly and explain w
 - Separate Code Reviewer issues are optional/special-case, not mandatory by default.
 - QA issues are separate when an independent gate matters.
 - Coordinator gates synthesize coding, review, QA, PR, CI, docs, and roadmap evidence.
-- Backlog is planning state, not executable state. See `docs/agents/README.md` for queue selection.
+- Queue selection may use `Todo` first, then the top unblocked matching Backlog item in the current allowed lane. See `docs/agents/README.md`.
 
 ## Change-control rule
 
