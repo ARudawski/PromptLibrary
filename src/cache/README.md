@@ -29,10 +29,13 @@ Implemented behavior:
 - stale cache access attempts a synchronous rebuild;
 - initial source/build failure returns a typed `PROMPT_CACHE_UNAVAILABLE`
   failure with reason `no_cache`;
+- an initial source load that produces no parseable and valid prompt
+  definitions returns the same typed `no_cache` failure instead of caching an
+  empty index;
 - stale rebuild failure returns a typed `PROMPT_CACHE_UNAVAILABLE` failure with
   reason `cache_build_failed` and does not serve the stale index;
 - invalid or unparsable prompt files follow the existing parser/validator path
-  and are skipped before indexing.
+  and are skipped before indexing when at least one usable prompt remains.
 
 Not implemented in ALJ-37:
 

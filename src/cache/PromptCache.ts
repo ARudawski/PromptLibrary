@@ -118,7 +118,6 @@ export class PromptCache {
   }
 
   async #buildCachedIndex(): Promise<CachedPromptIndex> {
-    const loadedAtMilliseconds = this.#clock();
     const loadedPromptFiles = await this.#promptSource.loadAllPrompts();
     const prompts: PromptDefinition[] = [];
 
@@ -137,6 +136,12 @@ export class PromptCache {
 
       prompts.push(validationResult.prompt);
     }
+
+    if (prompts.length === 0) {
+      throw new Error("Prompt cache build produced no usable prompts.");
+    }
+
+    const loadedAtMilliseconds = this.#clock();
 
     return {
       index: buildPromptIndex(prompts),

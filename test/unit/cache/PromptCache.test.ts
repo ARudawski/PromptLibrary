@@ -60,6 +60,68 @@ This invalid prompt must not invoke.
     });
   });
 
+  it("returns a typed no-cache failure when the source has no prompt files", async () => {
+    const cache = new PromptCache({
+      promptSource: new FakePromptSource([]),
+      clock: fixedClock(2_000),
+    });
+
+    const result = await cache.getIndex();
+
+    expect(result).toMatchObject({
+      kind: "failure",
+      error: {
+        code: "PROMPT_CACHE_UNAVAILABLE",
+        reason: "no_cache",
+        message: "Prompt cache could not be built and no usable cache exists.",
+      },
+    });
+    expect(cache.status()).toEqual({
+      kind: "empty",
+    });
+  });
+
+  it("returns a typed no-cache failure when no prompt files parse and validate", async () => {
+    const cache = new PromptCache({
+      promptSource: new FakePromptSource([
+        fakeLoadedPromptFile({
+          sourcePath: "fake://unparsable.md",
+          rawMarkdown: "This file has no frontmatter.",
+        }),
+        fakeLoadedPromptFile({
+          sourcePath: "fake://invalid.md",
+          rawMarkdown: `---
+schema_version: "1"
+slug: invalid-prompt
+title: Invalid Prompt
+description: Missing aliases keeps this prompt out.
+lifecycle: one_shot
+input_mode: attached_input
+status: active
+---
+
+This invalid prompt must not invoke.
+`,
+        }),
+      ]),
+      clock: fixedClock(2_000),
+    });
+
+    const result = await cache.getIndex();
+
+    expect(result).toMatchObject({
+      kind: "failure",
+      error: {
+        code: "PROMPT_CACHE_UNAVAILABLE",
+        reason: "no_cache",
+        message: "Prompt cache could not be built and no usable cache exists.",
+      },
+    });
+    expect(cache.status()).toEqual({
+      kind: "empty",
+    });
+  });
+
   it("serves a fresh cache without reloading the source", async () => {
     const clock = mutableClock(1_000);
     const promptSource = new CountingPromptSource([
@@ -132,6 +194,33 @@ This invalid prompt must not invoke.
     });
     expect(resolvePromptCommand(result.index, "second-prompt")).toMatchObject({
       kind: "found",
+    });
+  });
+
+  it("stamps the TTL after async source loading and cache build work finishes", async () => {
+    const clock = mutableClock(1_000);
+    const promptSource: PromptSource = {
+      async loadAllPrompts() {
+        clock.setNow(1_075);
+
+        return [validPromptFile("delayed-prompt", { body: "Delayed body.\n" })];
+      },
+    };
+    const cache = new PromptCache({ promptSource, clock, ttlMilliseconds: 50 });
+
+    const result = await cache.getIndex();
+
+    expect(result).toMatchObject({
+      kind: "success",
+      status: "fresh",
+      loadedAtMilliseconds: 1_075,
+      expiresAtMilliseconds: 1_125,
+    });
+    expect(cache.status()).toMatchObject({
+      kind: "ready",
+      freshness: "fresh",
+      loadedAtMilliseconds: 1_075,
+      expiresAtMilliseconds: 1_125,
     });
   });
 
