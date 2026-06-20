@@ -19,6 +19,11 @@ Authoritative Slice 1 contract docs:
 - `invocation-contract.md`
 - `prompt-schema.md`
 
+QA operating docs:
+
+- `qa/test-strategy.md`
+- `qa/qa-agent-behavior-spec.md`
+
 The repository has passed the Slice 0 proof gate, Slice 1 invocation gate, Slice 2.1 source-boundary gate, Slice 2.2 public GitHub source gate, and Slice 2.3 runtime cache TTL gate through recorded Linear evidence and is currently implementing Slice 2.4: stale-while-revalidate and last-known-good cache behavior.
 
 Current Slice 2.4 source/cache references:
