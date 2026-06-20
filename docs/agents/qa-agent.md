@@ -22,9 +22,11 @@ Before auditing, read:
 
 ## Eligibility
 
-Execute only a Linear issue whose title contains `QA Agent`, unless the user explicitly requests a QA sweep.
+Execute only a Linear issue whose resolved issue title contains `QA Agent`, unless the user explicitly requests a QA sweep.
 
-If an explicit issue ID does not contain `QA Agent`, stop and report the title mismatch.
+If an explicit Linear key or URL is provided, first fetch that issue, then check the resolved issue title/body. Do not reject normal Linear IDs such as `ALJ-58` merely because the ID string itself does not contain the role marker.
+
+If the resolved issue is not a QA Agent issue and the user did not explicitly request a QA sweep, stop and report the title mismatch.
 
 If no issue ID is provided, find the next unblocked QA issue in the current milestone/slice using the queue contract from `docs/agents/README.md`. Do not jump to later slices.
 
