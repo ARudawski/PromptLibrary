@@ -26,4 +26,9 @@ Current Slice 2.4 source/cache references:
 - `../src/prompt-source/README.md`
 - `../src/cache/README.md`
 
+Workflow and agent operating references:
+
+- `workflows/coding-agent-behavior-spec.md`
+- `workflows/ai-workflow-evaluation-2026-06-20.md`
+
 Do not treat partial-valid/cold-failure cache policy, inspect/list, real prompt, or hosted behavior as implemented code. The public GitHub source adapter and cache are infrastructure only until later slices wire broader runtime behavior.

@@ -44,6 +44,7 @@ Start here:
 - [`docs/roadmap/project-prompt-library-roadmap.md`](./docs/roadmap/project-prompt-library-roadmap.md) — implementation roadmap.
 - [`docs/standards/project-prompt-library-codex-agent-standards.md`](./docs/standards/project-prompt-library-codex-agent-standards.md) — detailed architecture and code standards.
 - [`docs/slice-0-proof.md`](./docs/slice-0-proof.md) — Slice 0 proof checklist and result log template.
+- [`docs/workflows/coding-agent-behavior-spec.md`](./docs/workflows/coding-agent-behavior-spec.md) — reproducible Coding Agent behavior for Linear/GitHub execution.
 
 ## Local development status
 
