@@ -6,8 +6,9 @@ The full QA strategy lives in [`docs/qa/test-strategy.md`](../docs/qa/test-strat
 
 ## Current phase
 
-The repository has passed Slice 1 fixture-backed invocation and Slice 2.1
-source-boundary work and is now in Slice 2.2: public GitHub source adapter.
+The repository has passed Slice 1 fixture-backed invocation, Slice 2.1
+source-boundary work, and Slice 2.2 public GitHub source work. It is now in
+Slice 2.3: runtime cache with TTL.
 
 Slice 0 was validated manually through Linear gate evidence. The local
 [`docs/slice-0-proof.md`](../docs/slice-0-proof.md) remains the proof checklist
@@ -19,8 +20,8 @@ and template because the important Slice 0 behavior was ChatGPT platform behavio
 - can this be reproduced in three cooperative fresh chats.
 
 Automated core tests started in Slice 1 and now include the Slice 2.1 source
-boundary, fake source helper, and Slice 2.2 public GitHub source adapter tests.
-They must remain deterministic.
+boundary, fake source helper, Slice 2.2 public GitHub source adapter tests, and
+Slice 2.3 prompt cache TTL tests. They must remain deterministic.
 
 ## Required deterministic test categories
 
@@ -55,9 +56,10 @@ Unit tests cover pure deterministic core behavior:
 - reduced invocation projection;
 - unknown command failure;
 - non-executing suggestions;
-- cache TTL behavior;
-- stale-while-revalidate behavior;
-- last-known-good preservation.
+- cache TTL behavior.
+
+Later cache unit tests will cover stale-while-revalidate behavior and
+last-known-good preservation after those slices are approved.
 
 Unit tests must not hit GitHub, ChatGPT, a tunnel, or a hosted MCP endpoint.
 

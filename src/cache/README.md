@@ -5,15 +5,43 @@ Runtime cache/index code lives here.
 Current files:
 
 ```text
+PromptCache.ts
 PromptIndex.ts
 ```
 
 Expected future files:
 
 ```text
-PromptCache.ts
 StaleWhileRevalidateCache.ts
 ```
+
+## Current ALJ-37 behavior
+
+`PromptCache` is a derived in-memory cache built from a `PromptSource` through
+the existing parser, per-prompt validator, and `PromptIndex` path.
+
+Implemented behavior:
+
+- default TTL is five minutes;
+- callers may provide a fakeable clock for deterministic tests;
+- fresh cache hits return the current `PromptIndex` without reloading source;
+- stale cache state is detectable;
+- stale cache access attempts a synchronous rebuild;
+- initial source/build failure returns a typed `PROMPT_CACHE_UNAVAILABLE`
+  failure with reason `no_cache`;
+- stale rebuild failure returns a typed `PROMPT_CACHE_UNAVAILABLE` failure with
+  reason `cache_build_failed` and does not serve the stale index;
+- invalid or unparsable prompt files follow the existing parser/validator path
+  and are skipped before indexing.
+
+Not implemented in ALJ-37:
+
+- stale-while-revalidate;
+- last-known-good preservation;
+- partial-valid/cold-failure policy beyond the existing parser/validator/index
+  path;
+- ChatGPT-facing cache refresh, cache diagnostics, or admin tools;
+- real prompt files.
 
 ## Current ALJ-17 behavior
 
@@ -37,6 +65,7 @@ Rules:
 - cache is derived and disposable;
 - GitHub remains canonical for public prompts;
 - no database in V1;
-- TTL, stale-while-revalidate, and last-known-good behavior are future source/cache
-  work, not part of the current active index;
+- TTL basics live in `PromptCache`;
+- stale-while-revalidate and last-known-good behavior are future source/cache
+  work, not part of the current cache implementation;
 - no ChatGPT-facing cache refresh tool.

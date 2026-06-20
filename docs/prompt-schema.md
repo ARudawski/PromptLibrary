@@ -129,18 +129,19 @@ the prompt body.
 
 Current Slice 1 fixtures live under `test/fixtures/`.
 
-The fixture-backed source:
+The fixture-backed invocation path:
 
 - loads local fixture Markdown only;
 - does not fetch GitHub;
-- does not implement runtime cache behavior;
 - does not load real prompt files;
 - does not inspect or list commands through ChatGPT-facing tools.
 
-Real prompt files under `prompts/*.md`, runtime source/cache behavior, and real
-MVP prompt authoring are later-slice work. Slice 2.2 adds the public GitHub
-source adapter as infrastructure only; fixture-backed invocation remains the
-current ChatGPT-facing runtime path.
+Slice 2.2 adds the public GitHub source adapter as infrastructure only. Slice
+2.3 adds core runtime cache TTL behavior as infrastructure only. Real prompt
+files under `prompts/*.md`, stale-while-revalidate, last-known-good
+preservation, partial-valid/cold-failure cache policy, and real MVP prompt
+authoring are later-slice work. Fixture-backed invocation remains the current
+ChatGPT-facing runtime path.
 
 ## Current Validation Coverage
 
@@ -149,6 +150,7 @@ The current schema behavior is covered by:
 - `test/unit/prompt-parser/parsePromptMarkdown.test.ts`
 - `test/unit/validation/validatePromptDefinition.test.ts`
 - `test/unit/validation/validatePromptCollection.test.ts`
+- `test/unit/cache/PromptCache.test.ts`
 - `test/unit/cache/PromptIndex.test.ts`
 - `test/unit/application/InvokePromptUseCase.test.ts`
 - `test/contract/invoke-prompt-library-command.test.ts`
