@@ -8,7 +8,7 @@ Expected future file:
 appConfig.ts
 ```
 
-Current Slice 2.2 source configuration is constructor-level only on
+Source configuration added in Slice 2.2 is constructor-level only on
 `PublicGitHubPromptSource`:
 
 ```text
