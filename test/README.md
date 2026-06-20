@@ -38,6 +38,7 @@ test/
 
 Unit tests cover pure deterministic core behavior:
 
+- source boundary and fake source behavior;
 - Markdown/frontmatter parsing;
 - exact prompt body preservation;
 - metadata schema validation;
@@ -135,6 +136,9 @@ Minimum Slice 1 fixtures:
 - one unknown command suggestion case.
 
 Later source/cache fixtures should use fake sources and fake clocks. Default deterministic tests must remain no-network.
+
+The current fake source helper lives at `test/helpers/FakePromptSource.ts`. It
+is test-only and must not become a production source implementation.
 
 ## Local commands
 

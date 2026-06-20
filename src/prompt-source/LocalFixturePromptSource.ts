@@ -1,15 +1,8 @@
 import { readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-
-export interface LoadedPromptFile {
-  readonly sourcePath: string;
-  readonly rawMarkdown: string;
-}
-
-export interface PromptSource {
-  loadAllPrompts(): Promise<readonly LoadedPromptFile[]>;
-}
+import type { LoadedPromptFile } from "./LoadedPromptFile.js";
+import type { PromptSource } from "./PromptSource.js";
 
 export const DEFAULT_FIXTURE_PROMPT_PATHS = [
   "test/fixtures/prompts-valid/active-basic.md",
