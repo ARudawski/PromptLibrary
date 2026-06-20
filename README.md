@@ -2,7 +2,7 @@
 
 Project Prompt Library is a small ChatGPT Apps / MCP connector for invoking exact, externally maintained prompt workflows from normal ChatGPT conversations using command-style requests such as `@pl grill-me`.
 
-This repository has passed the Slice 0 proof gate, Slice 1 invocation gate, Slice 2.1 source-boundary gate, and Slice 2.2 public GitHub source gate through recorded Linear evidence and is now in **Slice 2.3: runtime cache with TTL**.
+This repository has passed the Slice 0 proof gate, Slice 1 invocation gate, Slice 2.1 source-boundary gate, Slice 2.2 public GitHub source gate, and Slice 2.3 runtime cache TTL gate through recorded Linear evidence and is now in **Slice 2.4: stale-while-revalidate and last-known-good cache behavior**.
 
 The Slice 0 premise was:
 
@@ -15,9 +15,10 @@ The Slice 0 premise was:
 - Slice 1: fixture-backed invocation walking skeleton, approved with minor issues.
 - Slice 2.1: PromptSource boundary and fake source seam, approved.
 - Slice 2.2: public GitHub prompt source adapter, approved.
-- Slice 2.3: runtime prompt cache with five-minute TTL, in progress.
+- Slice 2.3: runtime prompt cache with five-minute TTL, approved.
+- Slice 2.4: stale-while-revalidate and last-known-good cache behavior, in progress.
 
-The current local MCP server still registers `invoke_prompt_library_command` against local fixture prompt files through the PromptSource boundary. Slice 2.2 added the public GitHub source adapter as isolated infrastructure. Slice 2.3 adds the core `PromptCache` TTL behavior as derived runtime state; stale-while-revalidate, last-known-good preservation, partial-valid/cold-failure policy, real prompt files, inspect/list tools, and hosted deployment are not implemented yet.
+The current local MCP server still registers `invoke_prompt_library_command` against local fixture prompt files through the PromptSource boundary. Slice 2.2 added the public GitHub source adapter as isolated infrastructure. Slice 2.3 added the core `PromptCache` TTL behavior as derived runtime state. Slice 2.4 adds stale refresh and last-known-good preservation inside that cache. Partial-valid/cold-failure policy, real prompt files, inspect/list tools, and hosted deployment are not implemented yet.
 
 ## Core V1 boundaries
 
@@ -46,7 +47,7 @@ Start here:
 
 ## Local development status
 
-The TypeScript/Node implementation currently supports deterministic local fixture invocation, the Slice 2.1 source boundary, the Slice 2.2 public GitHub source adapter behind that boundary, and the Slice 2.3 core prompt cache TTL module.
+The TypeScript/Node implementation currently supports deterministic local fixture invocation, the Slice 2.1 source boundary, the Slice 2.2 public GitHub source adapter behind that boundary, the Slice 2.3 core prompt cache TTL module, and Slice 2.4 stale/LKG cache behavior.
 
 ## CI quality gate
 
@@ -56,10 +57,10 @@ This is the deterministic default gate only. Live GitHub prompt-source checks, C
 
 ## Non-goals for the current phase
 
-Do not add in the current Slice 2.3 work:
+Do not add in the current Slice 2.4 work:
 
-- stale-while-revalidate or last-known-good cache behavior;
 - partial-valid/cold-failure cache policy beyond the existing parser/validator/index path;
+- ChatGPT-facing cache refresh, cache diagnostics, or admin tools;
 - real prompt files;
 - inspect/list tools;
 - hosted deployment;

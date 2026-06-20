@@ -249,7 +249,7 @@ This invalid prompt must not invoke.
     });
   });
 
-  it("returns a typed build failure without serving stale cache", async () => {
+  it("serves stale last-known-good cache when stale refresh source load fails", async () => {
     const clock = mutableClock(1_000);
     const sourceError = new Error("refresh failed");
     const promptSource = new CountingPromptSource(
@@ -263,14 +263,140 @@ This invalid prompt must not invoke.
 
     const result = await cache.getIndex();
 
-    expect(result).toEqual({
-      kind: "failure",
-      error: {
-        code: "PROMPT_CACHE_UNAVAILABLE",
-        reason: "cache_build_failed",
-        message: "Prompt cache refresh failed and stale cache was not served.",
-        cause: sourceError,
-      },
+    expect(result).toMatchObject({
+      kind: "success",
+      status: "stale",
+      loadedAtMilliseconds: 1_000,
+      expiresAtMilliseconds: 1_010,
+    });
+    expect(cache.status()).toMatchObject({
+      kind: "ready",
+      freshness: "stale",
+    });
+
+    if (result.kind !== "success") {
+      throw new Error("Expected stale last-known-good cache to be served.");
+    }
+
+    expect(resolvePromptCommand(result.index, "first-prompt")).toMatchObject({
+      kind: "found",
+    });
+    expect(resolvePromptCommand(result.index, "second-prompt")).toEqual({
+      kind: "not_found",
+      command: "second-prompt",
+    });
+  });
+
+  it("preserves stale last-known-good cache when refresh has no usable prompts", async () => {
+    const clock = mutableClock(1_000);
+    const promptSource = new CountingPromptSource([
+      [validPromptFile("first-prompt", { body: "First body.\n" })],
+      [],
+    ]);
+    const cache = new PromptCache({ promptSource, clock, ttlMilliseconds: 10 });
+
+    await cache.getIndex();
+    clock.setNow(1_010);
+
+    const result = await cache.getIndex();
+
+    expect(result).toMatchObject({
+      kind: "success",
+      status: "stale",
+      loadedAtMilliseconds: 1_000,
+      expiresAtMilliseconds: 1_010,
+    });
+    expect(promptSource.loadCount).toBe(2);
+
+    if (result.kind !== "success") {
+      throw new Error("Expected stale last-known-good cache to be served.");
+    }
+
+    expect(resolvePromptCommand(result.index, "first-prompt")).toMatchObject({
+      kind: "found",
+    });
+  });
+
+  it("preserves stale last-known-good cache when refresh includes invalid prompt files", async () => {
+    const clock = mutableClock(1_000);
+    const promptSource = new CountingPromptSource([
+      [validPromptFile("first-prompt", { body: "First body.\n" })],
+      [
+        validPromptFile("second-prompt", { body: "Second body.\n" }),
+        fakeLoadedPromptFile({
+          sourcePath: "fake://invalid.md",
+          rawMarkdown: "This file has no frontmatter.",
+        }),
+      ],
+    ]);
+    const cache = new PromptCache({ promptSource, clock, ttlMilliseconds: 10 });
+
+    await cache.getIndex();
+    clock.setNow(1_010);
+
+    const result = await cache.getIndex();
+
+    expect(result).toMatchObject({
+      kind: "success",
+      status: "stale",
+      loadedAtMilliseconds: 1_000,
+      expiresAtMilliseconds: 1_010,
+    });
+    expect(promptSource.loadCount).toBe(2);
+
+    if (result.kind !== "success") {
+      throw new Error("Expected stale last-known-good cache to be served.");
+    }
+
+    expect(resolvePromptCommand(result.index, "first-prompt")).toMatchObject({
+      kind: "found",
+    });
+    expect(resolvePromptCommand(result.index, "second-prompt")).toEqual({
+      kind: "not_found",
+      command: "second-prompt",
+    });
+  });
+
+  it("preserves stale last-known-good cache when refresh has unsafe collection conflicts", async () => {
+    const clock = mutableClock(1_000);
+    const promptSource = new CountingPromptSource([
+      [validPromptFile("first-prompt", { body: "First body.\n" })],
+      [
+        validPromptFile("conflict-a", {
+          alias: "shared-alias",
+          body: "Conflict A body.\n",
+        }),
+        validPromptFile("conflict-b", {
+          alias: "shared-alias",
+          body: "Conflict B body.\n",
+        }),
+      ],
+    ]);
+    const cache = new PromptCache({ promptSource, clock, ttlMilliseconds: 10 });
+
+    await cache.getIndex();
+    clock.setNow(1_010);
+
+    const result = await cache.getIndex();
+
+    expect(result).toMatchObject({
+      kind: "success",
+      status: "stale",
+      loadedAtMilliseconds: 1_000,
+      expiresAtMilliseconds: 1_010,
+    });
+    expect(promptSource.loadCount).toBe(2);
+
+    if (result.kind !== "success") {
+      throw new Error("Expected stale last-known-good cache to be served.");
+    }
+
+    expect(resolvePromptCommand(result.index, "first-prompt")).toMatchObject({
+      kind: "found",
+    });
+    expect(resolvePromptCommand(result.index, "shared-alias")).toEqual({
+      kind: "not_found",
+      command: "shared-alias",
     });
   });
 });
