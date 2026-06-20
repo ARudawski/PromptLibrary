@@ -6,7 +6,8 @@ The full QA strategy lives in [`docs/qa/test-strategy.md`](../docs/qa/test-strat
 
 ## Current phase
 
-The repository is in Slice 1: fixture-backed invocation walking skeleton.
+The repository has passed Slice 1 fixture-backed invocation and is now in Slice
+2.1: PromptSource boundary and fake source seam.
 
 Slice 0 was validated manually through Linear gate evidence. The local
 [`docs/slice-0-proof.md`](../docs/slice-0-proof.md) remains the proof checklist
@@ -17,7 +18,8 @@ and template because the important Slice 0 behavior was ChatGPT platform behavio
 - can it apply that prompt as behavior;
 - can this be reproduced in three cooperative fresh chats.
 
-Automated core tests have started in Slice 1 and must remain deterministic.
+Automated core tests started in Slice 1 and now include the Slice 2.1 source
+boundary and fake source helper. They must remain deterministic.
 
 ## Required deterministic test categories
 
