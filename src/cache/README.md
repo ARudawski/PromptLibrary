@@ -9,7 +9,7 @@ PromptCache.ts
 PromptIndex.ts
 ```
 
-Expected future files:
+Possible future files:
 
 ```text
 StaleWhileRevalidateCache.ts
@@ -32,15 +32,32 @@ Implemented behavior:
 - an initial source load that produces no parseable and valid prompt
   definitions returns the same typed `no_cache` failure instead of caching an
   empty index;
-- stale rebuild failure returns a typed `PROMPT_CACHE_UNAVAILABLE` failure with
-  reason `cache_build_failed` and does not serve the stale index;
+- ALJ-41 replaces the original stale rebuild failure behavior with
+  last-known-good preservation described below;
 - invalid or unparsable prompt files follow the existing parser/validator path
   and are skipped before indexing when at least one usable prompt remains.
 
-Not implemented in ALJ-37:
+## Current ALJ-41 behavior
 
-- stale-while-revalidate;
-- last-known-good preservation;
+`PromptCache` now also preserves last-known-good cache state across stale
+refresh attempts.
+
+Implemented behavior:
+
+- stale cache access attempts a synchronous refresh for this slice;
+- successful valid refresh replaces the cached index and returns fresh state;
+- source failure during stale refresh returns the stale last-known-good index;
+- stale refresh that produces no usable prompts returns the stale
+  last-known-good index;
+- stale refresh with invalid or unparsable prompt files returns the stale
+  last-known-good index instead of accepting a partial replacement;
+- stale refresh with unsafe collection conflicts returns the stale
+  last-known-good index;
+- stale success results expose only cache freshness and the existing `PromptIndex`
+  to core callers, not source/cache diagnostics.
+
+Not implemented in ALJ-41:
+
 - partial-valid/cold-failure policy beyond the existing parser/validator/index
   path;
 - ChatGPT-facing cache refresh, cache diagnostics, or admin tools;
@@ -69,6 +86,6 @@ Rules:
 - GitHub remains canonical for public prompts;
 - no database in V1;
 - TTL basics live in `PromptCache`;
-- stale-while-revalidate and last-known-good behavior are future source/cache
-  work, not part of the current cache implementation;
+- stale-while-revalidate and last-known-good behavior live in `PromptCache`;
+- partial-valid/cold-failure behavior remains future source/cache work;
 - no ChatGPT-facing cache refresh tool.

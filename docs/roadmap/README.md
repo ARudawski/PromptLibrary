@@ -21,11 +21,11 @@ Slice 6: Hosted deployment, only after local MVP proves useful
 
 If Slice 0 fails, do not proceed to parser/cache/GitHub implementation.
 
-Slice 0 was accepted with caveats through recorded Linear gate evidence, Slice 1 fixture-backed invocation has been approved as the implementation baseline, Slice 2.1 approved the `PromptSource` boundary and fake source seam, and Slice 2.2 approved the public GitHub source adapter behind `PromptSource`. The current approved work is Slice 2.3: runtime cache with TTL.
+Slice 0 was accepted with caveats through recorded Linear gate evidence, Slice 1 fixture-backed invocation has been approved as the implementation baseline, Slice 2.1 approved the `PromptSource` boundary and fake source seam, Slice 2.2 approved the public GitHub source adapter behind `PromptSource`, and Slice 2.3 approved runtime cache with TTL. The current approved work is Slice 2.4: stale-while-revalidate and last-known-good cache behavior.
 
 ## Current focus
 
-This repository currently supports Slice 1 fixture-backed invocation plus the Slice 2.1 `PromptSource` boundary and fake source seam. Slice 2.2 added the public GitHub source adapter as isolated infrastructure. Slice 2.3 adds runtime cache TTL basics. Stale-while-revalidate, last-known-good preservation, partial-valid/cold-failure policy, inspect/list tools, real prompt files, and hosted deployment are still later-slice work.
+This repository currently supports Slice 1 fixture-backed invocation plus the Slice 2.1 `PromptSource` boundary and fake source seam. Slice 2.2 added the public GitHub source adapter as isolated infrastructure. Slice 2.3 added runtime cache TTL basics. Slice 2.4 adds stale-while-revalidate and last-known-good preservation. Partial-valid/cold-failure policy, inspect/list tools, real prompt files, and hosted deployment are still later-slice work.
 
 ## Future full document
 

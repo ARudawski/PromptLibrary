@@ -27,7 +27,7 @@ export type PromptCacheStatus =
       readonly expiresAtMilliseconds: number;
     };
 
-export type PromptCacheFailureReason = "no_cache" | "cache_build_failed";
+export type PromptCacheFailureReason = "no_cache";
 
 export interface PromptCacheError {
   readonly code: "PROMPT_CACHE_UNAVAILABLE";
@@ -39,7 +39,7 @@ export interface PromptCacheError {
 export type PromptCacheGetIndexResult =
   | {
       readonly kind: "success";
-      readonly status: "fresh";
+      readonly status: PromptCacheFreshness;
       readonly index: PromptIndex;
       readonly loadedAtMilliseconds: number;
       readonly expiresAtMilliseconds: number;
@@ -53,6 +53,10 @@ interface CachedPromptIndex {
   readonly index: PromptIndex;
   readonly loadedAtMilliseconds: number;
   readonly expiresAtMilliseconds: number;
+}
+
+interface BuildCachedIndexOptions {
+  readonly rejectUnsafeRefreshResult: boolean;
 }
 
 export class PromptCache {
@@ -92,49 +96,67 @@ export class PromptCache {
     const cachedIndex = this.#cachedIndex;
 
     if (cachedIndex !== undefined && this.#isFresh(cachedIndex)) {
-      return promptCacheSuccess(cachedIndex);
+      return promptCacheSuccess(cachedIndex, "fresh");
     }
 
-    const hadCachedIndex = cachedIndex !== undefined;
+    if (cachedIndex !== undefined) {
+      try {
+        const refreshedIndex = await this.#buildCachedIndex({
+          rejectUnsafeRefreshResult: true,
+        });
+        this.#cachedIndex = refreshedIndex;
+
+        return promptCacheSuccess(refreshedIndex, "fresh");
+      } catch {
+        return promptCacheSuccess(cachedIndex, "stale");
+      }
+    }
 
     try {
-      const refreshedIndex = await this.#buildCachedIndex();
+      const refreshedIndex = await this.#buildCachedIndex({
+        rejectUnsafeRefreshResult: false,
+      });
       this.#cachedIndex = refreshedIndex;
 
-      return promptCacheSuccess(refreshedIndex);
+      return promptCacheSuccess(refreshedIndex, "fresh");
     } catch (cause: unknown) {
       return {
         kind: "failure",
         error: {
           code: "PROMPT_CACHE_UNAVAILABLE",
-          reason: hadCachedIndex ? "cache_build_failed" : "no_cache",
-          message: hadCachedIndex
-            ? "Prompt cache refresh failed and stale cache was not served."
-            : "Prompt cache could not be built and no usable cache exists.",
+          reason: "no_cache",
+          message: "Prompt cache could not be built and no usable cache exists.",
           cause,
         },
       };
     }
   }
 
-  async #buildCachedIndex(): Promise<CachedPromptIndex> {
+  async #buildCachedIndex(options: BuildCachedIndexOptions): Promise<CachedPromptIndex> {
     const loadedPromptFiles = await this.#promptSource.loadAllPrompts();
     const prompts: PromptDefinition[] = [];
+    let invalidPromptFileCount = 0;
 
     for (const loadedPromptFile of loadedPromptFiles) {
       const parseResult = parsePromptMarkdown(loadedPromptFile.rawMarkdown);
 
       if (parseResult.kind !== "success") {
+        invalidPromptFileCount += 1;
         continue;
       }
 
       const validationResult = validatePromptDefinition(parseResult.prompt);
 
       if (validationResult.kind !== "success") {
+        invalidPromptFileCount += 1;
         continue;
       }
 
       prompts.push(validationResult.prompt);
+    }
+
+    if (options.rejectUnsafeRefreshResult && invalidPromptFileCount > 0) {
+      throw new Error("Prompt cache refresh produced invalid or unparsable prompt files.");
     }
 
     if (prompts.length === 0) {
@@ -142,9 +164,14 @@ export class PromptCache {
     }
 
     const loadedAtMilliseconds = this.#clock();
+    const index = buildPromptIndex(prompts);
+
+    if (options.rejectUnsafeRefreshResult && index.issues.length > 0) {
+      throw new Error("Prompt cache build produced unsafe prompt collection issues.");
+    }
 
     return {
-      index: buildPromptIndex(prompts),
+      index,
       loadedAtMilliseconds,
       expiresAtMilliseconds: loadedAtMilliseconds + this.#ttlMilliseconds,
     };
@@ -155,10 +182,13 @@ export class PromptCache {
   }
 }
 
-function promptCacheSuccess(cachedIndex: CachedPromptIndex): PromptCacheGetIndexResult {
+function promptCacheSuccess(
+  cachedIndex: CachedPromptIndex,
+  status: PromptCacheFreshness,
+): PromptCacheGetIndexResult {
   return {
     kind: "success",
-    status: "fresh",
+    status,
     index: cachedIndex.index,
     loadedAtMilliseconds: cachedIndex.loadedAtMilliseconds,
     expiresAtMilliseconds: cachedIndex.expiresAtMilliseconds,
