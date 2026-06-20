@@ -8,11 +8,6 @@ Current source boundary files:
 LoadedPromptFile.ts
 PromptSource.ts
 LocalFixturePromptSource.ts
-```
-
-Expected future files:
-
-```text
 PublicGitHubPromptSource.ts
 ```
 
@@ -45,7 +40,49 @@ Prompt sources load raw Markdown files only. They do not parse frontmatter,
 validate prompt metadata, decide invokability, build indexes, format MCP
 responses, merge sources, or own cache state.
 
-## Current ALJ-29 behavior
+## Current ALJ-33 behavior
+
+`PublicGitHubPromptSource` implements `PromptSource` for the V1 public GitHub
+source. It is an infrastructure adapter only.
+
+Configuration is passed to the constructor:
+
+```ts
+new PublicGitHubPromptSource({
+  owner: "ARudawski",
+  repo: "PromptLibrary",
+  ref: "main",
+  promptsPath: "prompts",
+});
+```
+
+Defaults:
+
+```text
+ref: main
+promptsPath: prompts
+apiBaseUrl: https://api.github.com
+userAgent: project-prompt-library
+```
+
+The adapter uses the public GitHub Contents API to list the configured prompt
+path, filters flat Markdown files, fetches each file's raw `download_url`, and
+returns `LoadedPromptFile` values containing only:
+
+```text
+sourcePath
+rawMarkdown
+```
+
+Source failures are mapped to `PublicGitHubPromptSourceError` with a stable
+`code`, and file failures include `sourcePath` for later cache behavior. The
+adapter does not authenticate, use tokens, cache data, parse Markdown, validate
+frontmatter, decide invokability, expose diagnostics through ChatGPT, or wire
+itself into the fixture-backed MCP runtime.
+
+Default unit tests inject a fake fetch function and do not hit the network.
+
+## Earlier ALJ-29 behavior
 
 `PromptSource` and `LoadedPromptFile` are formal production interfaces.
 

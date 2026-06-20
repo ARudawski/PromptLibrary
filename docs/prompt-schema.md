@@ -137,8 +137,10 @@ The fixture-backed source:
 - does not load real prompt files;
 - does not inspect or list commands through ChatGPT-facing tools.
 
-Public prompt files under `prompts/*.md`, source/cache behavior, and real MVP
-prompt authoring are later-slice work.
+Real prompt files under `prompts/*.md`, runtime source/cache behavior, and real
+MVP prompt authoring are later-slice work. Slice 2.2 adds the public GitHub
+source adapter as infrastructure only; fixture-backed invocation remains the
+current ChatGPT-facing runtime path.
 
 ## Current Validation Coverage
 

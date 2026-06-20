@@ -16,13 +16,13 @@ When the full architecture/roadmap/standards documents are added, they become ma
 
 ## Current phase
 
-The project is in Slice 2.1: PromptSource boundary and fake source seam.
+The project is in Slice 2.2: public GitHub prompt source adapter.
 
 Slice 0 was accepted with caveats through recorded Linear gate evidence. The premise was:
 
 > ChatGPT can route `@pl proof` into the local MCP connector, receive a hardcoded model-visible prompt, and apply that prompt as behavior.
 
-Treat [`docs/slices/slice-1-invocation-walking-skeleton.md`](docs/slices/slice-1-invocation-walking-skeleton.md), [`docs/invocation-contract.md`](docs/invocation-contract.md), and [`docs/prompt-schema.md`](docs/prompt-schema.md) as the approved Slice 1 baseline. Slice 2.1 is approved only for the PromptSource boundary and fake test seam. Do not proceed to public GitHub source, runtime cache, inspect/list tools, or real prompts without an explicit coordinator or architecture decision.
+Treat [`docs/slices/slice-1-invocation-walking-skeleton.md`](docs/slices/slice-1-invocation-walking-skeleton.md), [`docs/invocation-contract.md`](docs/invocation-contract.md), and [`docs/prompt-schema.md`](docs/prompt-schema.md) as the approved Slice 1 baseline. Slice 2.1 approved the PromptSource boundary and fake test seam. Slice 2.2 is approved only for the public GitHub prompt source adapter behind that boundary. Do not proceed to runtime cache, inspect/list tools, real prompts, or hosted behavior without an explicit coordinator or architecture decision.
 
 ## Non-negotiable boundaries
 
@@ -138,6 +138,26 @@ Forbidden in Slice 2.1:
 - prompt editing, draft management, admin/debug/cache tools;
 - hosted deployment;
 - private-suite/auth/database design.
+
+## Slice 2.2 rules
+
+Allowed in Slice 2.2 only as approved by the current issue:
+
+- `PublicGitHubPromptSource`;
+- public GitHub directory loading for configured `prompts/*.md`;
+- typed/structured prompt-source failures;
+- mocked/fake unit tests for source success and failure behavior;
+- docs for source adapter configuration and behavior.
+
+Forbidden in Slice 2.2:
+
+- runtime TTL cache, stale-while-revalidate, or last-known-good behavior;
+- real prompt files under `prompts/`;
+- `inspect_prompt_library_command`;
+- `list_prompt_library_commands`;
+- ChatGPT-facing source/cache diagnostics or refresh tools;
+- private GitHub source, token/OAuth/auth, DB, or private-suite behavior;
+- hosted deployment.
 
 ## Architecture standards
 

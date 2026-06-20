@@ -8,6 +8,19 @@ Expected future file:
 appConfig.ts
 ```
 
+Current Slice 2.2 source configuration is constructor-level only on
+`PublicGitHubPromptSource`:
+
+```text
+owner
+repo
+ref
+promptsPath
+```
+
+The fixture-backed MCP runtime is not wired to public GitHub source yet, so no
+process-level app config loader exists in this slice.
+
 Rules:
 
 - validate configuration at startup;

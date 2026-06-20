@@ -6,8 +6,8 @@ The full QA strategy lives in [`docs/qa/test-strategy.md`](../docs/qa/test-strat
 
 ## Current phase
 
-The repository has passed Slice 1 fixture-backed invocation and is now in Slice
-2.1: PromptSource boundary and fake source seam.
+The repository has passed Slice 1 fixture-backed invocation and Slice 2.1
+source-boundary work and is now in Slice 2.2: public GitHub source adapter.
 
 Slice 0 was validated manually through Linear gate evidence. The local
 [`docs/slice-0-proof.md`](../docs/slice-0-proof.md) remains the proof checklist
@@ -19,7 +19,8 @@ and template because the important Slice 0 behavior was ChatGPT platform behavio
 - can this be reproduced in three cooperative fresh chats.
 
 Automated core tests started in Slice 1 and now include the Slice 2.1 source
-boundary and fake source helper. They must remain deterministic.
+boundary, fake source helper, and Slice 2.2 public GitHub source adapter tests.
+They must remain deterministic.
 
 ## Required deterministic test categories
 
@@ -40,7 +41,7 @@ test/
 
 Unit tests cover pure deterministic core behavior:
 
-- source boundary and fake source behavior;
+- source boundary, fake source behavior, and public GitHub source adapter behavior with mocked fetch;
 - Markdown/frontmatter parsing;
 - exact prompt body preservation;
 - metadata schema validation;
@@ -141,6 +142,10 @@ Later source/cache fixtures should use fake sources and fake clocks. Default det
 
 The current fake source helper lives at `test/helpers/FakePromptSource.ts`. It
 is test-only and must not become a production source implementation.
+
+`test/unit/prompt-source/PublicGitHubPromptSource.test.ts` verifies the public
+source adapter with an injected fetch stub. It must not be converted into a live
+GitHub smoke test.
 
 ## Local commands
 
