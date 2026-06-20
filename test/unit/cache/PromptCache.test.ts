@@ -122,6 +122,32 @@ This invalid prompt must not invoke.
     });
   });
 
+  it("returns a typed no-cache failure when no active commands can be indexed", async () => {
+    const cache = new PromptCache({
+      promptSource: new FakePromptSource([
+        validPromptFile("draft-only", {
+          status: "draft",
+          body: "Draft body.\n",
+        }),
+      ]),
+      clock: fixedClock(2_000),
+    });
+
+    const result = await cache.getIndex();
+
+    expect(result).toMatchObject({
+      kind: "failure",
+      error: {
+        code: "PROMPT_CACHE_UNAVAILABLE",
+        reason: "no_cache",
+        message: "Prompt cache could not be built and no usable cache exists.",
+      },
+    });
+    expect(cache.status()).toEqual({
+      kind: "empty",
+    });
+  });
+
   it("serves a fresh cache without reloading the source", async () => {
     const clock = mutableClock(1_000);
     const promptSource = new CountingPromptSource([
@@ -361,7 +387,50 @@ This invalid prompt must not invoke.
     });
   });
 
-  it("accepts a partial refresh while conflicted commands fail closed", async () => {
+  it("preserves stale last-known-good cache when refresh has no active commands", async () => {
+    const clock = mutableClock(1_000);
+    const promptSource = new CountingPromptSource([
+      [validPromptFile("first-prompt", { body: "First body.\n" })],
+      [
+        validPromptFile("draft-only", {
+          status: "draft",
+          body: "Draft body.\n",
+        }),
+        fakeLoadedPromptFile({
+          sourcePath: "fake://invalid.md",
+          rawMarkdown: "This file has no frontmatter.",
+        }),
+      ],
+    ]);
+    const cache = new PromptCache({ promptSource, clock, ttlMilliseconds: 10 });
+
+    await cache.getIndex();
+    clock.setNow(1_010);
+
+    const result = await cache.getIndex();
+
+    expect(result).toMatchObject({
+      kind: "success",
+      status: "stale",
+      loadedAtMilliseconds: 1_000,
+      expiresAtMilliseconds: 1_010,
+    });
+    expect(promptSource.loadCount).toBe(2);
+
+    if (result.kind !== "success") {
+      throw new Error("Expected stale last-known-good cache to be served.");
+    }
+
+    expect(resolvePromptCommand(result.index, "first-prompt")).toMatchObject({
+      kind: "found",
+    });
+    expect(resolvePromptCommand(result.index, "draft-only")).toEqual({
+      kind: "not_found",
+      command: "draft-only",
+    });
+  });
+
+  it("preserves stale last-known-good cache when refresh has unsafe collection conflicts", async () => {
     const clock = mutableClock(1_000);
     const promptSource = new CountingPromptSource([
       [validPromptFile("first-prompt", { body: "First body.\n" })],
@@ -388,30 +457,26 @@ This invalid prompt must not invoke.
 
     expect(result).toMatchObject({
       kind: "success",
-      status: "fresh",
-      loadedAtMilliseconds: 1_010,
-      expiresAtMilliseconds: 1_020,
+      status: "stale",
+      loadedAtMilliseconds: 1_000,
+      expiresAtMilliseconds: 1_010,
     });
     expect(promptSource.loadCount).toBe(2);
 
     if (result.kind !== "success") {
-      throw new Error("Expected partial conflict refresh to be accepted.");
+      throw new Error("Expected stale last-known-good cache to be served.");
     }
 
-    expect(resolvePromptCommand(result.index, "first-prompt")).toEqual({
-      kind: "not_found",
-      command: "first-prompt",
-    });
-    expect(resolvePromptCommand(result.index, "safe-prompt")).toMatchObject({
+    expect(resolvePromptCommand(result.index, "first-prompt")).toMatchObject({
       kind: "found",
     });
-    expect(resolvePromptCommand(result.index, "shared-alias")).toMatchObject({
-      kind: "conflict",
-      command: "shared-alias",
+    expect(resolvePromptCommand(result.index, "safe-prompt")).toEqual({
+      kind: "not_found",
+      command: "safe-prompt",
     });
-    expect(resolvePromptCommand(result.index, "conflict-a")).toMatchObject({
-      kind: "conflict",
-      command: "conflict-a",
+    expect(resolvePromptCommand(result.index, "shared-alias")).toEqual({
+      kind: "not_found",
+      command: "shared-alias",
     });
   });
 });
@@ -420,6 +485,7 @@ interface ValidPromptFileOptions {
   readonly alias?: string;
   readonly title?: string;
   readonly body: string;
+  readonly status?: "active" | "draft";
 }
 
 function validPromptFile(slug: string, options: ValidPromptFileOptions): LoadedPromptFile {
@@ -435,7 +501,7 @@ title: ${options.title ?? slug}
 description: Test prompt ${slug}.
 ${aliases}lifecycle: one_shot
 input_mode: attached_input
-status: active
+status: ${options.status ?? "active"}
 ---
 
 ${options.body}`,

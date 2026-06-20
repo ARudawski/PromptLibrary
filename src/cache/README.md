@@ -34,8 +34,8 @@ Implemented behavior:
   empty index;
 - ALJ-41 replaces the original stale rebuild failure behavior with
   last-known-good preservation described below;
-- ALJ-45 allows partial valid cache builds when at least one prompt file
-  produces a usable prompt definition;
+- ALJ-45 allows partial valid cache builds when at least one active command
+  remains after indexing;
 - invalid or unparsable prompt files follow the existing parser/validator path
   and are skipped before indexing when at least one usable prompt remains.
 
@@ -51,27 +51,30 @@ Implemented behavior:
 - source failure during stale refresh returns the stale last-known-good index;
 - stale refresh that produces no usable prompts returns the stale
   last-known-good index;
+- stale refresh that produces unsafe collection conflicts returns the stale
+  last-known-good index;
 - stale success results expose only cache freshness and the existing `PromptIndex`
   to core callers, not source/cache diagnostics.
 
 ## Current ALJ-45 behavior
 
-`PromptCache` accepts partial valid source results when the parser and
-per-prompt validator can produce at least one usable prompt definition.
+`PromptCache` accepts partial valid source results when the parser,
+per-prompt validator, and index can produce at least one active command.
 
 Implemented behavior:
 
 - invalid or unparsable prompt files are skipped and are not indexed;
 - stale refreshes with unrelated invalid or unparsable prompt files replace the
-  cached index when at least one usable prompt remains;
-- collection conflicts are represented by `PromptIndex` so affected command
-  strings fail closed instead of resolving by file order;
-- unrelated valid active prompts remain invokable when other commands are
-  conflicted;
+  cached index when at least one active command remains and no unsafe collection
+  conflicts are present;
+- stale refreshes with unsafe collection conflicts preserve last-known-good
+  cache state instead of replacing a safer cache;
+- accepted indexes use `PromptIndex` conflict records so affected command strings
+  fail closed instead of resolving by file order;
 - cold source/build failure returns a typed `PROMPT_CACHE_UNAVAILABLE` failure
   with reason `no_cache`;
-- cold builds with no parseable and valid prompt definitions return the same
-  typed `no_cache` failure;
+- cold builds with no parseable and valid prompt definitions, or with no active
+  commands after indexing, return the same typed `no_cache` failure;
 - failed stale refreshes and stale refreshes with no usable prompts continue to
   preserve last-known-good cache state.
 

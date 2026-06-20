@@ -98,6 +98,11 @@ export class PromptCache {
     if (cachedIndex !== undefined) {
       try {
         const refreshedIndex = await this.#buildCachedIndex();
+
+        if (refreshedIndex.index.issues.length > 0) {
+          throw new Error("Prompt cache refresh produced unsafe prompt collection issues.");
+        }
+
         this.#cachedIndex = refreshedIndex;
 
         return promptCacheSuccess(refreshedIndex, "fresh");
@@ -150,6 +155,10 @@ export class PromptCache {
 
     const loadedAtMilliseconds = this.#clock();
     const index = buildPromptIndex(prompts);
+
+    if (index.activeCommands.length === 0) {
+      throw new Error("Prompt cache build produced no active commands.");
+    }
 
     return {
       index,
