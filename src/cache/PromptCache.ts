@@ -55,10 +55,6 @@ interface CachedPromptIndex {
   readonly expiresAtMilliseconds: number;
 }
 
-interface BuildCachedIndexOptions {
-  readonly rejectUnsafeRefreshResult: boolean;
-}
-
 export class PromptCache {
   readonly #promptSource: PromptSource;
   readonly #ttlMilliseconds: number;
@@ -101,9 +97,7 @@ export class PromptCache {
 
     if (cachedIndex !== undefined) {
       try {
-        const refreshedIndex = await this.#buildCachedIndex({
-          rejectUnsafeRefreshResult: true,
-        });
+        const refreshedIndex = await this.#buildCachedIndex();
         this.#cachedIndex = refreshedIndex;
 
         return promptCacheSuccess(refreshedIndex, "fresh");
@@ -113,9 +107,7 @@ export class PromptCache {
     }
 
     try {
-      const refreshedIndex = await this.#buildCachedIndex({
-        rejectUnsafeRefreshResult: false,
-      });
+      const refreshedIndex = await this.#buildCachedIndex();
       this.#cachedIndex = refreshedIndex;
 
       return promptCacheSuccess(refreshedIndex, "fresh");
@@ -132,31 +124,24 @@ export class PromptCache {
     }
   }
 
-  async #buildCachedIndex(options: BuildCachedIndexOptions): Promise<CachedPromptIndex> {
+  async #buildCachedIndex(): Promise<CachedPromptIndex> {
     const loadedPromptFiles = await this.#promptSource.loadAllPrompts();
     const prompts: PromptDefinition[] = [];
-    let invalidPromptFileCount = 0;
 
     for (const loadedPromptFile of loadedPromptFiles) {
       const parseResult = parsePromptMarkdown(loadedPromptFile.rawMarkdown);
 
       if (parseResult.kind !== "success") {
-        invalidPromptFileCount += 1;
         continue;
       }
 
       const validationResult = validatePromptDefinition(parseResult.prompt);
 
       if (validationResult.kind !== "success") {
-        invalidPromptFileCount += 1;
         continue;
       }
 
       prompts.push(validationResult.prompt);
-    }
-
-    if (options.rejectUnsafeRefreshResult && invalidPromptFileCount > 0) {
-      throw new Error("Prompt cache refresh produced invalid or unparsable prompt files.");
     }
 
     if (prompts.length === 0) {
@@ -165,10 +150,6 @@ export class PromptCache {
 
     const loadedAtMilliseconds = this.#clock();
     const index = buildPromptIndex(prompts);
-
-    if (options.rejectUnsafeRefreshResult && index.issues.length > 0) {
-      throw new Error("Prompt cache build produced unsafe prompt collection issues.");
-    }
 
     return {
       index,

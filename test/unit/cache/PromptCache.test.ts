@@ -317,7 +317,7 @@ This invalid prompt must not invoke.
     });
   });
 
-  it("preserves stale last-known-good cache when refresh includes invalid prompt files", async () => {
+  it("accepts a partial valid refresh when unrelated prompt files are invalid", async () => {
     const clock = mutableClock(1_000);
     const promptSource = new CountingPromptSource([
       [validPromptFile("first-prompt", { body: "First body.\n" })],
@@ -338,26 +338,30 @@ This invalid prompt must not invoke.
 
     expect(result).toMatchObject({
       kind: "success",
-      status: "stale",
-      loadedAtMilliseconds: 1_000,
-      expiresAtMilliseconds: 1_010,
+      status: "fresh",
+      loadedAtMilliseconds: 1_010,
+      expiresAtMilliseconds: 1_020,
     });
     expect(promptSource.loadCount).toBe(2);
 
     if (result.kind !== "success") {
-      throw new Error("Expected stale last-known-good cache to be served.");
+      throw new Error("Expected partial valid refresh to be accepted.");
     }
 
-    expect(resolvePromptCommand(result.index, "first-prompt")).toMatchObject({
+    expect(resolvePromptCommand(result.index, "first-prompt")).toEqual({
+      kind: "not_found",
+      command: "first-prompt",
+    });
+    expect(resolvePromptCommand(result.index, "second-prompt")).toMatchObject({
       kind: "found",
     });
-    expect(resolvePromptCommand(result.index, "second-prompt")).toEqual({
+    expect(resolvePromptCommand(result.index, "invalid")).toEqual({
       kind: "not_found",
-      command: "second-prompt",
+      command: "invalid",
     });
   });
 
-  it("preserves stale last-known-good cache when refresh has unsafe collection conflicts", async () => {
+  it("accepts a partial refresh while conflicted commands fail closed", async () => {
     const clock = mutableClock(1_000);
     const promptSource = new CountingPromptSource([
       [validPromptFile("first-prompt", { body: "First body.\n" })],
@@ -370,6 +374,9 @@ This invalid prompt must not invoke.
           alias: "shared-alias",
           body: "Conflict B body.\n",
         }),
+        validPromptFile("safe-prompt", {
+          body: "Safe body.\n",
+        }),
       ],
     ]);
     const cache = new PromptCache({ promptSource, clock, ttlMilliseconds: 10 });
@@ -381,22 +388,30 @@ This invalid prompt must not invoke.
 
     expect(result).toMatchObject({
       kind: "success",
-      status: "stale",
-      loadedAtMilliseconds: 1_000,
-      expiresAtMilliseconds: 1_010,
+      status: "fresh",
+      loadedAtMilliseconds: 1_010,
+      expiresAtMilliseconds: 1_020,
     });
     expect(promptSource.loadCount).toBe(2);
 
     if (result.kind !== "success") {
-      throw new Error("Expected stale last-known-good cache to be served.");
+      throw new Error("Expected partial conflict refresh to be accepted.");
     }
 
-    expect(resolvePromptCommand(result.index, "first-prompt")).toMatchObject({
+    expect(resolvePromptCommand(result.index, "first-prompt")).toEqual({
+      kind: "not_found",
+      command: "first-prompt",
+    });
+    expect(resolvePromptCommand(result.index, "safe-prompt")).toMatchObject({
       kind: "found",
     });
-    expect(resolvePromptCommand(result.index, "shared-alias")).toEqual({
-      kind: "not_found",
+    expect(resolvePromptCommand(result.index, "shared-alias")).toMatchObject({
+      kind: "conflict",
       command: "shared-alias",
+    });
+    expect(resolvePromptCommand(result.index, "conflict-a")).toMatchObject({
+      kind: "conflict",
+      command: "conflict-a",
     });
   });
 });
