@@ -34,6 +34,8 @@ Implemented behavior:
   empty index;
 - ALJ-41 replaces the original stale rebuild failure behavior with
   last-known-good preservation described below;
+- ALJ-45 allows partial valid cache builds when at least one active command
+  remains after indexing;
 - invalid or unparsable prompt files follow the existing parser/validator path
   and are skipped before indexing when at least one usable prompt remains.
 
@@ -49,19 +51,38 @@ Implemented behavior:
 - source failure during stale refresh returns the stale last-known-good index;
 - stale refresh that produces no usable prompts returns the stale
   last-known-good index;
-- stale refresh with invalid or unparsable prompt files returns the stale
-  last-known-good index instead of accepting a partial replacement;
-- stale refresh with unsafe collection conflicts returns the stale
+- stale refresh that produces unsafe collection conflicts returns the stale
   last-known-good index;
 - stale success results expose only cache freshness and the existing `PromptIndex`
   to core callers, not source/cache diagnostics.
 
-Not implemented in ALJ-41:
+## Current ALJ-45 behavior
 
-- partial-valid/cold-failure policy beyond the existing parser/validator/index
-  path;
+`PromptCache` accepts partial valid source results when the parser,
+per-prompt validator, and index can produce at least one active command.
+
+Implemented behavior:
+
+- invalid or unparsable prompt files are skipped and are not indexed;
+- stale refreshes with unrelated invalid or unparsable prompt files replace the
+  cached index when at least one active command remains and no unsafe collection
+  conflicts are present;
+- stale refreshes with unsafe collection conflicts preserve last-known-good
+  cache state instead of replacing a safer cache;
+- accepted indexes use `PromptIndex` conflict records so affected command strings
+  fail closed instead of resolving by file order;
+- cold source/build failure returns a typed `PROMPT_CACHE_UNAVAILABLE` failure
+  with reason `no_cache`;
+- cold builds with no parseable and valid prompt definitions, or with no active
+  commands after indexing, return the same typed `no_cache` failure;
+- failed stale refreshes and stale refreshes with no usable prompts continue to
+  preserve last-known-good cache state.
+
+Not implemented in ALJ-45:
+
 - ChatGPT-facing cache refresh, cache diagnostics, or admin tools;
-- real prompt files.
+- real prompt files;
+- inspect/list tool behavior.
 
 ## Current ALJ-17 behavior
 
@@ -87,5 +108,6 @@ Rules:
 - no database in V1;
 - TTL basics live in `PromptCache`;
 - stale-while-revalidate and last-known-good behavior live in `PromptCache`;
-- partial-valid/cold-failure behavior remains future source/cache work;
+- partial-valid and cold-failure behavior live in `PromptCache` and
+  `PromptIndex`;
 - no ChatGPT-facing cache refresh tool.
