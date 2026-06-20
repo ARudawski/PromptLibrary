@@ -18,6 +18,8 @@ The Slice 0 premise was:
 - Slice 2.3: runtime prompt cache with five-minute TTL, approved.
 - Slice 2.4: stale-while-revalidate and last-known-good cache behavior, in progress.
 
+The compact current-state pointer for agents is [`docs/workflows/current-state-ledger.md`](./docs/workflows/current-state-ledger.md). If this README and the ledger disagree, use the ledger and raise a documentation drift finding.
+
 The current local MCP server still registers `invoke_prompt_library_command` against local fixture prompt files through the PromptSource boundary. Slice 2.2 added the public GitHub source adapter as isolated infrastructure. Slice 2.3 added the core `PromptCache` TTL behavior as derived runtime state. Slice 2.4 adds stale refresh and last-known-good preservation inside that cache. Partial-valid/cold-failure policy, real prompt files, inspect/list tools, and hosted deployment are not implemented yet.
 
 ## Core V1 boundaries
@@ -39,10 +41,14 @@ There is deliberately no ChatGPT-facing cache refresh tool and no draft-manageme
 Start here:
 
 - [`AGENTS.md`](./AGENTS.md) — repository-level instructions for Codex agents.
+- [`docs/workflows/current-state-ledger.md`](./docs/workflows/current-state-ledger.md) — current phase, queue, and caveat ledger.
+- [`docs/agents/README.md`](./docs/agents/README.md) — role-specific Coding, Review, QA, and Coordinator agent specs.
 - [`docs/idea-handoff.md`](./docs/idea-handoff.md) — original product handoff.
 - [`docs/architecture/project-prompt-library-architecture-plan.md`](./docs/architecture/project-prompt-library-architecture-plan.md) — approved architecture plan.
 - [`docs/roadmap/project-prompt-library-roadmap.md`](./docs/roadmap/project-prompt-library-roadmap.md) — implementation roadmap.
 - [`docs/standards/project-prompt-library-codex-agent-standards.md`](./docs/standards/project-prompt-library-codex-agent-standards.md) — detailed architecture and code standards.
+- [`docs/qa/test-strategy.md`](./docs/qa/test-strategy.md) — QA strategy.
+- [`docs/qa/ci-evidence.md`](./docs/qa/ci-evidence.md) — CI/check evidence convention.
 - [`docs/slice-0-proof.md`](./docs/slice-0-proof.md) — Slice 0 proof checklist and result log template.
 
 ## Local development status
