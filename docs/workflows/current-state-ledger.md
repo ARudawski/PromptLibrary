@@ -53,10 +53,12 @@ issue belongs to the current allowed slice/lane
 Expected labels:
 
 ```text
-agent:codex-local   coding automation may pick this issue
-agent:auto          recurring automation may pick this issue without explicit target
-agent:qa-local      QA automation may pick this issue
-gate:manual         human/coordinator decision required; do not auto-execute
+agent:codex-local   coding automation may pick Coding Agent issues
+agent:review        review automation may inspect issues/PRs in review
+agent:qa-local      QA automation may pick QA Agent issues
+agent:coordinator   coordinator automation may pick Coordinator Report issues
+agent:auto          recurring automation may pick this without explicit target
+gate:manual         human/coordinator decision required
 ```
 
 Keep exactly one next executable Coding Agent issue at a time unless the user explicitly opens parallel implementation lanes.
