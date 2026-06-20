@@ -7,8 +7,8 @@ These are repository-level instructions for Codex and other agents working on Pr
 When sources disagree, use this order:
 
 1. explicit current user instruction;
-2. `AGENTS.md`;
-3. `docs/workflows/current-state-ledger.md`;
+2. `docs/workflows/current-state-ledger.md` for current phase, active gate, next allowed slice, queue-selection state, and current caveats;
+3. `AGENTS.md` for repository-wide guardrails, product boundaries, architecture constraints, and agent behavior rules;
 4. approved architecture plan / ADRs;
 5. approved roadmap;
 6. role-specific spec in `docs/agents/`;
@@ -17,7 +17,7 @@ When sources disagree, use this order:
 9. GitHub PRs/issues;
 10. existing code and tests.
 
-If the conflict matters, stop and report it instead of silently improvising.
+If the conflict matters, stop and report it instead of silently improvising. Do not let stale phase text in a long-form file override the current-state ledger for phase/gate facts.
 
 ## Required reading
 
