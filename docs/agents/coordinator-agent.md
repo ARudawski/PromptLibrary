@@ -26,7 +26,7 @@ Before deciding, read:
 
 Execute only a Linear issue whose title contains `Coordinator Report` or an explicit coordinator gate marker. If an explicit issue does not match, stop and report the mismatch.
 
-If no issue is provided, find the next unblocked current-milestone coordinator gate in roadmap order. Backlog alone does not mean executable.
+If no issue is provided, find the next unblocked current-milestone coordinator gate in roadmap order. Prefer `Todo`; if no matching `Todo` gate exists, the top unblocked matching Backlog gate may be promoted/executed when it is still in the current allowed lane.
 
 ## Required evidence
 

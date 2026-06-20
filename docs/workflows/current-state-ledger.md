@@ -38,12 +38,14 @@ Slice 2.3: runtime cache with TTL — approved
 
 ## Queue selection rule
 
-Backlog is planning state, not executable state.
+`Todo` is the preferred executable state. If no matching `Todo` issue exists,
+automation may promote and execute the top unblocked matching Backlog item for
+the current allowed slice/lane.
 
 Automation may execute only an issue that matches all relevant criteria:
 
 ```text
-state = Todo
+state = Todo, or top unblocked matching Backlog item when no matching Todo exists
 expected agent label is present
 expected title marker is present
 issue is not blocked
