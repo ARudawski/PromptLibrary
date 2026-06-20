@@ -9,4 +9,5 @@ Use TDD for deterministic core behavior:
 - alias/index rules;
 - projection;
 - use cases;
+- prompt source adapters with mocked I/O;
 - cache behavior.

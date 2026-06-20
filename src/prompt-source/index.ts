@@ -5,3 +5,18 @@ export {
   type LocalFixturePromptSourceOptions,
 } from "./LocalFixturePromptSource.js";
 export type { PromptSource } from "./PromptSource.js";
+export {
+  DEFAULT_PUBLIC_GITHUB_API_BASE_URL,
+  DEFAULT_PUBLIC_GITHUB_PROMPT_REF,
+  DEFAULT_PUBLIC_GITHUB_PROMPTS_PATH,
+  DEFAULT_PUBLIC_GITHUB_USER_AGENT,
+  type PublicGitHubFetch,
+  type PublicGitHubFetchInit,
+  type PublicGitHubFetchResponse,
+  PublicGitHubPromptSource,
+  type PublicGitHubPromptSourceConfig,
+  PublicGitHubPromptSourceError,
+  type PublicGitHubPromptSourceErrorCode,
+  type PublicGitHubPromptSourceErrorOptions,
+  type PublicGitHubPromptSourceOptions,
+} from "./PublicGitHubPromptSource.js";
