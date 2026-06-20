@@ -26,7 +26,7 @@ Every agent must read:
 5. the linked PR/diff/commit when relevant
 6. the architecture, roadmap, standards, QA, and source docs required by the issue
 
-If these sources conflict, follow the source-of-truth order in `AGENTS.md`. Stop and report the conflict instead of improvising.
+If these sources conflict, follow the source-of-truth rules in `AGENTS.md`. Stop and report the conflict instead of improvising.
 
 ## Queue selection contract
 
@@ -41,19 +41,21 @@ Executable issue = Linear state Todo + expected agent label + expected title mar
 Role markers:
 
 ```text
-Coding Agent       -> title contains "Coding Agent"
+Coding Agent       -> title contains Coding Agent
 Review Agent       -> issue/PR is in review, or explicit review target is provided
-QA Agent           -> title contains "QA Agent"
-Coordinator Agent  -> title contains "Coordinator Report" or "Human/Coordinator Gate"
+QA Agent           -> title contains QA Agent
+Coordinator Agent  -> title contains Coordinator Report or explicit coordinator gate marker
 ```
 
-Recommended labels:
+Expected labels:
 
 ```text
-agent:codex-local   local Codex may execute this issue
+agent:codex-local   local Codex may execute Coding Agent issues
+agent:review        review agent may inspect issues/PRs in review
+agent:qa-local      local QA automation may execute QA Agent issues
+agent:coordinator   coordinator agent may execute gate issues
 agent:auto          recurring automation may pick this without manual target
-agent:qa-local      local QA automation may execute this issue
-gate:manual         do not auto-execute; human/coordinator decision required
+gate:manual         manual or coordinator decision required
 ```
 
 Backlog means known future work, not executable work. Keep exactly one next executable Coding Agent issue at a time unless the user explicitly opens a parallel lane.
@@ -70,4 +72,4 @@ Separate Code Reviewer issues are optional. Use them only when review itself is 
 
 ## Drift control
 
-Update `docs/workflows/current-state-ledger.md` only from coordinator gates or explicit human workflow updates. Ordinary coding, review, and QA agents may report stale ledger information, but should not silently rewrite the ledger unless their issue explicitly asks for workflow documentation changes.
+Update `docs/workflows/current-state-ledger.md` only from coordinator gates or explicit workflow updates. Ordinary coding, review, and QA agents may report stale ledger information, but should not silently rewrite the ledger unless their issue explicitly asks for workflow documentation changes.
