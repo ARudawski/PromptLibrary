@@ -1,32 +1,53 @@
 # Project Prompt Library — Agent Instructions
 
-These are repository-level instructions for Codex and other coding agents.
+These are repository-level instructions for Codex and other agents working on Project Prompt Library.
 
-## Required reading before implementation
+## Source-of-truth order
 
-Before changing code, read:
+When sources disagree, use this order:
+
+1. explicit current user instruction;
+2. `AGENTS.md`;
+3. `docs/workflows/current-state-ledger.md`;
+4. approved architecture plan / ADRs;
+5. approved roadmap;
+6. role-specific spec in `docs/agents/`;
+7. Codex standards and QA strategy;
+8. Linear issue acceptance criteria and comments;
+9. GitHub PRs/issues;
+10. existing code and tests.
+
+If the conflict matters, stop and report it instead of silently improvising.
+
+## Required reading
+
+Before changing code or deciding a gate, read:
 
 1. `README.md`
-2. `docs/architecture/README.md`
-3. `docs/roadmap/README.md`
-4. `docs/standards/README.md`
-5. `docs/slice-0-proof.md`
+2. `docs/workflows/current-state-ledger.md`
+3. `docs/agents/README.md`
+4. the relevant role-specific agent spec:
+   - Coding Agent: `docs/agents/coding-agent.md`
+   - Review Agent: `docs/agents/review-agent.md`
+   - QA Agent: `docs/agents/qa-agent.md`
+   - Coordinator Agent: `docs/agents/coordinator-agent.md`
+5. `docs/architecture/README.md`
+6. `docs/roadmap/README.md`
+7. `docs/standards/README.md`
+8. `docs/qa/test-strategy.md` when tests, QA, or runtime viability are relevant
+9. the target Linear issue, comments, blockers, attachments, linked PRs, and predecessor reports
 
-When the full architecture/roadmap/standards documents are added, they become mandatory reading too.
+For product-code work, also read the relevant full architecture, roadmap, standards, source, and test docs named by the issue.
 
 ## Current phase
 
-The project is in Slice 2.4: stale-while-revalidate and last-known-good cache behavior.
+Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, the project is completing Slice 2.4: stale-while-revalidate and last-known-good cache behavior.
 
-Slice 0 was accepted with caveats through recorded Linear gate evidence. The premise was:
+Do not proceed to partial-valid/cold-failure policy, inspect/list tools, real prompts, hosted deployment, private-suite behavior, auth, or database work without an explicit coordinator or architecture decision.
 
-> ChatGPT can route `@pl proof` into the local MCP connector, receive a hardcoded model-visible prompt, and apply that prompt as behavior.
+## Non-negotiable product boundary
 
-Treat [`docs/slices/slice-1-invocation-walking-skeleton.md`](docs/slices/slice-1-invocation-walking-skeleton.md), [`docs/invocation-contract.md`](docs/invocation-contract.md), and [`docs/prompt-schema.md`](docs/prompt-schema.md) as the approved Slice 1 baseline. Slice 2.1 approved the PromptSource boundary and fake test seam. Slice 2.2 approved the public GitHub prompt source adapter behind that boundary. Slice 2.3 approved runtime cache TTL basics. Slice 2.4 is approved only for stale-while-revalidate and last-known-good cache behavior. Do not proceed to partial-valid/cold-failure policy, inspect/list tools, real prompts, or hosted behavior without an explicit coordinator or architecture decision.
-
-## Non-negotiable boundaries
-
-This project is a retrieval-focused ChatGPT Apps / MCP connector.
+Project Prompt Library is a retrieval-focused ChatGPT Apps / MCP connector.
 
 The connector may:
 
@@ -34,7 +55,7 @@ The connector may:
 - retrieve prompt definitions;
 - validate prompt files;
 - return model-visible prompt bodies for invocation;
-- list and inspect active invokable prompts.
+- list and inspect active invokable prompts when their approved slice arrives.
 
 The connector must not:
 
@@ -70,123 +91,13 @@ inspect_draft
 admin/debug/cache tools
 ```
 
-## Slice 0 history
+## Current source/cache boundary
 
-Slice 0 was intentionally disposable.
+The public GitHub source adapter and cache are infrastructure until later slices wire broader runtime behavior.
 
-Allowed:
+Current allowed behavior is limited by the active Linear issue and current-state ledger.
 
-- local TypeScript/Node MCP server;
-- one hardcoded proof command;
-- hardcoded proof prompt;
-- local tunnel/developer setup documentation;
-- manual validation checklist.
-
-Forbidden in Slice 0:
-
-- GitHub prompt source;
-- Markdown parser;
-- YAML frontmatter;
-- schema validation;
-- runtime cache;
-- real prompts;
-- inspect/list tools;
-- hosted deployment;
-- private-suite/auth/database design.
-
-## Slice 1 rules
-
-Allowed in Slice 1 only as approved by the current issue:
-
-- local fixture prompt source;
-- Markdown/frontmatter parsing;
-- prompt definition and collection validation;
-- derived active command index;
-- invocation projection and use case;
-- `invoke_prompt_library_command` MCP adapter;
-- deterministic unit, contract, and golden tests.
-
-Forbidden in Slice 1:
-
-- public GitHub prompt source;
-- runtime TTL cache, stale refresh, or last-known-good behavior;
-- real prompt files;
-- `inspect_prompt_library_command`;
-- `list_prompt_library_commands`;
-- prompt editing, draft management, admin/debug/cache tools;
-- hosted deployment;
-- private-suite/auth/database design.
-
-## Slice 2.1 rules
-
-Allowed in Slice 2.1 only as approved by the current issue:
-
-- formal `PromptSource` interface;
-- minimal `LoadedPromptFile` raw loaded-file shape;
-- fake PromptSource test helper for deterministic tests;
-- adaptation of local fixture loading to the PromptSource boundary;
-- tests and docs for that source seam.
-
-Forbidden in Slice 2.1:
-
-- `PublicGitHubPromptSource`;
-- live GitHub or network source reads;
-- runtime TTL cache, stale-while-revalidate, or last-known-good behavior;
-- real prompt files under `prompts/`;
-- `inspect_prompt_library_command`;
-- `list_prompt_library_commands`;
-- prompt editing, draft management, admin/debug/cache tools;
-- hosted deployment;
-- private-suite/auth/database design.
-
-## Slice 2.2 rules
-
-Allowed in Slice 2.2 only as approved by the current issue:
-
-- `PublicGitHubPromptSource`;
-- public GitHub directory loading for configured `prompts/*.md`;
-- typed/structured prompt-source failures;
-- mocked/fake unit tests for source success and failure behavior;
-- docs for source adapter configuration and behavior.
-
-Forbidden in Slice 2.2:
-
-- runtime TTL cache, stale-while-revalidate, or last-known-good behavior;
-- real prompt files under `prompts/`;
-- `inspect_prompt_library_command`;
-- `list_prompt_library_commands`;
-- ChatGPT-facing source/cache diagnostics or refresh tools;
-- private GitHub source, token/OAuth/auth, DB, or private-suite behavior;
-- hosted deployment.
-
-## Slice 2.3 rules
-
-Allowed in Slice 2.3 only as approved by the current issue:
-
-- `PromptCache` or approved equivalent;
-- five-minute TTL by default;
-- configurable/fakeable clock;
-- fresh/stale cache state;
-- cache build from `PromptSource` through parser, validation, and index code;
-- typed cache-aware failures when no usable cache can be built;
-- fake-source/fake-clock unit tests;
-- concise docs for implemented cache behavior.
-
-Forbidden in Slice 2.3:
-
-- stale-while-revalidate behavior;
-- last-known-good preservation;
-- partial-valid/cold-failure policy beyond the existing parser/validator/index path;
-- ChatGPT-facing cache refresh, cache diagnostics, or admin tools;
-- real prompt files under `prompts/`;
-- `inspect_prompt_library_command`;
-- `list_prompt_library_commands`;
-- private GitHub source, token/OAuth/auth, DB, or private-suite behavior;
-- hosted deployment.
-
-## Slice 2.4 rules
-
-Allowed in Slice 2.4 only as approved by the current issue:
+For Slice 2.4 specifically, allowed behavior is:
 
 - stale-while-revalidate behavior or the approved synchronous equivalent;
 - last-known-good cache preservation;
@@ -194,14 +105,13 @@ Allowed in Slice 2.4 only as approved by the current issue:
 - fake-source/fake-clock tests for refresh success, refresh failure, and unsafe refresh preservation;
 - concise docs for implemented stale/LKG behavior.
 
-Forbidden in Slice 2.4:
+Still forbidden in Slice 2.4:
 
-- partial valid cache acceptance policy beyond preserving prior last-known-good state;
+- partial-valid cache acceptance policy beyond preserving prior last-known-good state;
 - cold-failure policy changes beyond existing no-cache failure behavior;
-- ChatGPT-facing cache refresh, cache diagnostics, or admin tools;
+- ChatGPT-facing cache refresh, diagnostics, or admin tools;
 - real prompt files under `prompts/`;
-- `inspect_prompt_library_command`;
-- `list_prompt_library_commands`;
+- `inspect_prompt_library_command` and `list_prompt_library_commands` implementation;
 - private GitHub source, token/OAuth/auth, DB, or private-suite behavior;
 - hosted deployment.
 
@@ -211,7 +121,7 @@ Use TypeScript/Node.
 
 Use a thin MCP adapter over framework-independent core modules.
 
-Expected eventual dependency direction:
+Expected dependency direction:
 
 ```text
 mcp adapter
@@ -265,34 +175,51 @@ For ChatGPT to apply a prompt, `prompt_body` must be model-visible in `structure
 
 ## Testing expectations
 
-Use TDD for deterministic core behavior after Slice 0.
+Use deterministic core tests for product behavior.
 
-Required later test categories:
+Required categories as slices mature:
 
 - unit tests;
 - MCP/tool contract tests;
 - fixture-based golden tests;
-- no-network core tests.
+- no-network core tests;
+- fake-source/fake-clock tests for source/cache behavior.
 
-Core tests must not hit GitHub, ChatGPT, a tunnel, or a hosted MCP endpoint.
+Core tests must not hit GitHub, ChatGPT, a tunnel, or a hosted MCP endpoint unless the issue explicitly asks for live/platform smoke evidence.
+
+Known caveats must remain visible until resolved:
+
+- `test:golden` may pass with no golden files;
+- `validate-prompts` may be a placeholder until Slice 2.6;
+- npm audit findings must be reported when observed.
 
 ## Agent report checklist
 
-Every coding-agent report must include:
+Every agent report must include role-appropriate evidence. At minimum:
 
-- scope completed;
-- changed files;
-- tests added/updated;
-- commands run;
-- results;
-- architecture boundaries preserved;
-- known issues;
-- intentionally not implemented by design.
+- target issue/PR/slice;
+- scope completed or reviewed;
+- files changed or inspected;
+- docs changed or docs status;
+- checks run/reviewed and exact results;
+- architecture boundaries preserved or violated;
+- known issues and caveats;
+- intentionally not implemented by design;
+- recommended next action.
 
-If checks cannot be run, say so plainly and explain why.
+If checks cannot be run or evidence is unavailable, say so plainly and explain why.
+
+## Workflow control
+
+- Coding issues move to `In Review`, not `Done`, when implementation is complete.
+- Review evidence normally lives on the coding issue and PR.
+- Separate Code Reviewer issues are optional/special-case, not mandatory by default.
+- QA issues are separate when an independent gate matters.
+- Coordinator gates synthesize coding, review, QA, PR, CI, docs, and roadmap evidence.
+- Backlog is planning state, not executable state. See `docs/agents/README.md` for queue selection.
 
 ## Change-control rule
 
 Do not weaken these instructions to make a task easier.
 
-If a task conflicts with these instructions, stop and call out the architecture conflict.
+If a task conflicts with these instructions, stop and call out the architecture or workflow conflict.
