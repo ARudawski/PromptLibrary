@@ -2,7 +2,7 @@
 
 Project Prompt Library is a small ChatGPT Apps / MCP connector for invoking exact, externally maintained prompt workflows from normal ChatGPT conversations using command-style requests such as `@pl grill-me`.
 
-This repository has passed the Slice 0 proof gate through recorded Linear evidence and is now in **Slice 1: fixture-backed invocation walking skeleton**.
+This repository has passed the Slice 0 proof gate and Slice 1 invocation gate through recorded Linear evidence and is now in **Slice 2.1: PromptSource boundary and fake source seam**.
 
 The Slice 0 premise was:
 
@@ -12,9 +12,10 @@ The Slice 0 premise was:
 
 - Slice -1: minimal repository/workflow bootstrap.
 - Slice 0: local hardcoded MCP premise proof, accepted with caveats in the Linear gate evidence referenced by [`docs/slices/slice-1-invocation-walking-skeleton.md`](./docs/slices/slice-1-invocation-walking-skeleton.md).
-- Slice 1: fixture-backed invocation walking skeleton, in progress.
+- Slice 1: fixture-backed invocation walking skeleton, approved with minor issues.
+- Slice 2.1: PromptSource boundary and fake source seam, in progress.
 
-The current local MCP server registers `invoke_prompt_library_command` against local fixture prompt files. It does not use GitHub source, runtime cache, real prompt files, inspect/list tools, or hosted deployment.
+The current local MCP server registers `invoke_prompt_library_command` against local fixture prompt files through the PromptSource boundary. It does not use public GitHub source, runtime cache, real prompt files, inspect/list tools, or hosted deployment.
 
 ## Core V1 boundaries
 
@@ -43,7 +44,7 @@ Start here:
 
 ## Local development status
 
-The TypeScript/Node implementation currently supports deterministic local fixture invocation for Slice 1.
+The TypeScript/Node implementation currently supports deterministic local fixture invocation and the initial Slice 2.1 source boundary.
 
 ## CI quality gate
 
@@ -53,9 +54,9 @@ This is the deterministic default gate only. Live GitHub prompt-source checks, C
 
 ## Non-goals for the current phase
 
-Do not add:
+Do not add in the current Slice 2.1 work:
 
-- GitHub prompt source;
+- public GitHub prompt source;
 - runtime cache;
 - real prompt files;
 - inspect/list tools;

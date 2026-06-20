@@ -26,7 +26,7 @@ The connector retrieves prompt definitions. The prompt text defines behavior. Th
 
 Before implementing the real architecture, Slice 0 must validate that ChatGPT can route `@pl proof` into a local MCP tool and apply the returned hardcoded prompt.
 
-Slice 0 was accepted with caveats through recorded Linear gate evidence. Current implementation remains bounded to Slice 1 fixture-backed invocation until later slices are explicitly approved.
+Slice 0 was accepted with caveats through recorded Linear gate evidence, and Slice 1 fixture-backed invocation has been approved as the current baseline. The current implementation is now bounded to Slice 2.1: the `PromptSource` boundary and fake source seam. Public GitHub source, runtime cache behavior, inspect/list tools, real prompt files, and hosted deployment remain later-slice work until explicitly approved.
 
 ## Future full document
 

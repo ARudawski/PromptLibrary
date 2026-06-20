@@ -16,13 +16,13 @@ When the full architecture/roadmap/standards documents are added, they become ma
 
 ## Current phase
 
-The project is in Slice 1: fixture-backed invocation walking skeleton.
+The project is in Slice 2.1: PromptSource boundary and fake source seam.
 
 Slice 0 was accepted with caveats through recorded Linear gate evidence. The premise was:
 
 > ChatGPT can route `@pl proof` into the local MCP connector, receive a hardcoded model-visible prompt, and apply that prompt as behavior.
 
-Treat [`docs/slices/slice-1-invocation-walking-skeleton.md`](docs/slices/slice-1-invocation-walking-skeleton.md) as the current Slice 1 baseline. Do not proceed beyond the approved Slice 1 issue scope without an explicit coordinator or architecture decision.
+Treat [`docs/slices/slice-1-invocation-walking-skeleton.md`](docs/slices/slice-1-invocation-walking-skeleton.md), [`docs/invocation-contract.md`](docs/invocation-contract.md), and [`docs/prompt-schema.md`](docs/prompt-schema.md) as the approved Slice 1 baseline. Slice 2.1 is approved only for the PromptSource boundary and fake test seam. Do not proceed to public GitHub source, runtime cache, inspect/list tools, or real prompts without an explicit coordinator or architecture decision.
 
 ## Non-negotiable boundaries
 
@@ -111,6 +111,28 @@ Forbidden in Slice 1:
 - public GitHub prompt source;
 - runtime TTL cache, stale refresh, or last-known-good behavior;
 - real prompt files;
+- `inspect_prompt_library_command`;
+- `list_prompt_library_commands`;
+- prompt editing, draft management, admin/debug/cache tools;
+- hosted deployment;
+- private-suite/auth/database design.
+
+## Slice 2.1 rules
+
+Allowed in Slice 2.1 only as approved by the current issue:
+
+- formal `PromptSource` interface;
+- minimal `LoadedPromptFile` raw loaded-file shape;
+- fake PromptSource test helper for deterministic tests;
+- adaptation of local fixture loading to the PromptSource boundary;
+- tests and docs for that source seam.
+
+Forbidden in Slice 2.1:
+
+- `PublicGitHubPromptSource`;
+- live GitHub or network source reads;
+- runtime TTL cache, stale-while-revalidate, or last-known-good behavior;
+- real prompt files under `prompts/`;
 - `inspect_prompt_library_command`;
 - `list_prompt_library_commands`;
 - prompt editing, draft management, admin/debug/cache tools;

@@ -21,11 +21,11 @@ Slice 6: Hosted deployment, only after local MVP proves useful
 
 If Slice 0 fails, do not proceed to parser/cache/GitHub implementation.
 
-Slice 0 was accepted with caveats through recorded Linear gate evidence. Slice 1 work remains bounded to local fixture-backed invocation.
+Slice 0 was accepted with caveats through recorded Linear gate evidence, and Slice 1 fixture-backed invocation has been approved as the implementation baseline. The current approved work is Slice 2.1: the `PromptSource` boundary and fake source seam.
 
 ## Current focus
 
-This repository is currently set up for Slice 1 fixture-backed invocation only.
+This repository currently supports Slice 1 fixture-backed invocation plus the initial Slice 2.1 `PromptSource` boundary and fake source seam. Public GitHub source, runtime cache behavior, inspect/list tools, real prompt files, and hosted deployment are still later-slice work.
 
 ## Future full document
 

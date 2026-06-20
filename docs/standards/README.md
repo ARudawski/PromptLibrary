@@ -10,7 +10,8 @@ This directory holds standards for Codex agents and QA agents.
 - Do not parse raw `@pl` text inside connector logic.
 - Do not add ChatGPT-facing admin, draft, cache-refresh, prompt-editing, auth, DB, or private-suite features in V1.
 - Do not implement work beyond the currently approved slice.
-- Slice 0 has passed with caveats; current implementation remains bounded to Slice 1 fixture-backed invocation.
+- Slice 0 has passed with caveats, and Slice 1 fixture-backed invocation is the approved baseline; current implementation is bounded to Slice 2.1 `PromptSource` boundary and fake source seam work.
+- Do not treat public GitHub source, runtime cache behavior, inspect/list tools, real prompt files, hosted deployment, or private/auth/DB behavior as implemented.
 
 ## Approved ChatGPT-facing tools
 
