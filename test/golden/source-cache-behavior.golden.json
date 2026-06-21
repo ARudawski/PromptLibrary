@@ -1,0 +1,158 @@
+{
+  "fresh_cache": {
+    "cache": {
+      "kind": "success",
+      "status": "fresh",
+      "loadedAtMilliseconds": 1000,
+      "expiresAtMilliseconds": 1050,
+      "index": {
+        "activeCommands": ["alpha", "alpha-alias"],
+        "issues": []
+      }
+    },
+    "commands": {
+      "alpha": {
+        "kind": "found",
+        "title": "Alpha"
+      },
+      "alpha-alias": {
+        "kind": "found",
+        "title": "Alpha"
+      },
+      "beta": {
+        "kind": "not_found",
+        "command": "beta"
+      }
+    }
+  },
+  "stale_refresh_success": {
+    "cache": {
+      "kind": "success",
+      "status": "fresh",
+      "loadedAtMilliseconds": 1050,
+      "expiresAtMilliseconds": 1100,
+      "index": {
+        "activeCommands": ["beta"],
+        "issues": []
+      }
+    },
+    "commands": {
+      "alpha": {
+        "kind": "not_found",
+        "command": "alpha"
+      },
+      "beta": {
+        "kind": "found",
+        "title": "Beta"
+      }
+    }
+  },
+  "failed_refresh_preserves_lkg": {
+    "cache": {
+      "kind": "success",
+      "status": "stale",
+      "loadedAtMilliseconds": 2000,
+      "expiresAtMilliseconds": 2050,
+      "index": {
+        "activeCommands": ["stable"],
+        "issues": []
+      }
+    },
+    "commands": {
+      "stable": {
+        "kind": "found",
+        "title": "Stable"
+      }
+    }
+  },
+  "partial_valid_cache": {
+    "cache": {
+      "kind": "success",
+      "status": "fresh",
+      "loadedAtMilliseconds": 3000,
+      "expiresAtMilliseconds": 3050,
+      "index": {
+        "activeCommands": ["safe"],
+        "issues": []
+      }
+    },
+    "commands": {
+      "safe": {
+        "kind": "found",
+        "title": "Safe"
+      },
+      "invalid-active": {
+        "kind": "not_found",
+        "command": "invalid-active"
+      }
+    }
+  },
+  "cold_cache_failure": {
+    "cache": {
+      "kind": "failure",
+      "error": {
+        "code": "PROMPT_CACHE_UNAVAILABLE",
+        "reason": "no_cache",
+        "message": "Prompt cache could not be built and no usable cache exists."
+      }
+    }
+  },
+  "invalid_conflicting_prompt_exclusion": {
+    "cache": {
+      "kind": "success",
+      "status": "fresh",
+      "loadedAtMilliseconds": 5000,
+      "expiresAtMilliseconds": 5050,
+      "index": {
+        "activeCommands": ["safe", "run-safe"],
+        "issues": [
+          {
+            "code": "duplicate_alias",
+            "command": "shared-alias",
+            "promptSlugs": ["conflict-a", "conflict-b"]
+          }
+        ]
+      }
+    },
+    "commands": {
+      "safe": {
+        "kind": "found",
+        "title": "Safe Prompt"
+      },
+      "invalid-active": {
+        "kind": "not_found",
+        "command": "invalid-active"
+      },
+      "shared-alias": {
+        "kind": "conflict",
+        "command": "shared-alias",
+        "issueCodes": ["duplicate_alias"]
+      }
+    },
+    "invocation_payload": {
+      "isError": false,
+      "structuredContent": {
+        "title": "Safe Prompt",
+        "lifecycle": "one_shot",
+        "input_mode": "attached_input",
+        "prompt_body": "Apply safe without exposing cache details.\n"
+      },
+      "content": [
+        {
+          "type": "text",
+          "text": "Prompt invoked: Safe Prompt."
+        }
+      ]
+    },
+    "conflict_invocation": {
+      "isError": true,
+      "structuredContent": null,
+      "content": [
+        {
+          "type": "text",
+          "text": "No prompt invoked.\nno_prompt_invoked: true\nerror_code: PROMPT_AMBIGUOUS\nmessage: Command \"shared-alias\" is ambiguous and no prompt was invoked."
+        }
+      ]
+    }
+  }
+}
