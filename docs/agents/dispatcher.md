@@ -94,7 +94,7 @@ role:
 issue:
 ```
 
-Terminal markers:
+Claim-mode handoff transition marker:
 
 ```text
 DISPATCHER HANDOFF ACCEPTED
@@ -102,6 +102,10 @@ claim_id:
 accepted_at:
 consumer:
 ```
+
+`DISPATCHER HANDOFF ACCEPTED` is not a terminal marker by itself. In claim mode, the handoff consumer must post it together with `AGENT RUNNING` before doing heavy work so ownership moves from dispatcher claim to role-run claim without a lock gap.
+
+Terminal markers:
 
 ```text
 AGENT COMPLETE
@@ -197,7 +201,7 @@ If operating in candidate mode, do not mutate Linear. Emit:
   <required_role_spec>docs/agents/ROLE-agent.md</required_role_spec>
   <current_state_ledger>docs/workflows/current-state-ledger.md</current_state_ledger>
   <linked_pr>PR URL or none</linked_pr>
-  <message>Start a fresh ROLE Agent run manually or through an approved handoff consumer.</message>
+  <message>Start a fresh ROLE Agent run manually or through an approved handoff consumer. Candidate mode supplies no claim_id.</message>
 </dispatcher_result>
 
 Then stop.
@@ -259,25 +263,25 @@ If this run owns the claim, emit:
   <required_role_spec>docs/agents/ROLE-agent.md</required_role_spec>
   <current_state_ledger>docs/workflows/current-state-ledger.md</current_state_ledger>
   <linked_pr>PR URL or none</linked_pr>
-  <message>Handoff consumer must start a fresh ROLE Agent run and post DISPATCHER HANDOFF ACCEPTED.</message>
+  <message>Handoff consumer must start a fresh ROLE Agent run and post DISPATCHER HANDOFF ACCEPTED plus AGENT RUNNING.</message>
 </dispatcher_result>
 
 Then stop.
 
 ## Phase 5 — Fresh role run obligations
 
-The fresh role run must post this marker before doing heavy work:
+If the fresh role run starts from `ROLE_HANDOFF_CANDIDATE`, do not invent a `claim_id` and do not post claim lifecycle markers. Start a normal fresh role run, follow the full role-agent read contract below, and record ordinary role evidence.
+
+If the fresh role run starts from adopted claim-mode `ROLE_HANDOFF`, it must use the supplied `claim_id`.
+
+The claim-mode handoff consumer must post this combined acceptance/running marker before doing heavy work:
 
 ```text
 DISPATCHER HANDOFF ACCEPTED
 claim_id:
 accepted_at:
 consumer:
-```
 
-It must then post its own role-running marker if it needs to hold the lock:
-
-```text
 AGENT RUNNING
 claim_id:
 claim_expires_at:
@@ -285,7 +289,9 @@ role:
 issue:
 ```
 
-The fresh role run must end with one terminal marker for the same `claim_id`:
+`AGENT RUNNING` is mandatory for claim-mode role runs. Do not consume a dispatcher claim without establishing the role-run live claim in the same comment.
+
+The claim-mode fresh role run must end with one terminal marker for the same `claim_id`:
 
 - `AGENT COMPLETE`
 - `AGENT BLOCKED`

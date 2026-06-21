@@ -78,10 +78,11 @@ Dispatcher
   -> claim mode: claim, emit ROLE_HANDOFF, and stop
 
 Fresh role run
-  -> accepts handoff when in claim mode
+  -> candidate mode: starts from ROLE_HANDOFF_CANDIDATE without claim markers
+  -> claim mode: accepts ROLE_HANDOFF and posts AGENT RUNNING
   -> reads role spec and issue context
   -> executes exactly one role workflow
-  -> writes evidence and terminal claim marker back to Linear/GitHub
+  -> writes evidence, plus terminal claim marker when a claim_id exists
 ```
 
 The dispatcher is a queue worker, not a reasoning hub. It should not build project understanding unless it has selected work. The only repo file it may read before handoff is `docs/workflows/current-state-ledger.md`, because the ledger is required to avoid stale Linear labels pulling later-slice work.
@@ -127,7 +128,7 @@ role:
 issue:
 ```
 
-Terminal markers:
+Claim-mode handoff transition marker:
 
 ```text
 DISPATCHER HANDOFF ACCEPTED
@@ -135,6 +136,10 @@ claim_id:
 accepted_at:
 consumer:
 ```
+
+`DISPATCHER HANDOFF ACCEPTED` is not a terminal marker by itself. In claim mode, the handoff consumer must post it together with `AGENT RUNNING` before doing heavy work so ownership moves from dispatcher claim to role-run claim without a lock gap.
+
+Terminal markers:
 
 ```text
 AGENT COMPLETE
@@ -164,7 +169,9 @@ observed_at:
 reason:
 ```
 
-In claim mode, the handoff consumer must post `DISPATCHER HANDOFF ACCEPTED` before the fresh role run performs heavy work. The fresh role run must then post `AGENT RUNNING` if it needs to hold the lock and must end with a terminal marker.
+Candidate-mode handoffs do not create a `claim_id`; fresh role runs started from `ROLE_HANDOFF_CANDIDATE` must not invent claim lifecycle markers.
+
+In claim mode, the handoff consumer must post `DISPATCHER HANDOFF ACCEPTED` and `AGENT RUNNING` in the same Linear comment before the fresh role run performs heavy work. `AGENT RUNNING` is mandatory for claim-mode role runs, and the role run must end with a terminal marker.
 
 ## Queue rules
 
