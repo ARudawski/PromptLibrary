@@ -1,7 +1,7 @@
 # Dispatcher and Role Learning Setup
 
 Status: proposed operating setup  
-Last updated: 2026-06-20  
+Last updated: 2026-06-21  
 Scope: Project Prompt Library Codex/Linear/GitHub workflow
 
 This document designs the lightweight dispatcher setup and the role-learning loop for Project Prompt Library. It keeps runtime state in Linear/GitHub and keeps execution threads disposable.
@@ -29,23 +29,25 @@ Linear:
 
 - Project: `Project Prompt Library`.
 - Labels exist for `agent:codex-local`, `agent:review`, `agent:qa-local`, `agent:coordinator`, `agent:auto`, and `gate:manual`.
-- Active work in `In Progress` or `In Review` is treated as a stop signal for new dispatcher claims.
-- `Todo` is preferred for executable work, but the top unblocked matching Backlog item may be promoted/executed when the current queue rule permits it.
+- `In Progress` agent work is treated as the project-level soft lock.
+- `In Review` Coding Agent work is review-ready handoff state, not an active-work lock.
+- `Todo` is preferred for executable work, but the top unblocked matching Backlog item may be promoted/executed when no matching executable Todo exists and the current queue rule permits it.
 
 ## Dispatcher model
 
 ```text
 Dispatcher
-  -> cheap Linear-only preflight
-  -> if active work exists: stop
-  -> if no executable issue exists: stop
+  -> cheap preflight: Linear + current-state ledger only
+  -> if active In Progress agent work exists: stop
+  -> if review-ready In Review coding work exists: select review
+  -> else if no executable issue exists: stop
   -> if one executable issue exists: claim it
   -> after claim, load role spec and issue context
   -> execute exactly one role workflow
   -> write evidence back to Linear/GitHub
 ```
 
-The dispatcher is a queue worker, not a reasoning hub. It should not build project understanding unless it has already claimed work.
+The dispatcher is a queue worker, not a reasoning hub. It should not build project understanding unless it has already claimed work. The only repo file it may read before claim is `docs/workflows/current-state-ledger.md`, because the ledger is required to avoid stale Linear labels pulling later-slice work.
 
 ## Suggested settings
 
@@ -53,7 +55,7 @@ Dispatcher:
 
 ```text
 reasoning: low or medium
-GitHub/repo access before claim: no
+GitHub/repo access before claim: current-state ledger only
 Linear access before claim: yes
 ```
 
@@ -68,7 +70,9 @@ coordinator: medium unless gate is ambiguous
 
 ## Queue rules
 
-If any Project Prompt Library issue is `In Progress` or `In Review` with an agent label or role marker, the dispatcher stops.
+The dispatcher stops when an agent-marked issue is `In Progress`.
+
+The dispatcher does not stop merely because a Coding Agent issue is `In Review`; that is the normal review handoff state. It should instead select the review role when the issue belongs to the current allowed lane and has a PR or clear review target.
 
 When an issue is selected, claim it before expensive context loading:
 
@@ -100,6 +104,11 @@ Next coding issue waiting behind gate:
   state: Backlog
   labels: agent:codex-local
   no agent:auto
+
+Coding issue ready for review:
+  state: In Review
+  labels: agent:codex-local
+  linked PR present
 ```
 
 ## Role learning model
