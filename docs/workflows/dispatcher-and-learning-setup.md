@@ -37,13 +37,19 @@ Linear:
 - `In Progress` Coding Agent work may be fix-ready handoff state when review has requested changes and no live claim exists.
 - `Todo` is preferred for executable work, but the top unblocked matching Backlog item may be promoted/executed when no matching executable Todo exists and the current queue rule permits it.
 
+GitHub:
+
+- Repository: `ARudawski/PromptLibrary`.
+- Dispatcher preflight may read recent/open PR metadata only: number, title, state, draft state, base/head branch, merged/closed timestamps, and visible Linear issue links.
+- Dispatcher preflight must not read PR diffs, CI logs, PR comments, review threads, source files, or broad repo docs before handoff.
+
 ## Dispatcher modes
 
 Default until adoption: candidate mode.
 
 ```text
 candidate mode:
-  cheap preflight: Linear + current-state ledger only
+  cheap preflight: Linear + current-state ledger + recent PR metadata only
   select one candidate
   emit ROLE_HANDOFF_CANDIDATE
   do not mutate Linear
@@ -54,7 +60,7 @@ Adopted only after explicit coordinator/human approval: claim mode.
 
 ```text
 claim mode:
-  cheap preflight: Linear + current-state ledger only
+  cheap preflight: Linear + current-state ledger + recent PR metadata only
   select one candidate
   write DISPATCHER CLAIM RUNNING with claim_id and claim_expires_at
   verify unique claim ownership
@@ -68,8 +74,10 @@ Use claim mode only when a handoff consumer exists and is expected to start a fr
 
 ```text
 Dispatcher
-  -> cheap preflight: Linear + current-state ledger only
+  -> cheap preflight: Linear + current-state ledger + recent PR metadata only
+  -> compare ledger, Linear queue, live claims, and recent PR state for blocking drift
   -> if a live claim exists: stop
+  -> if blocking state drift exists: stop
   -> if review-ready In Review coding work exists: select review handoff
   -> if fix-ready In Progress coding work exists: select coding handoff
   -> else if matching executable Todo exists: select it
@@ -85,7 +93,30 @@ Fresh role run
   -> writes evidence, plus terminal claim marker when a claim_id exists
 ```
 
-The dispatcher is a queue worker, not a reasoning hub. It should not build project understanding unless it has selected work. The only repo file it may read before handoff is `docs/workflows/current-state-ledger.md`, because the ledger is required to avoid stale Linear labels pulling later-slice work.
+The dispatcher is a queue worker, not a reasoning hub. It should not build project understanding unless it has selected work. The only repo file it may read before handoff is `docs/workflows/current-state-ledger.md`, because the ledger is required to avoid stale Linear labels pulling later-slice work. Recent GitHub PR metadata is allowed only as a cheap drift signal, not as review evidence.
+
+## State-drift preflight
+
+The dispatcher must compare three cheap signals before selecting work:
+
+1. `docs/workflows/current-state-ledger.md` for current phase, gate, next lane, queue rule, and caveats.
+2. Linear queue state for active candidates, blockers, labels, comments, and live claim markers.
+3. Recent/open GitHub PR metadata for whether a linked issue was recently merged, closed, opened, or still active.
+
+Use `STATE_DRIFT_DETECTED` and stop when the mismatch would change the selected lane, role, issue, or blocker decision. Examples include a ledger that says a later slice is blocked while recent Linear/GitHub evidence appears to complete it, multiple plausible current lanes exposed by stale labels, or missing cheap PR metadata that is needed to distinguish review-ready from fix-ready work.
+
+Treat drift as a non-blocking caveat when it is already tracked and does not change the selected handoff. PL-60 is the concrete repair path for stale current-state ledger/status docs. PL-62 is the workflow rule requiring coordinator closeouts to surface, update, link, or block on documentation/state drift. A dispatcher handoff may proceed with a `<state_caveat>` only when exactly one candidate remains and the drift is known, tracked, and irrelevant to role selection.
+
+Machine-readable dispatcher decisions:
+
+```text
+DONT_NOTIFY
+CLAIM_BLOCKED
+STATE_DRIFT_DETECTED
+AMBIGUOUS_QUEUE
+ROLE_HANDOFF_CANDIDATE
+ROLE_HANDOFF
+```
 
 ## Suggested settings
 
@@ -93,7 +124,7 @@ Dispatcher:
 
 ```text
 reasoning: low or medium
-GitHub/repo access before handoff: current-state ledger only
+GitHub/repo access before handoff: current-state ledger plus recent PR metadata only
 Linear access before handoff: yes
 role execution in dispatcher run: no
 ```
