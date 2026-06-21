@@ -2,7 +2,7 @@
 
 Status: active workflow contract  
 Scope: Project Prompt Library agent behavior  
-Last updated: 2026-06-20
+Last updated: 2026-06-21
 
 This directory contains the durable operating specs for the agents used in Project Prompt Library. These files are not product architecture and do not authorize new runtime behavior. They define how agents select work, gather evidence, update Linear/GitHub, and stop when scope is unclear.
 
@@ -10,14 +10,33 @@ This directory contains the durable operating specs for the agents used in Proje
 
 | Agent | Spec | Main job |
 |---|---|---|
+| Dispatcher | [`dispatcher.md`](./dispatcher.md) | Proposed queue/claim/handoff router; not active until explicitly adopted. |
 | Coding Agent | [`coding-agent.md`](./coding-agent.md) | Implement one bounded Linear issue or docs task and produce a PR. |
 | Review Agent | [`review-agent.md`](./review-agent.md) | Review the coding issue and PR, request changes or approve/merge when safe. |
 | QA Agent | [`qa-agent.md`](./qa-agent.md) | Independently verify accepted implementation evidence, runtime viability, docs, and tests. |
 | Coordinator Agent | [`coordinator-agent.md`](./coordinator-agent.md) | Synthesize coding/review/QA evidence and decide proceed/fix/re-QA/stop. |
 
+Supporting docs:
+
+- [`learning-log.md`](./learning-log.md) — proposed compact audit log for role-learning decisions.
+- [`../workflows/dispatcher-and-learning-setup.md`](../workflows/dispatcher-and-learning-setup.md) — proposed operating setup for dispatcher and role-learning workflow.
+
+## Dispatcher exception
+
+The Dispatcher is not a normal role agent and does not follow the full common operating contract during preflight.
+
+Dispatcher preflight may read only:
+
+1. Linear queue/state metadata needed to select work.
+2. `docs/workflows/current-state-ledger.md`.
+
+The Dispatcher must not read `AGENTS.md`, role specs, PR diffs, source files, long issue histories, or broad project docs before emitting a handoff. Its job is to produce `ROLE_HANDOFF_CANDIDATE` in candidate mode or `ROLE_HANDOFF` in adopted claim mode, then stop.
+
+Fresh Coding, Review, QA, and Coordinator role runs follow the full common operating contract below.
+
 ## Common operating contract
 
-Every agent must read:
+Every non-dispatcher role agent must read:
 
 1. `AGENTS.md`
 2. `docs/workflows/current-state-ledger.md`
