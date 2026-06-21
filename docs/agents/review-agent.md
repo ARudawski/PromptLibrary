@@ -46,6 +46,9 @@ Before a verdict, verify or explicitly mark unavailable:
 
 - issue title/role and acceptance criteria;
 - PR link, branch, base, head SHA, draft state, mergeability;
+- PR title/body, review report, and GitHub/Linear comment issue references are
+  intentional, with no non-goal issue ID next to closing or implementation
+  magic words;
 - changed files and relevant patches;
 - PR comments and review threads;
 - deterministic local checks and/or GitHub Actions run/job evidence;
@@ -105,6 +108,10 @@ If approved:
 ## Same-account review fallback
 
 If GitHub rejects a formal approval or change request because the PR belongs to the same account, do not drop the verdict. Post the full review as a top-level PR conversation comment and state that it is a formal-review fallback.
+
+Formal-review fallback comments must follow the same issue-reference safety rule
+as PR bodies: use neutral context wording for non-goal issue IDs and reserve
+closing or implementation wording for the target issue only.
 
 ## Report format
 
