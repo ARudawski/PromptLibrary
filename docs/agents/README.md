@@ -2,7 +2,7 @@
 
 Status: active workflow contract  
 Scope: Project Prompt Library agent behavior  
-Last updated: 2026-06-20
+Last updated: 2026-06-21
 
 This directory contains the durable operating specs for the agents used in Project Prompt Library. These files are not product architecture and do not authorize new runtime behavior. They define how agents select work, gather evidence, update Linear/GitHub, and stop when scope is unclear.
 
@@ -10,7 +10,7 @@ This directory contains the durable operating specs for the agents used in Proje
 
 | Agent | Spec | Main job |
 |---|---|---|
-| Dispatcher | [`dispatcher.md`](./dispatcher.md) | Select and claim at most one executable Linear issue before loading expensive context. |
+| Dispatcher | [`dispatcher.md`](./dispatcher.md) | Proposed queue/claim/handoff router; not active until explicitly adopted. |
 | Coding Agent | [`coding-agent.md`](./coding-agent.md) | Implement one bounded Linear issue or docs task and produce a PR. |
 | Review Agent | [`review-agent.md`](./review-agent.md) | Review the coding issue and PR, request changes or approve/merge when safe. |
 | QA Agent | [`qa-agent.md`](./qa-agent.md) | Independently verify accepted implementation evidence, runtime viability, docs, and tests. |
@@ -18,8 +18,8 @@ This directory contains the durable operating specs for the agents used in Proje
 
 Supporting docs:
 
-- [`learning-log.md`](./learning-log.md) — compact audit log for accepted/rejected/deferred role-learning decisions.
-- [`../workflows/dispatcher-and-learning-setup.md`](../workflows/dispatcher-and-learning-setup.md) — operating setup for dispatcher and role-learning workflow.
+- [`learning-log.md`](./learning-log.md) — proposed compact audit log for role-learning decisions.
+- [`../workflows/dispatcher-and-learning-setup.md`](../workflows/dispatcher-and-learning-setup.md) — proposed operating setup for dispatcher and role-learning workflow.
 
 ## Common operating contract
 
