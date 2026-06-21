@@ -1,9 +1,11 @@
 # Agent Learning Log
 
-Status: active workflow audit log  
-Last updated: 2026-06-20
+Status: proposed workflow audit log  
+Last updated: 2026-06-21
 
 This log records accepted, rejected, or deferred agent-learning decisions. It is an audit trail, not a runtime prompt. Agents should read the active role specs and current-state ledger first.
+
+Adoption note: this log becomes part of the active workflow only after a coordinator/human adoption gate accepts the dispatcher and role-learning setup.
 
 ## Usage
 
@@ -42,7 +44,7 @@ Problem:
 Recurring role runs can spend tokens fetching Linear/GitHub/repo context before confirming there is actually executable work. Role behavior can also drift if lessons stay inside long-lived threads instead of durable docs.
 
 Decision:
-accepted
+proposed
 
 Changed:
 - Added `docs/agents/dispatcher.md` as the dispatcher prompt/spec.
@@ -50,5 +52,6 @@ Changed:
 - Added this learning log.
 
 Notes:
-- Dispatcher must run cheap Linear-only preflight before repository context loading.
+- Dispatcher must run cheap preflight before context loading.
 - Role learning is artifact-based: agents propose learning candidates; coordinator/human review decides; accepted rules move into exactly one canonical file.
+- This setup is not active until an explicit adoption gate accepts it.
