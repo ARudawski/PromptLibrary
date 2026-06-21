@@ -6,7 +6,7 @@ Scope: Project Prompt Library Codex/Linear/GitHub workflow
 
 This document designs the lightweight dispatcher setup and the role-learning loop for Project Prompt Library. It keeps runtime state in Linear/GitHub and keeps execution threads disposable.
 
-Adoption note: this setup remains proposed until a coordinator/human adoption gate confirms that the current-state ledger and Linear queue are ready for it.
+Adoption note: this setup remains proposed until a coordinator/human adoption gate confirms that the current-state ledger, Linear queue, and handoff consumer are ready for it.
 
 ## Design principles
 
@@ -15,7 +15,7 @@ Adoption note: this setup remains proposed until a coordinator/human adoption ga
 - Use scheduled runs only after the manual workflow is predictable.
 - Keep one thread per coherent unit of work.
 - Keep agents small, state-light, and evidence-driven.
-- Use Linear and GitHub for queue state, reports, and learning decisions.
+- Use Linear and GitHub for queue state, reports, claims, and learning decisions.
 
 ## Current assumptions
 
@@ -31,29 +31,60 @@ Linear:
 
 - Project: `Project Prompt Library`.
 - Labels exist for `agent:codex-local`, `agent:review`, `agent:qa-local`, `agent:coordinator`, `agent:auto`, and `gate:manual`.
-- `In Progress` agent work is treated as the project-level soft lock.
-- `In Review` Coding Agent work is review-ready handoff state, not an active-work lock.
+- Linear state is workflow position, not proof that an agent is currently running.
+- A live claim marker is the active-work lock.
+- `In Review` Coding Agent work is review-ready handoff state.
+- `In Progress` Coding Agent work may be fix-ready handoff state when review has requested changes and no live claim exists.
 - `Todo` is preferred for executable work, but the top unblocked matching Backlog item may be promoted/executed when no matching executable Todo exists and the current queue rule permits it.
+
+## Dispatcher modes
+
+Default until adoption: candidate mode.
+
+```text
+candidate mode:
+  cheap preflight: Linear + current-state ledger only
+  select one candidate
+  emit ROLE_HANDOFF_CANDIDATE
+  do not mutate Linear
+  stop
+```
+
+Adopted only after explicit coordinator/human approval: claim mode.
+
+```text
+claim mode:
+  cheap preflight: Linear + current-state ledger only
+  select one candidate
+  write DISPATCHER CLAIM RUNNING with claim_id and claim_expires_at
+  verify unique claim ownership
+  emit ROLE_HANDOFF
+  stop
+```
+
+Use claim mode only when a handoff consumer exists and is expected to start a fresh role run from `ROLE_HANDOFF`. Without that consumer, candidate mode is safer because it cannot strand a Linear issue in a claimed state.
 
 ## Dispatcher model
 
 ```text
 Dispatcher
   -> cheap preflight: Linear + current-state ledger only
-  -> if active In Progress agent work exists: stop
-  -> if review-ready In Review coding work exists: claim review handoff
-  -> else if no executable issue exists: stop
-  -> if one executable issue exists: claim it
-  -> emit ROLE_HANDOFF
-  -> stop
+  -> if a live claim exists: stop
+  -> if review-ready In Review coding work exists: select review handoff
+  -> if fix-ready In Progress coding work exists: select coding handoff
+  -> else if matching executable Todo exists: select it
+  -> else if no matching executable Todo exists: select top matching Backlog when allowed
+  -> candidate mode: emit ROLE_HANDOFF_CANDIDATE and stop
+  -> claim mode: claim, emit ROLE_HANDOFF, and stop
 
 Fresh role run
-  -> read role spec and issue context
-  -> execute exactly one role workflow
-  -> write evidence back to Linear/GitHub
+  -> accepts handoff when in claim mode
+  -> reads role spec and issue context
+  -> executes exactly one role workflow
+  -> writes evidence and terminal claim marker back to Linear/GitHub
 ```
 
-The dispatcher is a queue worker, not a reasoning hub. It should not build project understanding unless it has already claimed work. The only repo file it may read before claim is `docs/workflows/current-state-ledger.md`, because the ledger is required to avoid stale Linear labels pulling later-slice work.
+The dispatcher is a queue worker, not a reasoning hub. It should not build project understanding unless it has selected work. The only repo file it may read before handoff is `docs/workflows/current-state-ledger.md`, because the ledger is required to avoid stale Linear labels pulling later-slice work.
 
 ## Suggested settings
 
@@ -61,8 +92,8 @@ Dispatcher:
 
 ```text
 reasoning: low or medium
-GitHub/repo access before claim: current-state ledger only
-Linear access before claim: yes
+GitHub/repo access before handoff: current-state ledger only
+Linear access before handoff: yes
 role execution in dispatcher run: no
 ```
 
@@ -75,23 +106,76 @@ QA: medium/high when runtime/project-state viability matters
 coordinator: medium unless gate is ambiguous
 ```
 
-## Queue and claim rules
+## Claim lifecycle
 
-The dispatcher stops when an agent-marked issue is `In Progress`.
+A live claim is one of these markers without a later terminal marker for the same `claim_id` and with `claim_expires_at` still in the future:
 
-The dispatcher does not stop merely because a Coding Agent issue is `In Review`; that is the normal review handoff state. It should instead claim a review handoff when the issue belongs to the current allowed lane and has a PR or clear review target.
+```text
+DISPATCHER CLAIM RUNNING
+claim_id:
+claim_expires_at:
+role:
+issue:
+claim_rule:
+```
 
-When an issue is selected, claim it before expensive context loading:
+```text
+AGENT RUNNING
+claim_id:
+claim_expires_at:
+role:
+issue:
+```
 
-1. Generate a unique `claim_id`.
-2. Fetch issue.
-3. Verify role title/label or review-handoff exception.
-4. Move normal Coding, QA, and Coordinator issues to `In Progress`.
-5. Leave review-ready Coding Agent issues in `In Review`; claim review by marker comment instead.
-6. Remove `agent:auto` if present and safe.
-7. Post an `AGENT RUNNING` comment with the claim id.
-8. Re-fetch issue/comments and continue only if this run uniquely owns the active claim.
-9. Emit a role handoff and stop.
+Terminal markers:
+
+```text
+DISPATCHER HANDOFF ACCEPTED
+claim_id:
+accepted_at:
+consumer:
+```
+
+```text
+AGENT COMPLETE
+claim_id:
+completed_at:
+result:
+```
+
+```text
+AGENT BLOCKED
+claim_id:
+blocked_at:
+reason:
+```
+
+```text
+AGENT CLAIM RELEASED
+claim_id:
+released_at:
+reason:
+```
+
+```text
+AGENT CLAIM EXPIRED
+claim_id:
+observed_at:
+reason:
+```
+
+In claim mode, the handoff consumer must post `DISPATCHER HANDOFF ACCEPTED` before the fresh role run performs heavy work. The fresh role run must then post `AGENT RUNNING` if it needs to hold the lock and must end with a terminal marker.
+
+## Queue rules
+
+The dispatcher stops when a live claim exists. It does not stop merely because an issue is `In Progress` or `In Review`.
+
+Selection order:
+
+1. Review-ready `In Review` Coding Agent issue with linked PR/review target.
+2. Fix-ready `In Progress` Coding Agent issue with requested-changes/fix-needed evidence and no live claim.
+3. Matching executable `Todo` issue.
+4. Top unblocked matching Backlog issue when no matching executable `Todo` exists and the current queue rule permits it.
 
 Completion routing happens in the fresh role run, not in the dispatcher:
 
@@ -120,6 +204,12 @@ Coding issue ready for review:
   state: In Review
   labels: agent:codex-local
   linked PR present
+
+Coding issue needing review fixes:
+  state: In Progress
+  labels: agent:codex-local
+  review requested changes present
+  no live claim present
 ```
 
 ## Role learning model
@@ -215,5 +305,6 @@ At the end of each milestone, run a small workflow compaction:
 2. Add this setup document.
 3. Add `docs/agents/learning-log.md`.
 4. Link the documents from `docs/README.md` and `docs/agents/README.md`.
-5. Start with low-frequency manual or scheduled runs.
-6. Review the first five dispatcher runs before tightening cadence.
+5. Start in candidate mode.
+6. Review the first dispatcher candidates before adopting claim mode.
+7. Adopt claim mode only after the handoff consumer is defined and tested.
