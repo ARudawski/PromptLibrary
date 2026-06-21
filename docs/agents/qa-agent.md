@@ -91,12 +91,12 @@ npm run test:golden
 npm run validate-prompts
 ```
 
-Record exact pass, fail, skipped, or placeholder status. If live ChatGPT/tunnel/hosted checks are out of scope, say so and use the closest deterministic substitute.
+Record exact pass, fail, or skipped status. If live ChatGPT/tunnel/hosted checks are out of scope, say so and use the closest deterministic substitute.
 
 Known current caveats must stay explicit until their slices complete:
 
-- `test:golden` may pass with no golden files;
-- `validate-prompts` may be a placeholder before Slice 2.6;
+- `test:golden` has real Slice 2.7 source/cache coverage; future exact-payload behavior still needs slice-specific golden coverage where applicable;
+- `validate-prompts` is a real local validator but may pass with zero prompt files until real prompt slices add approved prompt definitions;
 - npm audit caveats must be reported when observed.
 
 ## Linear findings

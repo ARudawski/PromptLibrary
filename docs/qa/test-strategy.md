@@ -94,13 +94,7 @@ Contract tests cover MCP-facing tool shapes without real ChatGPT:
 
 ### 4.4 Golden tests
 
-Golden tests should protect exact payload and fixture behavior once real golden fixtures exist.
-
-Until then, reports must keep the caveat visible:
-
-```text
-test:golden may pass with no golden files.
-```
+Golden tests should protect exact payload and fixture behavior for approved behavior. As of Slice 2.7, `test:golden` includes real source/cache golden coverage; later slices should add targeted golden coverage when exact payloads or fixtures become part of their acceptance surface.
 
 ### 4.5 Source/cache QA
 
@@ -134,9 +128,9 @@ npm run test:golden
 npm run validate-prompts
 ```
 
-Record exact pass/fail/skipped/placeholder status.
+Record exact pass/fail/skipped status.
 
-`validate-prompts` may remain a placeholder until Slice 2.6 completes. Do not treat placeholder success as real prompt-file validation.
+`validate-prompts` is a real local validator as of Slice 2.6. It may pass with zero local prompt files until approved real-prompt slices add prompt definitions; do not treat an empty prompt-set pass as live prompt coverage.
 
 ## 6. CI evidence
 
@@ -216,7 +210,7 @@ QA must treat accidental implementation of these as architecture drift, not bonu
 
 Carry these forward until resolved by the relevant slice or issue:
 
-- `test:golden` may pass with no golden files.
-- `validate-prompts` may be a placeholder before Slice 2.6.
+- `test:golden` has real Slice 2.7 source/cache coverage; future exact-payload behavior still needs slice-specific golden coverage where applicable.
+- `validate-prompts` is real local validation but may pass with zero prompt files until real prompt slices add approved prompt definitions.
 - npm audit findings must be reported when observed.
 - Source/cache infrastructure is not equivalent to fully wired real prompt runtime behavior until later slices complete.
