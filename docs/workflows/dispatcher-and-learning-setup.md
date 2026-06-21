@@ -75,13 +75,15 @@ Use claim mode only when a handoff consumer exists and is expected to start a fr
 ```text
 Dispatcher
   -> cheap preflight: Linear + current-state ledger + recent PR metadata only
-  -> compare ledger, Linear queue, live claims, and recent PR state for blocking drift
+  -> compare ledger, Linear queue, live claims, and recent PR state for hard blockers and provisional drift notes
   -> if a live claim exists: stop
-  -> if blocking state drift exists: stop
+  -> if hard state drift blocks candidate selection: stop
   -> if review-ready In Review coding work exists: select review handoff
   -> if fix-ready In Progress coding work exists: select coding handoff
   -> else if matching executable Todo exists: select it
   -> else if no matching executable Todo exists: select top matching Backlog when allowed
+  -> after exactly one candidate is selected: finalize provisional drift as blocking or non-blocking caveat
+  -> if post-selection blocking drift exists: stop
   -> candidate mode: emit ROLE_HANDOFF_CANDIDATE and stop
   -> claim mode: claim, emit ROLE_HANDOFF, and stop
 
@@ -103,9 +105,11 @@ The dispatcher must compare three cheap signals before selecting work:
 2. Linear queue state for active candidates, blockers, labels, comments, and live claim markers.
 3. Recent/open GitHub PR metadata for whether a linked issue was recently merged, closed, opened, or still active.
 
-Use `STATE_DRIFT_DETECTED` and stop when the mismatch would change the selected lane, role, issue, or blocker decision. Examples include a ledger that says a later slice is blocked while recent Linear/GitHub evidence appears to complete it, multiple plausible current lanes exposed by stale labels, or missing cheap PR metadata that is needed to distinguish review-ready from fix-ready work.
+Phase 1 drift classification is provisional unless the mismatch prevents safe candidate selection. Use `STATE_DRIFT_DETECTED` before selection only for hard blockers, such as a candidate set that cannot be formed safely, a later slice or gate appearing complete with no explicit target or repair path, unavailable cheap metadata needed to build the candidate set, or stale labels/states that expose multiple plausible lanes before ordering rules can be applied.
 
-Treat drift as a non-blocking caveat when it is already tracked and does not change the selected handoff. PL-60 is the concrete repair path for stale current-state ledger/status docs. PL-62 is the workflow rule requiring coordinator closeouts to surface, update, link, or block on documentation/state drift. A dispatcher handoff may proceed with a `<state_caveat>` only when exactly one candidate remains and the drift is known, tracked, and irrelevant to role selection.
+Carry provisional drift notes into candidate selection when the final decision depends on which issue is selected, whether exactly one candidate remains, or whether the selected issue is the tracked repair/workflow handoff. After selection, use `STATE_DRIFT_DETECTED` and stop if the drift would change the selected lane, role, issue, dependency, or blocker decision.
+
+Treat drift as a non-blocking caveat only after exactly one candidate remains and the mismatch does not change that handoff. PL-60 is the concrete repair path for stale current-state ledger/status docs. PL-62 is the workflow rule requiring coordinator closeouts to surface, update, link, or block on documentation/state drift. A dispatcher handoff may proceed with a `<state_caveat>` only when the drift is known, tracked, and irrelevant to the selected role/issue, or when the selected issue itself is the repair/workflow handoff.
 
 Machine-readable dispatcher decisions:
 
