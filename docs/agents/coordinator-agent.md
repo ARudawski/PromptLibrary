@@ -2,7 +2,7 @@
 
 Status: active workflow contract  
 Role: Codex Prompt Coordinator / gate coordinator  
-Last updated: 2026-06-20
+Last updated: 2026-06-21
 
 ## Purpose
 
@@ -58,6 +58,14 @@ Repository evidence:
 - architecture and standards boundaries;
 - known caveats such as placeholder gates.
 
+Documentation/state evidence:
+
+- `docs/workflows/current-state-ledger.md` as the compact source-of-truth surface for phase, gate, next-lane, queue, and caveat facts;
+- relevant role-agent docs when the decision changes agent workflow;
+- PR body or linked GitHub evidence when it is part of the workflow record;
+- Linear issue state, comments, labels, blockers, and links when they affect queue routing;
+- `docs/agents/learning-log.md` only for proposed, accepted, rejected, deferred, or superseded workflow learnings reviewed by a coordinator/human gate.
+
 ## Review evidence pattern
 
 Default:
@@ -84,6 +92,29 @@ QA evidence should include:
 - blockers, important improvements, minor issues, and follow-ups.
 
 Do not approve a gate from a sweep marker or incomplete QA issue when targeted QA was required.
+
+## Documentation/state closeout
+
+Before exposing the next lane or closing a coordinator/workflow issue, deliberately decide whether documentation or workflow state must change.
+
+Check at minimum:
+
+- `docs/workflows/current-state-ledger.md` for phase, gate, next-lane, queue, and caveat facts;
+- relevant role-agent docs if the decision changes role behavior;
+- PR body or linked GitHub evidence if it is part of the workflow record;
+- Linear issue state, comments, labels, blockers, and links that affect routing;
+- `docs/agents/learning-log.md` only when a workflow learning is proposed, accepted, rejected, deferred, or superseded.
+
+If live Linear/GitHub evidence conflicts with stale docs, do not ignore the conflict. Report it, then use the smallest correct outcome:
+
+```text
+updated now
+no update needed, with reason
+follow-up issue created or linked, with ID/link
+blocked pending human/coordinator decision
+```
+
+Stale docs may be non-blocking for a product verdict when live evidence is stronger, but stale source-of-truth docs must be updated when in scope or tracked as an explicit follow-up when out of scope.
 
 ## CI evidence
 
@@ -119,6 +150,7 @@ QA verdict:
 QA Coordinator verdict:
 Deterministic checks:
 Documentation status:
+Documentation/state outcome:
 Architecture boundary status:
 Decision:
 Blocking issues:
