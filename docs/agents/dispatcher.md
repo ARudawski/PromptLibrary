@@ -43,6 +43,17 @@ claim mode:
 
 Use claim mode only when a handoff consumer exists and is expected to start a fresh role run from `ROLE_HANDOFF`. Without that consumer, candidate mode is safer because it cannot strand a Linear issue in a claimed state.
 
+## Decision taxonomy
+
+Dispatcher output should use one of these compact decisions:
+
+- `DONT_NOTIFY` - no executable work is available, or the run has nothing useful to report.
+- `CLAIM_BLOCKED` - a live dispatcher or role claim already owns the relevant issue.
+- `STATE_DRIFT_DETECTED` - dispatcher found blocking state drift between the current-state ledger, Linear queue, selected candidate, and recent GitHub PR metadata.
+- `AMBIGUOUS_QUEUE` - more than one executable candidate remains after applying the current lane, role, blocker, and ordering rules.
+- `ROLE_HANDOFF_CANDIDATE` - candidate mode selected exactly one role handoff without mutating Linear.
+- `ROLE_HANDOFF` - claim mode selected and claimed exactly one role handoff after explicit adoption.
+
 ## Dispatcher prompt
 
 Use this prompt for the dispatcher automation or manual dispatcher run:
@@ -62,15 +73,35 @@ Current operating mode:
 - Claim mode requires a handoff consumer.
 
 Cheap preflight exception:
-Before selecting work, you may read only docs/workflows/current-state-ledger.md from GitHub. Do not read any other GitHub/repository files, AGENTS.md, role specs, PR diffs, source code, or long issue histories before handoff.
+Before selecting work, you may read only:
+- docs/workflows/current-state-ledger.md from GitHub;
+- Linear queue/state metadata and recent issue comments needed for candidate, dependency, and claim checks;
+- cheap GitHub PR metadata for ARudawski/PromptLibrary, limited to recent/open PR number, title, state, draft state, base/head branch, merged_at/closed_at, and linked Linear issue IDs when visible.
+
+Do not read any other GitHub/repository files, AGENTS.md, role specs, PR diffs, source code, CI logs, PR review threads, PR comments, or long issue histories before handoff.
+
+Decision taxonomy:
+- DONT_NOTIFY: no executable work is available, or the run has nothing useful to report.
+- CLAIM_BLOCKED: a live dispatcher or role claim already owns the relevant issue.
+- STATE_DRIFT_DETECTED: dispatcher found blocking state drift between the current-state ledger, Linear queue, selected candidate, and recent GitHub PR metadata.
+- AMBIGUOUS_QUEUE: more than one executable candidate remains after applying the current lane, role, blocker, and ordering rules.
+- ROLE_HANDOFF_CANDIDATE: candidate mode selected exactly one role handoff without mutating Linear.
+- ROLE_HANDOFF: claim mode selected and claimed exactly one role handoff after explicit adoption.
 
 ## Phase 1 — Cheap preflight
 
-Use Linear and the current-state ledger only.
+Use Linear, the current-state ledger, and cheap recent GitHub PR metadata only.
 
 1. Read docs/workflows/current-state-ledger.md to determine the current allowed phase/gate/lane and current queue caveats.
 2. Inspect candidate issues and recent comments for live claim markers.
-3. Treat a claim as live only when:
+3. Inspect recent/open GitHub PR metadata only enough to notice whether recent merged/open PRs contradict the ledger or explain Linear queue movement. Do not inspect PR diffs, CI logs, comments, review threads, or repository source.
+4. Compare the ledger, Linear, and PR metadata before selecting work, but treat drift classification as provisional unless the mismatch blocks candidate selection itself:
+   - ledger current slice/gate/next-lane facts versus completed or active Linear candidates;
+   - Linear candidate states/labels/blockers versus live claim markers;
+   - recent merged/open PRs versus Linear issue state when the PR names or links the issue;
+   - stale status docs called out by known repair issues, such as PL-60, versus workflow rules that make the drift visible, such as PL-62.
+5. Carry provisional drift notes forward when the decision depends on which issue is selected, whether exactly one candidate remains, or whether the selected issue is a tracked repair/workflow handoff.
+6. Treat a claim as live only when:
    - it has a dispatcher or role `RUNNING` marker;
    - it has no later terminal marker for the same `claim_id`;
    - its `claim_expires_at` has not passed.
@@ -137,16 +168,39 @@ reason:
 
 If a live claim exists, do not start new work. Return:
 
-<heartbeat>
-  <decision>DONT_NOTIFY</decision>
+<dispatcher_result>
+  <decision>CLAIM_BLOCKED</decision>
+  <blocking>true</blocking>
   <message>Existing agent claim is active: ISSUE_ID — TITLE.</message>
-</heartbeat>
+</dispatcher_result>
 
-If an automation id is available, include it inside the heartbeat as `<automation_id>...</automation_id>`. Do not invent one.
+If an automation id is available, include it inside the result as `<automation_id>...</automation_id>`. Do not invent one.
 
 Then stop.
 
 Do not use Linear state alone as a live lock. `In Progress` can mean reviewed work is waiting for the Coding Agent to resume; `In Review` can mean completed coding work is ready for review.
+
+Before candidate selection, stop only for hard drift blockers:
+- the ledger, Linear, and recent PR metadata are too contradictory to form a safe candidate set;
+- a later slice or gate appears complete in Linear/GitHub while the ledger says that work is blocked, and no explicit target, repair issue, or workflow issue explains the mismatch;
+- required cheap metadata is unavailable and the missing evidence is needed to build or filter the candidate set;
+- stale labels/states expose multiple plausible lanes before ordering rules can be applied.
+
+For hard Phase 1 drift blockers, return:
+
+<dispatcher_result>
+  <decision>STATE_DRIFT_DETECTED</decision>
+  <blocking>true</blocking>
+  <ledger_summary>Current ledger lane/gate in one line.</ledger_summary>
+  <linear_summary>Conflicting Linear state in one line.</linear_summary>
+  <github_pr_summary>Conflicting recent PR state, or unavailable.</github_pr_summary>
+  <repair_path>Known repair issue such as PL-60, or none.</repair_path>
+  <message>State drift blocks safe candidate selection. Coordinator/human state repair is needed before dispatcher selection.</message>
+</dispatcher_result>
+
+Then stop.
+
+Do not return `STATE_DRIFT_DETECTED` for tracked repair/caveat drift before candidate selection. If the drift may be non-blocking because it is already tracked by PL-60, because a PL-62-style workflow rule explains it, or because an explicit target may be the repair/caveat handoff, keep selecting and finalize that classification after Phase 2.
 
 ## Phase 2 — Find executable issue
 
@@ -185,9 +239,51 @@ If an automation id is available, include it inside the heartbeat as `<automatio
 
 Then stop.
 
-If multiple executable issues exist in the same lane, select the earliest by current-state ledger, roadmap order, dependency order, then issue number. Record the ambiguity as a queue hygiene note in the handoff.
+If multiple executable issues exist in the same lane, select the earliest by current-state ledger, roadmap order, dependency order, then issue number. Record the ambiguity as a queue hygiene note in the handoff. If those ordering rules cannot reduce the set to exactly one candidate, return:
+
+<dispatcher_result>
+  <decision>AMBIGUOUS_QUEUE</decision>
+  <blocking>true</blocking>
+  <candidates>ISSUE_ID list with role/title/state.</candidates>
+  <message>Multiple executable candidates remain after dispatcher ordering. Coordinator/human queue repair is needed.</message>
+</dispatcher_result>
+
+Then stop.
 
 Never skip gates. Never jump to a later slice because it looks ready.
+
+## Phase 2.5 - Finalize provisional state drift
+
+After Phase 2 has produced exactly one candidate, resolve any provisional drift notes before emitting a handoff.
+
+Post-selection blocking drift:
+- the provisional drift would change the selected role, issue, lane, dependency, or blocker status;
+- the drift is not tracked by a concrete repair issue and is not explained by an explicit current instruction;
+- the selected issue is not the repair/workflow issue needed to make the drift visible or routeable;
+- the dispatcher cannot explain why the stale state is irrelevant to this exact handoff.
+
+For post-selection blocking drift, return:
+
+<dispatcher_result>
+  <decision>STATE_DRIFT_DETECTED</decision>
+  <blocking>true</blocking>
+  <ledger_summary>Current ledger lane/gate in one line.</ledger_summary>
+  <linear_summary>Conflicting Linear state in one line.</linear_summary>
+  <github_pr_summary>Conflicting recent PR state, or unavailable.</github_pr_summary>
+  <repair_path>Known repair issue such as PL-60, or none.</repair_path>
+  <selected_candidate>ISSUE_ID - TITLE, or none.</selected_candidate>
+  <message>State drift blocks this selected handoff. Coordinator/human state repair is needed before role execution.</message>
+</dispatcher_result>
+
+Then stop.
+
+Non-blocking drift may continue only when all of these are true:
+- exactly one candidate remains after the Phase 2 ordering and ambiguity checks;
+- the drift is already tracked by a concrete repair issue, such as PL-60 for stale current-state ledger/status docs, or by an accepted workflow rule such as PL-62;
+- the selected issue itself is the tracked repair/workflow handoff, or the explicit current instruction and live Linear/GitHub evidence make the selected handoff unambiguous;
+- the mismatch does not change the selected role, issue, lane, dependency, or blocker status.
+
+For non-blocking drift, include a short `<state_caveat>...</state_caveat>` in the handoff result and continue to Phase 3 or Phase 4.
 
 ## Phase 3 — Candidate mode handoff
 
@@ -201,6 +297,7 @@ If operating in candidate mode, do not mutate Linear. Emit:
   <required_role_spec>docs/agents/ROLE-agent.md</required_role_spec>
   <current_state_ledger>docs/workflows/current-state-ledger.md</current_state_ledger>
   <linked_pr>PR URL or none</linked_pr>
+  <state_caveat>Known non-blocking drift, or none.</state_caveat>
   <message>Start a fresh ROLE Agent run manually or through an approved handoff consumer. Candidate mode supplies no claim_id.</message>
 </dispatcher_result>
 
@@ -242,7 +339,7 @@ expected_output: ROLE_HANDOFF
 If another claim wins, write `AGENT CLAIM RELEASED` for this claim if possible and return:
 
 <dispatcher_result>
-  <decision>CLAIM_LOST</decision>
+  <decision>CLAIM_BLOCKED</decision>
   <issue>ISSUE_ID — TITLE</issue>
   <role>ROLE</role>
   <claim_id>CLAIM_ID</claim_id>
@@ -263,6 +360,7 @@ If this run owns the claim, emit:
   <required_role_spec>docs/agents/ROLE-agent.md</required_role_spec>
   <current_state_ledger>docs/workflows/current-state-ledger.md</current_state_ledger>
   <linked_pr>PR URL or none</linked_pr>
+  <state_caveat>Known non-blocking drift, or none.</state_caveat>
   <message>Handoff consumer must start a fresh ROLE Agent run and post DISPATCHER HANDOFF ACCEPTED plus AGENT RUNNING.</message>
 </dispatcher_result>
 

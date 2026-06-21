@@ -29,8 +29,9 @@ Dispatcher preflight may read only:
 
 1. Linear queue/state metadata needed to select work.
 2. `docs/workflows/current-state-ledger.md`.
+3. Cheap recent/open GitHub PR metadata needed to detect state drift, limited to PR number, title, state, draft state, base/head branch, timestamps, and visible Linear issue links.
 
-The Dispatcher must not read `AGENTS.md`, role specs, PR diffs, source files, long issue histories, or broad project docs before emitting a handoff. Its job is to produce `ROLE_HANDOFF_CANDIDATE` in candidate mode or `ROLE_HANDOFF` in adopted claim mode, then stop.
+The Dispatcher must not read `AGENTS.md`, role specs, PR diffs, CI logs, PR comments, review threads, source files, long issue histories, or broad project docs before emitting a handoff. Its job is to produce one machine-readable dispatcher decision, normally `ROLE_HANDOFF_CANDIDATE` in candidate mode or `ROLE_HANDOFF` in adopted claim mode, then stop.
 
 Fresh Coding, Review, QA, and Coordinator role runs follow the full common operating contract below.
 
