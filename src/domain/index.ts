@@ -5,8 +5,13 @@ export {
   type PromptErrorReason,
   type PromptLibraryError,
 } from "./PromptErrors.js";
+export type { PromptInspection } from "./PromptInspection.js";
 export type { PromptInvocationPayload } from "./PromptInvocationPayload.js";
 export { PROMPT_LIFECYCLES, type PromptLifecycle } from "./PromptLifecycle.js";
 export type { PromptMetadata } from "./PromptMetadata.js";
-export type { DomainResult, PromptInvocationResult } from "./PromptResult.js";
+export type {
+  DomainResult,
+  PromptInspectionResult,
+  PromptInvocationResult,
+} from "./PromptResult.js";
 export { PROMPT_STATUSES, type PromptStatus } from "./PromptStatus.js";
