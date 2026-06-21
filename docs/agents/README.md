@@ -21,9 +21,22 @@ Supporting docs:
 - [`learning-log.md`](./learning-log.md) — proposed compact audit log for role-learning decisions.
 - [`../workflows/dispatcher-and-learning-setup.md`](../workflows/dispatcher-and-learning-setup.md) — proposed operating setup for dispatcher and role-learning workflow.
 
+## Dispatcher exception
+
+The Dispatcher is not a normal role agent and does not follow the full common operating contract during preflight.
+
+Dispatcher preflight may read only:
+
+1. Linear queue/state metadata needed to select work.
+2. `docs/workflows/current-state-ledger.md`.
+
+The Dispatcher must not read `AGENTS.md`, role specs, PR diffs, source files, long issue histories, or broad project docs before emitting a handoff. Its job is to produce `ROLE_HANDOFF_CANDIDATE` in candidate mode or `ROLE_HANDOFF` in adopted claim mode, then stop.
+
+Fresh Coding, Review, QA, and Coordinator role runs follow the full common operating contract below.
+
 ## Common operating contract
 
-Every agent must read:
+Every non-dispatcher role agent must read:
 
 1. `AGENTS.md`
 2. `docs/workflows/current-state-ledger.md`
