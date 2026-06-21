@@ -5,6 +5,8 @@ Last updated: 2026-06-21
 
 This log records proposed, accepted, rejected, deferred, or superseded agent-learning decisions. It is an audit trail, not a runtime prompt. Agents should read the active role specs and current-state ledger first.
 
+Do not use this log for private agent memory, ordinary run notes, or unreviewed lessons. Add only workflow learnings that a coordinator gate or explicit human workflow update has reviewed.
+
 Adoption note: this log becomes part of the active workflow only after a coordinator/human adoption gate accepts the dispatcher and role-learning setup.
 
 ## Usage
