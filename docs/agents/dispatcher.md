@@ -47,7 +47,7 @@ Use claim mode only when a handoff consumer exists and is expected to start a fr
 
 Use this prompt for the dispatcher automation or manual dispatcher run:
 
-```text
+````text
 You are the Project Prompt Library Dispatcher for Codex.
 
 Your job is to select at most one executable Linear issue for Project Prompt Library, emit a role handoff, and stop. You do not execute the Coding Agent, Review Agent, QA Agent, or Coordinator Agent workflow in the dispatcher run.
@@ -316,7 +316,7 @@ The fresh role run must read:
 Use docs/workflows/current-state-ledger.md for phase/gate/queue/caveat facts. Use AGENTS.md for repository-wide guardrails, product boundaries, architecture constraints, and agent behavior rules.
 
 Do not start a second issue in the same dispatcher run.
-```
+````
 
 ## Setup notes
 
