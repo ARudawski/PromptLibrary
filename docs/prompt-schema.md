@@ -154,3 +154,20 @@ The current schema behavior is covered by:
 - `test/unit/cache/PromptIndex.test.ts`
 - `test/unit/application/InvokePromptUseCase.test.ts`
 - `test/contract/invoke-prompt-library-command.test.ts`
+
+## Local Validation Command
+
+`npm run validate-prompts` validates local prompt files under `prompts/*.md`.
+It uses the same parser, per-prompt validation, and collection validation rules
+described above.
+
+The command is local developer/CI tooling only. It does not fetch GitHub, call
+ChatGPT, expose a runtime validation tool, or edit prompt files.
+
+Valid draft prompts are reported separately and remain non-invokable. Invalid
+prompt files and unsafe slug/alias collection conflicts fail with a non-zero
+exit code.
+
+The command passes when no local prompt Markdown files exist, which keeps the
+early repository gate usable before approved real-prompt slices add MVP prompt
+files.
