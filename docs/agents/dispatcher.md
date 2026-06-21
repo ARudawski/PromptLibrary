@@ -1,7 +1,7 @@
 # Dispatcher Automation Prompt — Project Prompt Library
 
 Status: active dispatcher spec  
-Last updated: 2026-06-20  
+Last updated: 2026-06-21  
 Scope: Codex dispatcher runs for `Project Prompt Library`
 
 This file is the durable prompt/spec for the lightweight dispatcher. The dispatcher is intentionally not a project brain. It is a cheap queue gate that decides whether exactly one Linear issue may be claimed, then delegates to the appropriate role spec only after a successful claim.
@@ -9,8 +9,9 @@ This file is the durable prompt/spec for the lightweight dispatcher. The dispatc
 ## Design goals
 
 - Minimize idle token use.
-- Avoid GitHub/repo/doc reads when no issue is executable.
+- Avoid GitHub/repo/source reads when no issue is executable.
 - Avoid duplicate concurrent agent runs.
+- Allow normal handoff states such as Coding Agent work in `In Review` to become review targets.
 - Keep role execution fresh and issue-scoped.
 - Keep learning artifact-based, not hidden in long chats.
 
@@ -27,25 +28,25 @@ Operating systems of record:
 - Linear project: Project Prompt Library
 - GitHub repository: ARudawski/PromptLibrary
 
-Hard rule:
-Do not read GitHub, repository files, AGENTS.md, role specs, PR diffs, source code, or long issue histories until you have selected and claimed exactly one eligible Linear issue.
+Cheap preflight exception:
+Before selecting work, you may read only docs/workflows/current-state-ledger.md from GitHub. Do not read any other GitHub/repository files, AGENTS.md, role specs, PR diffs, source code, or long issue histories until you have selected and claimed exactly one eligible Linear issue.
 
-## Phase 1 — Cheap Linear preflight only
+## Phase 1 — Cheap preflight
 
-Use Linear only.
+Use Linear and the current-state ledger only.
 
-First check whether any Project Prompt Library issue is currently active in `In Progress` or `In Review` and has one of these labels or role/title markers:
+1. Read docs/workflows/current-state-ledger.md to determine the current allowed phase/gate/lane and current queue caveats.
+2. Check whether any Project Prompt Library issue is currently `In Progress` and has one of these labels or role/title markers:
+   - agent:codex-local
+   - agent:review
+   - agent:qa-local
+   - agent:coordinator
+   - Coding Agent
+   - Review Agent
+   - QA Agent
+   - Coordinator Report
 
-- agent:codex-local
-- agent:review
-- agent:qa-local
-- agent:coordinator
-- Coding Agent
-- Review Agent
-- QA Agent
-- Coordinator Report
-
-If such an active issue exists, do not start new work. Return exactly:
+If such an `In Progress` issue exists, treat it as active work. Do not start new work. Return exactly:
 
 <heartbeat>
   <decision>DONT_NOTIFY</decision>
@@ -54,20 +55,23 @@ If such an active issue exists, do not start new work. Return exactly:
 
 Then stop.
 
+Do not treat every `In Review` issue as active work. In this project, completed Coding Agent work intentionally moves to `In Review` so review can run next.
+
 ## Phase 2 — Find executable issue
 
 Look for exactly one executable issue in this order:
 
-1. Project Prompt Library issue in state Todo with label agent:auto.
-2. If no Todo issue exists, use the current queue rule: select the top unblocked matching Backlog issue for the current allowed slice/lane only.
+1. Review-ready handoff: a current-lane Coding Agent issue in `In Review` with an attached or clearly linked PR/review target. Select this as Review Agent work even if there is no separate Code Reviewer issue.
+2. Matching Todo: a Project Prompt Library issue in state `Todo` matching the current allowed lane and expected role label/title marker. Prefer `agent:auto` when present.
+3. Backlog fallback: if no matching executable Todo exists, use the current queue rule to select the top unblocked matching Backlog issue for the current allowed slice/lane only.
 
 A candidate must satisfy all relevant checks:
 
-- expected role label is present;
+- expected role label is present, or it is an `In Review` Coding Agent issue selected as Review Agent handoff;
 - expected title marker is present after resolving/fetching the issue;
 - dependencies/blockers are resolved;
-- issue belongs to the current allowed slice/lane;
-- issue is not gate:manual unless the selected role is a coordinator/human gate and the role rules permit it.
+- issue belongs to the current allowed slice/lane from the ledger;
+- issue is not `gate:manual` unless the selected role is a coordinator/human gate and the role rules permit it.
 
 Role labels:
 
@@ -91,12 +95,12 @@ Never skip gates. Never jump to a later slice because it looks ready.
 
 ## Phase 3 — Claim the issue before expensive context
 
-Before reading repository docs or PRs:
+Before reading repository docs or PRs beyond the current-state ledger:
 
 1. Fetch the selected Linear issue.
 2. Verify the resolved issue title/body matches the selected role lane.
-3. Move the issue to In Progress if it is not already In Progress.
-4. Remove agent:auto if present and safe.
+3. Move the issue to `In Progress` if it is not already `In Progress`.
+4. Remove `agent:auto` if present and safe.
 5. Add a Linear comment:
 
 AGENT RUNNING
@@ -181,5 +185,6 @@ Do not start a second issue in the same run.
 
 - Configure the dispatcher with low or medium reasoning by default.
 - Use fresh role execution context per claimed issue/review/QA/gate.
-- Use Linear as the lock: an issue in `In Progress` or `In Review` prevents new dispatcher claims.
+- Use Linear as the primary lock: `In Progress` agent work prevents new dispatcher claims.
+- Treat `In Review` Coding Agent issues as review-ready handoffs, not as an active-work lock.
 - Prefer one active lane at a time for this solo project unless parallelism is explicitly opened.
