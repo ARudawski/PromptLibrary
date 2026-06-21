@@ -115,6 +115,8 @@ claim_expires_at:
 role:
 issue:
 claim_rule:
+claimed_from_state:
+claimed_from_labels:
 ```
 
 ```text
@@ -319,8 +321,9 @@ Before reading repository docs or PRs beyond the current-state ledger:
 5. Move normal Todo/Backlog Coding, QA, and Coordinator issues to `In Progress` if needed.
 6. Do not move review-ready Coding Agent issues out of `In Review` just to claim review.
 7. Do not move fix-ready Coding Agent issues if they are already `In Progress`.
-8. Remove `agent:auto` only if the adopted handoff consumer is confirmed to start the fresh role run immediately.
-9. Add a Linear comment:
+8. Record `claimed_from_state` and `claimed_from_labels` before any state or label mutation, using `none` only when nothing changed.
+9. Remove `agent:auto` only if the adopted handoff consumer is confirmed to start the fresh role run immediately.
+10. Add a Linear comment:
 
 DISPATCHER CLAIM RUNNING
 claim_id: CLAIM_ID
@@ -328,10 +331,12 @@ claim_expires_at: TIMESTAMP
 role: ROLE
 issue: ISSUE_ID — TITLE
 claim_rule: RULE_USED
+claimed_from_state: STATE_BEFORE_CLAIM_OR_NONE
+claimed_from_labels: LABELS_REMOVED_OR_NONE
 expected_output: ROLE_HANDOFF
 
-10. Re-fetch the issue and comments.
-11. Continue only if this run uniquely owns the live claim:
+11. Re-fetch the issue and comments.
+12. Continue only if this run uniquely owns the live claim:
     - the `claim_id` comment is present;
     - no earlier live claim exists for the same issue;
     - the issue state still matches the expected post-claim state.
@@ -376,11 +381,16 @@ Minimum handoff consumer contract:
 
 - Consume exactly one `ROLE_HANDOFF` result and no candidate-mode result.
 - Re-fetch the Linear issue and comments before accepting the handoff.
-- Verify the dispatcher claim is present, unexpired, and unique for the selected issue.
+- Verify the dispatcher claim is present, unexpired, and unique for the selected issue, with no terminal marker for the same `claim_id`.
+- Reject the handoff if comments already contain `DISPATCHER HANDOFF ACCEPTED` or `AGENT RUNNING` for the same `claim_id`; the first accepted/running consumer owns the role run.
+- Verify current executability still satisfies the `claim_rule`, not just the static handoff fields: issue state is still eligible, blockers are still resolved, review-ready or fix-ready evidence still exists when required, and any linked PR is still open and ready for that rule.
 - Verify the role, issue, claim rule, linked PR, and state caveat still match the handoff.
 - Post the combined `DISPATCHER HANDOFF ACCEPTED` plus `AGENT RUNNING` comment before heavy role work.
+- Re-fetch the Linear issue and comments after posting, then proceed only if this consumer's combined accepted/running marker is the first one for the `claim_id` and current executability still satisfies the `claim_rule`.
 - Start one fresh role run for that issue and role, using the supplied `claim_id`.
 - End with exactly one terminal marker for the same `claim_id`.
+
+If the post-acceptance re-fetch shows another consumer accepted first, this consumer must stop before heavy work and must not post a terminal marker for the shared `claim_id`; the winning role run is responsible for the terminal marker.
 
 The handoff consumer may move the selected issue only as the normal role workflow requires. It must not select a different issue, change the role, change the `claim_id`, start a parallel lane, activate claim mode globally, remove candidate mode, or treat a dispatcher claim as completed without a terminal marker.
 
@@ -403,8 +413,8 @@ issue:
 
 Failure handling:
 
-- Missed pickup: if the consumer does not post the combined acceptance/running marker before `claim_expires_at`, a later dispatcher or observer may post `AGENT CLAIM EXPIRED` for the dispatcher claim and candidate mode remains the fallback.
-- Expired claim: the consumer must not accept an expired dispatcher claim. Post `AGENT CLAIM EXPIRED` if it is safe to do so, then stop.
+- Missed pickup: if the consumer does not post the combined acceptance/running marker before `claim_expires_at`, a later dispatcher or observer may post `AGENT CLAIM EXPIRED` only after restoring any claim-mode queue mutation recorded in `claimed_from_state` or `claimed_from_labels`, or after posting an explicit repair/blocker note that says why safe restoration is not possible. Candidate mode remains the fallback after the issue is restored or repair-routed.
+- Expired claim: the consumer must not accept an expired dispatcher claim. Before posting `AGENT CLAIM EXPIRED`, restore any claim-mode queue mutation recorded in `claimed_from_state` or `claimed_from_labels` when safe; if restoration is unsafe because humans or another agent changed the issue, post `AGENT BLOCKED` or a repair note that makes the stranded state explicit, then stop.
 - Duplicate claim: the earliest unexpired live claim wins. A later claimant must post `AGENT CLAIM RELEASED` for its own `claim_id` if possible, return `CLAIM_BLOCKED`, and stop.
 - Interrupted role run: a resumed run may continue only when the same `claim_id` is still unexpired and no terminal marker exists. If the claim expired during interruption, post `AGENT CLAIM EXPIRED` or `AGENT BLOCKED` with the interruption reason and stop.
 - Role-run refusal: if the fresh role run refuses the task because of title, role, blocker, architecture, or evidence mismatch, post `AGENT CLAIM RELEASED` before heavy work or `AGENT BLOCKED` after acceptance, then stop.

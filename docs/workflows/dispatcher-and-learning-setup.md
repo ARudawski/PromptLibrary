@@ -170,6 +170,8 @@ claim_expires_at:
 role:
 issue:
 claim_rule:
+claimed_from_state:
+claimed_from_labels:
 ```
 
 ```text
@@ -234,6 +236,8 @@ Allowed consumer actions:
 - Read exactly one dispatcher `ROLE_HANDOFF` result.
 - Re-fetch the selected Linear issue and comments.
 - Verify the dispatcher claim is live: the `DISPATCHER CLAIM RUNNING` marker exists, `claim_expires_at` is in the future, no earlier unexpired live claim owns the issue, and no terminal marker exists for the same `claim_id`.
+- Reject the handoff if comments already contain `DISPATCHER HANDOFF ACCEPTED` or `AGENT RUNNING` for the same `claim_id`; the first accepted/running consumer owns the role run.
+- Verify current executability still satisfies the `claim_rule`, not just the static handoff fields: issue state is still eligible, blockers are still resolved, review-ready or fix-ready evidence still exists when required, and any linked PR is still open and ready for that rule.
 - Verify the handoff still matches the issue, role, claim rule, linked PR, and state caveat.
 - Post one combined acceptance/running comment before heavy work:
 
@@ -253,6 +257,8 @@ issue:
 - Start one fresh role-agent run for that issue and role, using the supplied `claim_id`.
 - End the run with exactly one terminal marker for the same `claim_id`: `AGENT COMPLETE`, `AGENT BLOCKED`, `AGENT CLAIM RELEASED`, or `AGENT CLAIM EXPIRED`.
 
+After posting the combined acceptance/running comment, the consumer must re-fetch the Linear issue and comments. It may proceed only if its own combined marker is the first one for that `claim_id` and current executability still satisfies the `claim_rule`. If another consumer accepted first, stop before heavy work and do not post a terminal marker for the shared `claim_id`; the winning role run owns completion.
+
 Forbidden consumer actions:
 
 - Do not consume `ROLE_HANDOFF_CANDIDATE` as a claim-mode run.
@@ -268,8 +274,8 @@ Failure handling:
 
 | Case | Required behavior |
 |---|---|
-| Missed handoff pickup | If `claim_expires_at` passes before the combined acceptance/running comment exists, do not start heavy work. A later dispatcher or observer may post `AGENT CLAIM EXPIRED` with the missed-pickup reason. |
-| Expired claim | The consumer must refuse the handoff, post `AGENT CLAIM EXPIRED` if safe, and stop. |
+| Missed handoff pickup | If `claim_expires_at` passes before the combined acceptance/running comment exists, do not start heavy work. Before posting `AGENT CLAIM EXPIRED`, restore any state or label mutation recorded in `claimed_from_state` or `claimed_from_labels`; if safe restoration is not possible, post an explicit repair/blocker note so the issue is not stranded as ordinary `In Progress`. |
+| Expired claim | The consumer must refuse the handoff. Before posting `AGENT CLAIM EXPIRED`, restore any state or label mutation recorded in `claimed_from_state` or `claimed_from_labels`; if humans or another agent changed the issue and restoration would be unsafe, post `AGENT BLOCKED` or a repair note that makes the stranded state explicit, then stop. |
 | Duplicate claims | The earliest unexpired live claim for the issue wins. Later claimants post `AGENT CLAIM RELEASED` for their own `claim_id` when possible, return `CLAIM_BLOCKED`, and stop. |
 | Interrupted role run | Resume only when the same `claim_id` is still unexpired and no terminal marker exists. If expiry passed, post `AGENT CLAIM EXPIRED` or `AGENT BLOCKED` with the interruption reason and stop. |
 | Role-run refusal | If the fresh role run refuses due to title, role, blocker, architecture, or evidence mismatch, post `AGENT CLAIM RELEASED` before heavy work or `AGENT BLOCKED` after acceptance, then stop. |
@@ -280,11 +286,11 @@ Use this checklist before moving from candidate mode to any claim-mode adoption.
 
 1. Candidate baseline: run the dispatcher in candidate mode and verify it emits exactly one `ROLE_HANDOFF_CANDIDATE`, creates no `claim_id`, and mutates no Linear state.
 2. Manual proof authorization: record explicit coordinator/human approval naming the issue, role, consumer, claim expiry window, and that this is a bounded proof, not recurring adoption.
-3. Dispatcher claim: run claim mode manually and verify it writes exactly one `DISPATCHER CLAIM RUNNING` marker, moves only the selected issue as allowed, and emits `ROLE_HANDOFF`.
-4. Consumer acceptance: verify the consumer re-fetches the issue/comments and posts `DISPATCHER HANDOFF ACCEPTED` plus `AGENT RUNNING` in one Linear comment before heavy work.
+3. Dispatcher claim: run claim mode manually and verify it writes exactly one `DISPATCHER CLAIM RUNNING` marker, records `claimed_from_state` and `claimed_from_labels`, moves only the selected issue as allowed, and emits `ROLE_HANDOFF`.
+4. Consumer acceptance: verify the consumer re-fetches the issue/comments, rejects already accepted or already running handoffs for the same `claim_id`, re-checks current executability against the `claim_rule`, posts `DISPATCHER HANDOFF ACCEPTED` plus `AGENT RUNNING` in one Linear comment, then re-fetches again so only the first consumer proceeds.
 5. Role completion: verify the fresh role run follows the full role spec, posts normal evidence, and ends with exactly one terminal marker for the same `claim_id`.
-6. Failure dry-runs: table-check missed pickup, expired claim, duplicate claim, interrupted role run, and role-run refusal against the required terminal or release marker behavior.
-7. Fallback check: verify candidate mode still works after the proof and that stale or failed claims do not prevent later candidate-mode handoff.
+6. Failure dry-runs: table-check missed pickup, expired claim, duplicate acceptance, duplicate claim, interrupted role run, and role-run refusal against the required terminal, release, or repair behavior.
+7. Fallback check: verify candidate mode still works after the proof and that stale or failed claims restore or repair queue state instead of stranding Todo/Backlog work in `In Progress`.
 8. Adoption decision: claim mode may be partially adopted only after the proof evidence is reviewed and a coordinator/human decision names the allowed roles, lanes, expiry window, and rollback rule.
 
 Recommendation: keep claim mode off for recurring automation until the manual proof above passes. After proof, adopt claim mode only for the narrow role/lane named in the adoption decision; keep candidate mode as the default fallback.
