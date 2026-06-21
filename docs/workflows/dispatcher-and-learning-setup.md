@@ -286,6 +286,34 @@ agent run
   -> learning-log records the decision
 ```
 
+## Automation incident / learning candidate format
+
+Use this only for automation mistakes, near-misses, bad handoffs, stale-state decisions, duplicate claims, wrong-worktree attempts, unsafe selections, or similar evidence that may change workflow behavior. Do not turn every harmless hiccup into a ticket or learning entry.
+
+Immediate incident evidence belongs in a Linear comment on the affected issue or run. Reviewed durable learning belongs in `docs/agents/learning-log.md`. Active role or workflow rules change only after coordinator/human adoption and must live in exactly one canonical file.
+
+```text
+Automation incident / learning candidate
+Kind: incident | near-miss | bad handoff | stale-state | duplicate claim | wrong worktree | unsafe selection
+Observed:
+Impact:
+Immediate action:
+Affected role/spec:
+Proposed change:
+Confidence: low | medium | high
+Routing: Linear evidence now; learning-log only after review; role/spec update only after adoption
+```
+
+Compact examples:
+
+| Example | Immediate evidence | Possible durable target |
+|---|---|---|
+| Stale ledger conflicts with live Linear/GitHub but the selected workflow issue is explicit and safe. | Linear comment with ledger summary, live evidence, and why it is non-blocking or blocking. | `docs/workflows/current-state-ledger.md` for state facts, or dispatcher/coordinator docs for routing policy. |
+| Agent starts in the wrong worktree or wrong clone. | Linear run comment naming the observed path, branch, and stopped/resumed action. | The relevant role spec if this repeatedly causes unsafe work. |
+| Duplicate live claim or unexpired claim blocks selection. | Linear comment naming both claim IDs, expiry times, and chosen terminal/release action. | Dispatcher or handoff-consumer claim lifecycle docs after review. |
+| Queue is ambiguous after applying role, lane, blocker, and ordering rules. | Linear comment listing candidates and the unresolved tie. | Shared queue rules in `docs/agents/README.md` or dispatcher docs. |
+| Backlog item would be picked without matching lane, title marker, blocker, or `agent:auto` guardrails. | Linear comment naming the unsafe candidate and skipped reason. | Linear operating model or shared queue docs after coordinator/human decision. |
+
 ## Learning candidates section
 
 Add this section to role reports when useful:

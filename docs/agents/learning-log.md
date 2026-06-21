@@ -13,6 +13,8 @@ Adoption note: this log becomes part of the active workflow only after a coordin
 
 Add an entry only when a learning candidate is reviewed by a coordinator gate or explicit human workflow update.
 
+Raw automation incidents and near-misses belong first in Linear run comments using the workflow report format. This log records the reviewed decision, not the unreviewed incident transcript.
+
 Decision values:
 
 ```text
