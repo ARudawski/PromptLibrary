@@ -1,5 +1,4 @@
-import { constants } from "node:fs";
-import { access, readdir, readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import type { PromptDefinition } from "../src/domain/index.js";
@@ -16,6 +15,20 @@ const DEFAULT_PROMPTS_DIRECTORY = "prompts";
 export interface ValidatePromptsOptions {
   readonly rootDirectory?: string;
   readonly promptsDirectory?: string;
+  readonly fileSystem?: PromptFileSystem;
+}
+
+export interface PromptFileSystem {
+  readdir(
+    path: string,
+    options: { readonly withFileTypes: true },
+  ): Promise<readonly PromptDirectoryEntry[]>;
+  readFile(path: string, encoding: BufferEncoding): Promise<string>;
+}
+
+export interface PromptDirectoryEntry {
+  readonly name: string;
+  isFile(): boolean;
 }
 
 export interface PromptFileValidationIssue {
@@ -55,6 +68,11 @@ interface LoadedPromptFile {
   readonly rawMarkdown: string;
 }
 
+const nodePromptFileSystem: PromptFileSystem = {
+  readdir,
+  readFile,
+};
+
 export async function validateLocalPrompts(
   options: ValidatePromptsOptions = {},
 ): Promise<ValidatePromptsResult> {
@@ -63,7 +81,11 @@ export async function validateLocalPrompts(
     rootDirectory,
     options.promptsDirectory ?? DEFAULT_PROMPTS_DIRECTORY,
   );
-  const loadedFiles = await loadLocalPromptFiles(promptsDirectory, rootDirectory);
+  const loadedFiles = await loadLocalPromptFiles(
+    promptsDirectory,
+    rootDirectory,
+    options.fileSystem ?? nodePromptFileSystem,
+  );
   const validPrompts: ValidatedPromptFile[] = [];
   const invalidFiles: PromptFileValidationIssue[] = [];
 
@@ -172,12 +194,20 @@ async function runCli(): Promise<number> {
 async function loadLocalPromptFiles(
   promptsDirectory: string,
   rootDirectory: string,
+  fileSystem: PromptFileSystem,
 ): Promise<readonly LoadedPromptFile[]> {
-  if (!(await pathExists(promptsDirectory))) {
-    return [];
+  let directoryEntries: readonly PromptDirectoryEntry[];
+
+  try {
+    directoryEntries = await fileSystem.readdir(promptsDirectory, { withFileTypes: true });
+  } catch (error) {
+    if (isNodeError(error) && error.code === "ENOENT") {
+      return [];
+    }
+
+    throw error;
   }
 
-  const directoryEntries = await readdir(promptsDirectory, { withFileTypes: true });
   const markdownFileNames = directoryEntries
     .filter((entry) => entry.isFile() && entry.name.endsWith(".md"))
     .map((entry) => entry.name)
@@ -189,19 +219,14 @@ async function loadLocalPromptFiles(
 
       return {
         filePath: relative(rootDirectory, filePath),
-        rawMarkdown: await readFile(filePath, "utf8"),
+        rawMarkdown: await fileSystem.readFile(filePath, "utf8"),
       };
     }),
   );
 }
 
-async function pathExists(path: string): Promise<boolean> {
-  try {
-    await access(path, constants.R_OK);
-    return true;
-  } catch {
-    return false;
-  }
+function isNodeError(error: unknown): error is NodeJS.ErrnoException {
+  return error instanceof Error && "code" in error;
 }
 
 function appendPromptList(

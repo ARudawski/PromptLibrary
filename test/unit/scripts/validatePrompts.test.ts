@@ -57,6 +57,43 @@ describe("validate-prompts script", () => {
     expect(formatValidationReport(result)).toContain("no local prompt Markdown files found");
   });
 
+  it("fails closed when the prompts directory cannot be read", async () => {
+    const rootDirectory = await createTemporaryRoot();
+
+    await expect(
+      validateLocalPrompts({
+        rootDirectory,
+        fileSystem: {
+          readdir: async () => {
+            throw fileSystemError("EACCES", "permission denied reading prompts directory");
+          },
+          readFile: async () => "",
+        },
+      }),
+    ).rejects.toThrow("permission denied reading prompts directory");
+  });
+
+  it("fails closed when a prompt file cannot be read", async () => {
+    const rootDirectory = await createTemporaryRoot();
+
+    await expect(
+      validateLocalPrompts({
+        rootDirectory,
+        fileSystem: {
+          readdir: async () => [
+            {
+              name: "blocked.md",
+              isFile: () => true,
+            },
+          ],
+          readFile: async () => {
+            throw fileSystemError("EACCES", "permission denied reading prompt file");
+          },
+        },
+      }),
+    ).rejects.toThrow("permission denied reading prompt file");
+  });
+
   it("fails non-zero-equivalent validation for invalid prompt files", async () => {
     const rootDirectory = await createPromptWorkspace({
       "invalid-active.md": `---
@@ -160,4 +197,8 @@ status: ${input.status}
 
 Use this prompt for local validate-prompts testing.
 `;
+}
+
+function fileSystemError(code: string, message: string): NodeJS.ErrnoException {
+  return Object.assign(new Error(message), { code });
 }
