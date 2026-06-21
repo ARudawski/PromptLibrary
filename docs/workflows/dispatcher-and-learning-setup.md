@@ -6,6 +6,8 @@ Scope: Project Prompt Library Codex/Linear/GitHub workflow
 
 This document designs the lightweight dispatcher setup and the role-learning loop for Project Prompt Library. It keeps runtime state in Linear/GitHub and keeps execution threads disposable.
 
+Adoption note: this setup remains proposed until a coordinator/human adoption gate confirms that the current-state ledger and Linear queue are ready for it.
+
 ## Design principles
 
 - Keep durable guidance in repo docs, not repeated long prompts.
@@ -39,10 +41,14 @@ Linear:
 Dispatcher
   -> cheap preflight: Linear + current-state ledger only
   -> if active In Progress agent work exists: stop
-  -> if review-ready In Review coding work exists: select review
+  -> if review-ready In Review coding work exists: claim review handoff
   -> else if no executable issue exists: stop
   -> if one executable issue exists: claim it
-  -> after claim, load role spec and issue context
+  -> emit ROLE_HANDOFF
+  -> stop
+
+Fresh role run
+  -> read role spec and issue context
   -> execute exactly one role workflow
   -> write evidence back to Linear/GitHub
 ```
@@ -57,9 +63,10 @@ Dispatcher:
 reasoning: low or medium
 GitHub/repo access before claim: current-state ledger only
 Linear access before claim: yes
+role execution in dispatcher run: no
 ```
 
-Role execution after claim:
+Fresh role execution after handoff:
 
 ```text
 coding: medium/high depending on issue complexity
@@ -68,21 +75,25 @@ QA: medium/high when runtime/project-state viability matters
 coordinator: medium unless gate is ambiguous
 ```
 
-## Queue rules
+## Queue and claim rules
 
 The dispatcher stops when an agent-marked issue is `In Progress`.
 
-The dispatcher does not stop merely because a Coding Agent issue is `In Review`; that is the normal review handoff state. It should instead select the review role when the issue belongs to the current allowed lane and has a PR or clear review target.
+The dispatcher does not stop merely because a Coding Agent issue is `In Review`; that is the normal review handoff state. It should instead claim a review handoff when the issue belongs to the current allowed lane and has a PR or clear review target.
 
 When an issue is selected, claim it before expensive context loading:
 
-1. Fetch issue.
-2. Verify role title/label.
-3. Move issue to `In Progress`.
-4. Remove `agent:auto` if present.
-5. Post an `AGENT RUNNING` comment.
+1. Generate a unique `claim_id`.
+2. Fetch issue.
+3. Verify role title/label or review-handoff exception.
+4. Move normal Coding, QA, and Coordinator issues to `In Progress`.
+5. Leave review-ready Coding Agent issues in `In Review`; claim review by marker comment instead.
+6. Remove `agent:auto` if present and safe.
+7. Post an `AGENT RUNNING` comment with the claim id.
+8. Re-fetch issue/comments and continue only if this run uniquely owns the active claim.
+9. Emit a role handoff and stop.
 
-Completion routing:
+Completion routing happens in the fresh role run, not in the dispatcher:
 
 - Coding work ends in `In Review`, not `Done`.
 - Review work either returns the coding issue to `In Progress`, approves/merges and moves it to `Done`, or records `BLOCKED`.
