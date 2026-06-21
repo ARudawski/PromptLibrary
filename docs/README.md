@@ -25,7 +25,7 @@ These files are workflow contracts. They do not approve product scope or later-s
 ## Workflow setup docs
 
 - [`workflows/dispatcher-and-learning-setup.md`](workflows/dispatcher-and-learning-setup.md) — proposed dispatcher and role-learning setup.
-- [`agents/learning-log.md`](agents/learning-log.md) — proposed audit log for accepted/rejected/deferred role-learning decisions.
+- [`agents/learning-log.md`](agents/learning-log.md) — proposed audit log for proposed/accepted/rejected/deferred/superseded role-learning decisions.
 
 ## Slice implementation baselines
 
