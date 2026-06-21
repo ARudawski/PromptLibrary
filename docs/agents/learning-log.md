@@ -67,3 +67,30 @@ Notes:
 - Dispatcher must run cheap preflight before context loading.
 - Role learning is artifact-based: agents propose learning candidates; coordinator/human review decides; accepted rules move into exactly one canonical file.
 - This setup is not active until an explicit adoption gate accepts it.
+
+## 2026-06-21 — Retire QA Coordinator as active role
+
+Source:
+- Human workflow request to evaluate PL-59 and PL-60.
+- PL-59: QA sweep finding about retired review-ticket dependency.
+- PL-60: QA finding about stale current-state ledger/status docs.
+
+Problem:
+The two live QA Coordinator tickets do not require a separate role. They are
+QA-originated process and documentation-state findings that need workflow
+triage, issue annotation, or source-of-truth updates.
+
+Decision:
+accepted
+
+Changed:
+- `docs/agents/README.md`
+- `docs/agents/qa-agent.md`
+- `docs/agents/coordinator-agent.md`
+- `docs/qa/test-strategy.md`
+
+Notes:
+- QA Agent remains responsible for independent verification and sweep evidence.
+- Coordinator Agent owns process correction, queue repair, documentation-state
+  reconciliation, and gate decisions from QA-originated findings.
+- Do not create new QA Coordinator issues.

@@ -2,7 +2,7 @@
 
 Status: active workflow contract  
 Role: QA Agent  
-Last updated: 2026-06-20
+Last updated: 2026-06-21
 
 ## Purpose
 
@@ -51,7 +51,7 @@ Inspect:
 
 - target issue scope, non-goals, acceptance criteria, blockers, and comments;
 - implementation report and review evidence on the coding issue and PR;
-- QA Coordinator/process correction comments where relevant;
+- Coordinator/process-correction comments where relevant;
 - PR metadata, changed files, comments, review threads, CI/check evidence, head/merge SHAs;
 - README, AGENTS, architecture, roadmap, standards, QA strategy, CI evidence docs, and issue-specific docs.
 
@@ -103,7 +103,13 @@ Known current caveats must stay explicit until their slices complete:
 
 Create new Linear tickets only for untracked findings.
 
-Use a Coding Agent ticket for blocking implementation/release findings. Use a QA Coordinator ticket for non-blocking process, coverage, or coordination findings.
+Use a Coding Agent ticket for product, test, or documentation implementation
+fixes. Use a Coordinator Agent ticket for non-blocking process, coverage,
+queue, documentation-state, or coordination findings.
+
+There is no separate active `QA Coordinator` role. If a sweep would previously
+have created a QA Coordinator finding, create or link a Coordinator Agent issue
+instead.
 
 Every finding needs:
 

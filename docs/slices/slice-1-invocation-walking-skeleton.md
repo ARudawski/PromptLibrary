@@ -20,6 +20,11 @@ After ALJ-19, use those two docs as the current GitHub reference for the
 fixture-backed invocation contract and prompt schema draft. This baseline remains
 the implementation history and scope boundary for Slice 1.
 
+Role note: this historical baseline may mention `QA Coordinator`. The active
+workflow has no separate QA Coordinator role. Treat historical QA Coordinator
+references as `QA Agent` for verification work and `Coordinator Agent` for
+process, documentation-state, or gate decisions.
+
 ## Slice 0 Gate Evidence
 
 Slice 1 work is allowed only because Slice 0 was accepted through recorded

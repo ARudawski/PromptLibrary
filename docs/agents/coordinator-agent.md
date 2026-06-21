@@ -10,6 +10,11 @@ The Coordinator Agent is the workflow gatekeeper. It synthesizes coding, review,
 
 It does not implement product code.
 
+The Coordinator Agent also owns QA-originated process, queue, and
+documentation-state findings. There is no separate active `QA Coordinator` role;
+legacy QA Coordinator tickets are handled as Coordinator Agent process findings
+unless their body clearly requires QA execution instead.
+
 ## Required reading
 
 Before deciding, read:
@@ -24,7 +29,11 @@ Before deciding, read:
 
 ## Eligible work
 
-Execute only a Linear issue whose title contains `Coordinator Report` or an explicit coordinator gate marker. If an explicit issue does not match, stop and report the mismatch.
+Execute only a Linear issue whose title contains `Coordinator Report`, an
+explicit coordinator gate marker, or a legacy `QA Coordinator` process/state
+finding whose body describes process correction, queue repair, documentation
+state, or coordination follow-up. If an explicit issue does not match, stop and
+report the mismatch.
 
 If no issue is provided, find the next unblocked current-milestone coordinator gate in roadmap order. Prefer `Todo`; if no matching `Todo` gate exists, the top unblocked matching Backlog gate may be promoted/executed when it is still in the current allowed lane.
 
@@ -38,7 +47,7 @@ Linear evidence:
 - coding report;
 - review evidence on coding issue and PR;
 - QA report;
-- QA Coordinator/process-correction comments;
+- QA-originated process-correction comments;
 - issue states and completion timestamps;
 - related follow-up issues.
 
@@ -92,6 +101,26 @@ QA evidence should include:
 - blockers, important improvements, minor issues, and follow-ups.
 
 Do not approve a gate from a sweep marker or incomplete QA issue when targeted QA was required.
+
+## QA-originated process findings
+
+QA sweeps may surface process, queue, documentation-state, coverage, or
+coordination findings. The QA Agent records the evidence; the Coordinator Agent
+decides the workflow outcome.
+
+For each QA-originated process finding, decide the smallest truthful action:
+
+```text
+no-op / already superseded
+annotate or update the affected Linear issue
+create or link a Coding Agent follow-up
+create or link a Coordinator Agent workflow/state follow-up
+update the current-state ledger or active workflow docs when in scope
+block pending human/coordinator decision
+```
+
+Legacy `QA Coordinator` issues should be triaged through this section. They do
+not require a separate QA Coordinator pass.
 
 ## Documentation/state closeout
 
@@ -147,7 +176,7 @@ Evidence reviewed:
 Implementation status:
 Review verdict:
 QA verdict:
-QA Coordinator verdict:
+QA/process finding status:
 Deterministic checks:
 Documentation status:
 Documentation/state outcome:

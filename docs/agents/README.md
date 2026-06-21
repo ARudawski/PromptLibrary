@@ -21,6 +21,23 @@ Supporting docs:
 - [`learning-log.md`](./learning-log.md) — proposed compact audit log for role-learning decisions.
 - [`../workflows/dispatcher-and-learning-setup.md`](../workflows/dispatcher-and-learning-setup.md) — proposed operating setup for dispatcher and role-learning workflow.
 
+## QA Coordinator retirement
+
+There is no separate active `QA Coordinator` role in the automated workflow.
+
+Legacy `QA Coordinator` tickets or roadmap references map to one of the active
+roles:
+
+- `QA Agent` when the work is independent verification, audit execution, or QA
+  sweep evidence gathering.
+- `Coordinator Agent` when the work is process correction, queue repair,
+  documentation/state reconciliation, gate synthesis, or deciding whether a QA
+  finding is blocking.
+
+Do not create new `QA Coordinator` issues. QA-originated process findings should
+be filed as Coordinator Agent work unless they require implementation fixes,
+which belong to a Coding Agent issue.
+
 ## Dispatcher exception
 
 The Dispatcher is not a normal role agent and does not follow the full common operating contract during preflight.
@@ -65,7 +82,7 @@ Role markers:
 Coding Agent       -> title contains Coding Agent
 Review Agent       -> issue/PR is in review, or explicit review target is provided
 QA Agent           -> title contains QA Agent
-Coordinator Agent  -> title contains Coordinator Report or explicit coordinator gate marker
+Coordinator Agent  -> title contains Coordinator Report, explicit coordinator gate marker, or legacy QA Coordinator process/state finding
 ```
 
 Expected labels:
