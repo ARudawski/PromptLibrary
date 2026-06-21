@@ -10,10 +10,16 @@ This directory contains the durable operating specs for the agents used in Proje
 
 | Agent | Spec | Main job |
 |---|---|---|
+| Dispatcher | [`dispatcher.md`](./dispatcher.md) | Select and claim at most one executable Linear issue before loading expensive context. |
 | Coding Agent | [`coding-agent.md`](./coding-agent.md) | Implement one bounded Linear issue or docs task and produce a PR. |
 | Review Agent | [`review-agent.md`](./review-agent.md) | Review the coding issue and PR, request changes or approve/merge when safe. |
 | QA Agent | [`qa-agent.md`](./qa-agent.md) | Independently verify accepted implementation evidence, runtime viability, docs, and tests. |
 | Coordinator Agent | [`coordinator-agent.md`](./coordinator-agent.md) | Synthesize coding/review/QA evidence and decide proceed/fix/re-QA/stop. |
+
+Supporting docs:
+
+- [`learning-log.md`](./learning-log.md) — compact audit log for accepted/rejected/deferred role-learning decisions.
+- [`../workflows/dispatcher-and-learning-setup.md`](../workflows/dispatcher-and-learning-setup.md) — operating setup for dispatcher and role-learning workflow.
 
 ## Common operating contract
 
