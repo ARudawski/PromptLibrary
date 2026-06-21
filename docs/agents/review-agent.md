@@ -46,6 +46,8 @@ Before a verdict, verify or explicitly mark unavailable:
 
 - issue title/role and acceptance criteria;
 - PR link, branch, base, head SHA, draft state, mergeability;
+- PR title/body issue references are intentional, with no non-goal issue ID
+  next to closing or implementation magic words;
 - changed files and relevant patches;
 - PR comments and review threads;
 - deterministic local checks and/or GitHub Actions run/job evidence;

@@ -104,6 +104,16 @@ Report exact pass/fail/skipped/placeholder status. Keep known caveats visible, e
 
 ## GitHub behavior
 
+PR body issue references must be intentional. Use closing or implementation
+verbs only for the issue the PR is meant to advance. For non-goal or context
+issues, avoid negated closing phrases such as `does not close PL-60`, `does not
+implement PL-67`, or `not fixing PL-68`; integrations may still treat the issue
+ID as linked to the PR lifecycle. Prefer neutral wording such as:
+
+```text
+Context only: PL-60, PL-67, PL-68. No lifecycle action requested for these issues.
+```
+
 For completed work:
 
 1. commit to a `codex/<issue-id-or-short-task>` branch;

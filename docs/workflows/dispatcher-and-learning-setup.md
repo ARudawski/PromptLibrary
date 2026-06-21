@@ -313,6 +313,26 @@ Compact examples:
 | Duplicate live claim or unexpired claim blocks selection. | Linear comment naming both claim IDs, expiry times, and chosen terminal/release action. | Dispatcher or handoff-consumer claim lifecycle docs after review. |
 | Queue is ambiguous after applying role, lane, blocker, and ordering rules. | Linear comment listing candidates and the unresolved tie. | Shared queue rules in `docs/agents/README.md` or dispatcher docs. |
 | Backlog item would be picked without matching lane, title marker, blocker, or `agent:auto` guardrails. | Linear comment naming the unsafe candidate and skipped reason. | Linear operating model or shared queue docs after coordinator/human decision. |
+| PR body links non-goal issues through negated closing wording, as in PL-71. | Repair the affected Linear states, then comment with the PR, issue IDs, timestamps, and restored state. | Coding and review docs for PR body issue-reference rules. |
+
+## PR issue-reference safety
+
+Reserve closing or implementation words for the issue a PR is meant to advance.
+Do not put non-goal issue IDs next to words such as `close`, `fix`, `resolve`,
+`complete`, or `implement`, even in negated phrases. Integrations may not
+understand the negation.
+
+Unsafe:
+
+```text
+This does not close PL-60 or implement PL-67.
+```
+
+Safer:
+
+```text
+Context only: PL-60, PL-67. No lifecycle action requested for these issues.
+```
 
 ## Learning candidates section
 
