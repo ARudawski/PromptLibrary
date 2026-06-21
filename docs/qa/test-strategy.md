@@ -1,8 +1,8 @@
 # Test Strategy — Project Prompt Library
 
 Status: QA strategy v2.0  
-Last updated: 2026-06-20  
-Owner: QA Coordinator  
+Last updated: 2026-06-21
+Owner: QA Agent for verification; Coordinator Agent for QA-originated process findings
 Current phase: M2 — public source, cache, validation
 
 ## 1. QA goal
@@ -165,9 +165,17 @@ read QA issue -> gather Linear/GitHub/repo evidence -> produce brief plan -> run
 
 QA sweeps are useful for process drift, stale docs, missing evidence, or wrong-worktree problems, but they must not create duplicate issues or invent later-slice implementation work.
 
+There is no separate active QA Coordinator role. QA sweeps should create or link
+Coordinator Agent issues for process, queue, documentation-state, coverage, or
+coordination findings, and Coding Agent issues for implementation fixes.
+
 ## 8. Coordinator gates
 
 Coordinator gates decide proceed/fix/re-QA/stop using coding, review, QA, PR, CI, and documentation evidence. They should not require a separate Code Reviewer issue unless that issue is explicitly active and blocking.
+
+Coordinator gates also own QA-originated process findings. A legacy QA
+Coordinator issue is treated as a Coordinator Agent process finding unless it
+explicitly asks for independent QA execution.
 
 Default review evidence pattern:
 

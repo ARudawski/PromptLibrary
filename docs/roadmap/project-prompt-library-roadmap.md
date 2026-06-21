@@ -2,10 +2,16 @@
 
 Status: Initial implementation roadmap 1.0  
 Date: 2026-06-18  
-Primary audience: Codex Prompt Coordinator, QA Coordinator, coding agents, future architecture review  
+Primary audience: Codex Prompt Coordinator, QA Agent, Coordinator Agent, coding agents, future architecture review
 Roadmap basis: approved architecture plan v1.0 plus greenfield planning clarifications
 
 ---
+
+Role note: this roadmap contains historical `QA Coordinator` language from the
+initial plan. In the active automated workflow, there is no separate QA
+Coordinator role. Read those references as `QA Agent` when they describe
+verification work, and as `Coordinator Agent` when they describe process,
+queue, documentation-state, or gate decisions.
 
 ## 1. Executive summary
 
