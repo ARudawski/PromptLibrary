@@ -3,13 +3,23 @@
 Status: proposed workflow audit log  
 Last updated: 2026-06-21
 
-This log records accepted, rejected, or deferred agent-learning decisions. It is an audit trail, not a runtime prompt. Agents should read the active role specs and current-state ledger first.
+This log records proposed, accepted, rejected, deferred, or superseded agent-learning decisions. It is an audit trail, not a runtime prompt. Agents should read the active role specs and current-state ledger first.
 
 Adoption note: this log becomes part of the active workflow only after a coordinator/human adoption gate accepts the dispatcher and role-learning setup.
 
 ## Usage
 
 Add an entry only when a learning candidate is reviewed by a coordinator gate or explicit human workflow update.
+
+Decision values:
+
+```text
+proposed   documented candidate setup, not active yet
+accepted   approved and active
+rejected   intentionally not adopted
+deferred   valid or plausible, but postponed
+superseded replaced by a newer decision
+```
 
 Template:
 
@@ -24,7 +34,7 @@ Problem:
 ...
 
 Decision:
-accepted / rejected / deferred
+proposed / accepted / rejected / deferred / superseded
 
 Changed:
 - docs/agents/...
