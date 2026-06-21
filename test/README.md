@@ -7,9 +7,10 @@ The full QA strategy lives in [`docs/qa/test-strategy.md`](../docs/qa/test-strat
 ## Current phase
 
 The repository has passed Slice 1 fixture-backed invocation, Slice 2.1
-source-boundary work, Slice 2.2 public GitHub source work, and Slice 2.3
-runtime cache TTL work. It is now in Slice 2.4: stale-while-revalidate and
-last-known-good cache behavior.
+source-boundary work, Slice 2.2 public GitHub source work, Slice 2.3 runtime
+cache TTL work, Slice 2.4 stale/LKG cache behavior, Slice 2.5 partial-valid
+cache and cold failure behavior, and Slice 2.6 local prompt validation.
+Slice 2.7 adds source/cache contract and golden coverage.
 
 Slice 0 was validated manually through Linear gate evidence. The local
 [`docs/slice-0-proof.md`](../docs/slice-0-proof.md) remains the proof checklist
@@ -21,8 +22,9 @@ and template because the important Slice 0 behavior was ChatGPT platform behavio
 - can this be reproduced in three cooperative fresh chats.
 
 Automated core tests started in Slice 1 and now include the Slice 2.1 source
-boundary, fake source helper, Slice 2.2 public GitHub source adapter tests, and
-Slice 2.3/2.4 prompt cache TTL and stale/LKG tests. They must remain
+boundary, fake source helper, Slice 2.2 public GitHub source adapter tests,
+Slice 2.3/2.4/2.5 prompt cache tests, Slice 2.6 validate-prompts tests, and
+Slice 2.7 source/cache contract and golden tests. They must remain
 deterministic.
 
 ## Required deterministic test categories
@@ -59,10 +61,8 @@ Unit tests cover pure deterministic core behavior:
 - unknown command failure;
 - non-executing suggestions;
 - cache TTL behavior;
-- stale-while-revalidate / last-known-good cache behavior.
-
-Later cache unit tests will cover partial-valid and cold-failure policy after
-those slices are approved.
+- stale-while-revalidate / last-known-good cache behavior;
+- partial-valid and cold-failure policy.
 
 Unit tests must not hit GitHub, ChatGPT, a tunnel, or a hosted MCP endpoint.
 
@@ -99,6 +99,8 @@ Required golden scenarios:
 - cold cache failure;
 - partial valid cache behavior;
 - failed refresh preserving last-known-good.
+
+Slice 2.7 adds real source/cache golden coverage under `test/golden/`.
 
 Golden tests must assert that normal invocation payload contains only:
 
