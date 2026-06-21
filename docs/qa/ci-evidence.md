@@ -23,7 +23,7 @@ GitHub combined-status or check APIs are useful but are not the only acceptable 
 Coding Agent reports must record:
 
 - exact local commands run;
-- pass/fail/skipped/placeholder status;
+- pass/fail/skipped status;
 - checkout/worktree or branch used;
 - PR URL when created;
 - whether GitHub Actions was pending, unavailable, or not checked.
@@ -68,6 +68,6 @@ Coordinator reports must name the evidence source used for the gate decision. If
 
 ## Known current caveats
 
-- `test:golden` may pass with no golden files until golden coverage exists.
-- `validate-prompts` may pass as a placeholder until Slice 2.6.
+- `test:golden` has real Slice 2.7 source/cache coverage; future exact-payload behavior still needs slice-specific golden coverage where applicable.
+- `validate-prompts` is a real local validator but may pass with zero prompt files until real prompt slices add approved prompt definitions.
 - npm audit findings are not automatically blockers but must be reported when observed.

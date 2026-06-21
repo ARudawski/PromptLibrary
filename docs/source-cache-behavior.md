@@ -73,4 +73,4 @@ Not implemented here:
 - private prompt suites, auth, OAuth, user accounts, or database storage
 - prompt editing, draft management, semantic routing, prompt composition, or workflow/session state
 
-The repository current-state ledger is intentionally not updated by this Slice 2.7 coding work; the stale ledger/status-doc cleanup remains tracked separately by PL-60.
+Use [`workflows/current-state-ledger.md`](./workflows/current-state-ledger.md) for the current operating state, next lane, and workflow caveats.

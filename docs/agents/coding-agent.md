@@ -2,7 +2,7 @@
 
 Status: active workflow contract  
 Role: local Codex / Coding Agent  
-Last updated: 2026-06-20
+Last updated: 2026-06-21
 
 ## Purpose
 
@@ -100,7 +100,10 @@ npm run test:contract
 npm run test:golden
 ```
 
-Report exact pass/fail/skipped/placeholder status. Keep known caveats visible, especially empty golden tests and placeholder prompt validation before their slice is completed.
+Report exact pass/fail/skipped status for every check. Keep current caveats visible:
+
+- `test:golden` includes real Slice 2.7 source/cache coverage; later slices must add meaningful golden coverage when applicable.
+- `validate-prompts` is a real local validator; it may pass with zero local prompt files until approved real prompt definitions are added.
 
 ## GitHub behavior
 

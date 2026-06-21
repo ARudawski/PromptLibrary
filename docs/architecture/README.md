@@ -16,7 +16,7 @@ The V1 product is retrieval-focused:
 - no database in V1;
 - no private prompt suites in V1;
 - thin MCP adapter over framework-independent core;
-- runtime cache with 5-minute TTL and stale-while-revalidate / last-known-good behavior after Slice 2.4.
+- runtime cache with 5-minute TTL, stale-while-revalidate / last-known-good behavior, partial-valid/cold-failure behavior, local validation tooling, and source/cache contract/golden coverage through M2.
 
 ## Hard boundary
 
@@ -26,7 +26,7 @@ The connector retrieves prompt definitions. The prompt text defines behavior. Th
 
 Before implementing the real architecture, Slice 0 must validate that ChatGPT can route `@pl proof` into a local MCP tool and apply the returned hardcoded prompt.
 
-Slice 0 was accepted with caveats through recorded Linear gate evidence, Slice 1 fixture-backed invocation has been approved as the baseline, Slice 2.1 approved the `PromptSource` boundary and fake source seam, Slice 2.2 approved the public GitHub source adapter behind `PromptSource`, and Slice 2.3 approved runtime cache TTL basics. The current implementation is now bounded to Slice 2.4: stale-while-revalidate and last-known-good cache behavior. Partial-valid/cold-failure policy, inspect/list tools, real prompt files, and hosted deployment remain later-slice work until explicitly approved.
+Slice 0 was accepted with caveats through recorded Linear gate evidence, Slice 1 fixture-backed invocation has been approved as the baseline, and M2 has been approved through Slice 2.7: `PromptSource`, public GitHub source adapter infrastructure, runtime cache TTL, stale/LKG cache behavior, partial-valid/cold-failure behavior, local `validate-prompts`, and source/cache contract/golden coverage. Inspect/list implementation, real prompt files, hosted deployment, private suites, auth, and DB behavior remain later-slice work until explicitly approved.
 
 ## Future full document
 

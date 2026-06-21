@@ -41,9 +41,9 @@ For product-code work, also read the relevant full architecture, roadmap, standa
 
 ## Current phase
 
-Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, the project is completing Slice 2.4: stale-while-revalidate and last-known-good cache behavior.
+Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, M2 source/cache/validation is complete through Slice 2.7 and no product slice is active. M3 / Slice 3.1 inspect/list work may start only after an explicit issue is created, promoted, or targeted.
 
-Do not proceed to partial-valid/cold-failure policy, inspect/list tools, real prompts, hosted deployment, private-suite behavior, auth, or database work without an explicit coordinator or architecture decision.
+Do not proceed to inspect/list implementation, real prompts, hosted deployment, private-suite behavior, auth, or database work without an explicit coordinator or architecture decision.
 
 ## Non-negotiable product boundary
 
@@ -93,25 +93,27 @@ admin/debug/cache tools
 
 ## Current source/cache boundary
 
-The public GitHub source adapter and cache are infrastructure until later slices wire broader runtime behavior.
+The public GitHub source adapter and cache are approved M2 infrastructure. Later slices still decide broader runtime and user-facing behavior.
 
 Current allowed behavior is limited by the active Linear issue and current-state ledger.
 
-For Slice 2.4 specifically, allowed behavior is:
+Approved M2 source/cache/validation behavior includes:
 
 - stale-while-revalidate behavior or the approved synchronous equivalent;
 - last-known-good cache preservation;
+- partial-valid cache behavior when at least one safe active command remains;
+- cold no-cache failure when no usable active cache can be built;
 - replacement of cache state only after a successful valid refresh;
-- fake-source/fake-clock tests for refresh success, refresh failure, and unsafe refresh preservation;
-- concise docs for implemented stale/LKG behavior.
+- local `validate-prompts` validation of `prompts/*.md`;
+- source/cache contract and golden coverage;
+- fake-source/fake-clock tests for source/cache behavior;
+- concise docs for implemented source/cache behavior.
 
-Still forbidden in Slice 2.4:
+Still forbidden in the current post-M2 workflow-doc phase:
 
-- partial-valid cache acceptance policy beyond preserving prior last-known-good state;
-- cold-failure policy changes beyond existing no-cache failure behavior;
 - ChatGPT-facing cache refresh, diagnostics, or admin tools;
 - real prompt files under `prompts/`;
-- `inspect_prompt_library_command` and `list_prompt_library_commands` implementation;
+- `inspect_prompt_library_command` and `list_prompt_library_commands` implementation unless an explicit M3 / Slice 3.1 issue is opened;
 - private GitHub source, token/OAuth/auth, DB, or private-suite behavior;
 - hosted deployment.
 
@@ -189,8 +191,8 @@ Core tests must not hit GitHub, ChatGPT, a tunnel, or a hosted MCP endpoint unle
 
 Known caveats must remain visible until resolved:
 
-- `test:golden` may pass with no golden files;
-- `validate-prompts` may be a placeholder until Slice 2.6;
+- `test:golden` now includes Slice 2.7 source/cache golden coverage, but later slices still need their own meaningful golden coverage when applicable;
+- `validate-prompts` is a real local validator, but it may pass with zero local prompt files until real prompt slices add approved prompt definitions;
 - npm audit findings must be reported when observed.
 
 ## Agent report checklist
