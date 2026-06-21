@@ -372,6 +372,18 @@ If the fresh role run starts from `ROLE_HANDOFF_CANDIDATE`, do not invent a `cla
 
 If the fresh role run starts from adopted claim-mode `ROLE_HANDOFF`, it must use the supplied `claim_id`.
 
+Minimum handoff consumer contract:
+
+- Consume exactly one `ROLE_HANDOFF` result and no candidate-mode result.
+- Re-fetch the Linear issue and comments before accepting the handoff.
+- Verify the dispatcher claim is present, unexpired, and unique for the selected issue.
+- Verify the role, issue, claim rule, linked PR, and state caveat still match the handoff.
+- Post the combined `DISPATCHER HANDOFF ACCEPTED` plus `AGENT RUNNING` comment before heavy role work.
+- Start one fresh role run for that issue and role, using the supplied `claim_id`.
+- End with exactly one terminal marker for the same `claim_id`.
+
+The handoff consumer may move the selected issue only as the normal role workflow requires. It must not select a different issue, change the role, change the `claim_id`, start a parallel lane, activate claim mode globally, remove candidate mode, or treat a dispatcher claim as completed without a terminal marker.
+
 The claim-mode handoff consumer must post this combined acceptance/running marker before doing heavy work:
 
 ```text
@@ -388,6 +400,14 @@ issue:
 ```
 
 `AGENT RUNNING` is mandatory for claim-mode role runs. Do not consume a dispatcher claim without establishing the role-run live claim in the same comment.
+
+Failure handling:
+
+- Missed pickup: if the consumer does not post the combined acceptance/running marker before `claim_expires_at`, a later dispatcher or observer may post `AGENT CLAIM EXPIRED` for the dispatcher claim and candidate mode remains the fallback.
+- Expired claim: the consumer must not accept an expired dispatcher claim. Post `AGENT CLAIM EXPIRED` if it is safe to do so, then stop.
+- Duplicate claim: the earliest unexpired live claim wins. A later claimant must post `AGENT CLAIM RELEASED` for its own `claim_id` if possible, return `CLAIM_BLOCKED`, and stop.
+- Interrupted role run: a resumed run may continue only when the same `claim_id` is still unexpired and no terminal marker exists. If the claim expired during interruption, post `AGENT CLAIM EXPIRED` or `AGENT BLOCKED` with the interruption reason and stop.
+- Role-run refusal: if the fresh role run refuses the task because of title, role, blocker, architecture, or evidence mismatch, post `AGENT CLAIM RELEASED` before heavy work or `AGENT BLOCKED` after acceptance, then stop.
 
 The claim-mode fresh role run must end with one terminal marker for the same `claim_id`:
 
