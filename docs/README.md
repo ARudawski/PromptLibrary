@@ -18,8 +18,14 @@ This directory contains architecture, roadmap, standards, QA, workflow, and agen
 - [`agents/review-agent.md`](agents/review-agent.md)
 - [`agents/qa-agent.md`](agents/qa-agent.md)
 - [`agents/coordinator-agent.md`](agents/coordinator-agent.md)
+- [`agents/dispatcher.md`](agents/dispatcher.md) — proposed dispatcher; not active until explicitly adopted.
 
 These files are workflow contracts. They do not approve product scope or later-slice behavior.
+
+## Workflow setup docs
+
+- [`workflows/dispatcher-and-learning-setup.md`](workflows/dispatcher-and-learning-setup.md) — proposed dispatcher and role-learning setup.
+- [`agents/learning-log.md`](agents/learning-log.md) — proposed audit log for accepted/rejected/deferred role-learning decisions.
 
 ## Slice implementation baselines
 
