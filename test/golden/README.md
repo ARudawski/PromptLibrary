@@ -14,14 +14,13 @@ Current coverage:
 - cold cache failure;
 - invalid/conflicting prompt exclusion;
 - invocation payload hygiene for cache-derived indexes.
+- read-only API tool payloads in `read-only-api-tools.test.ts` and `read-only-api-tools.golden.json`;
+- raw tool result top-level key guarding before golden projection;
+- invoke active success plus unknown, draft/not-invokable, and ambiguous failures;
+- inspect active success plus unknown, draft/not-invokable, and ambiguous failures;
+- list active success and invalid-index failure;
+- draft exclusion and prompt-body exclusion from list output.
 
 Planned later coverage:
 
-- valid active invocation;
-- alias invocation;
-- unknown command with non-executing suggestion;
-- draft not invokable;
-- invalid prompt excluded;
-- alias conflict;
-- inspection result;
-- list result;
+- real MVP prompt payloads after approved prompt files exist.
