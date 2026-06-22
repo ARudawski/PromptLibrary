@@ -21,11 +21,11 @@ Slice 6: Hosted deployment, only after local MVP proves useful
 
 If Slice 0 fails, do not proceed to parser/cache/GitHub implementation.
 
-Slice 0 was accepted with caveats through recorded Linear gate evidence, Slice 1 fixture-backed invocation has been approved as the implementation baseline, M2 has been approved through Slice 2.7, M3 inspect work has been approved through Slice 3.2, M3 list work has been approved through Slice 3.4, and Slice 3.5 inspect/list golden tests and tool reference work has been approved through PL-78 / PR #45. PL-79 QA and PL-80 Coordinator completion/readiness gates remain explicit before any later product lane.
+Slice 0 was accepted with caveats through recorded Linear gate evidence, Slice 1 fixture-backed invocation has been approved as the implementation baseline, M2 has been approved through Slice 2.7, M3 inspect work has been approved through Slice 3.2, M3 list work has been approved through Slice 3.4, Slice 3.5 inspect/list golden tests and tool reference work has been approved through PL-78 / PR #45, and PL-80 accepted M3 completion/readiness after PL-79 QA. The next allowed product lane is Slice 4.1 prompt authoring baseline only.
 
 ## Current focus
 
-This repository currently supports Slice 1 fixture-backed invocation, M2 source/cache/validation behavior, M3 inspect behavior through the core use case/projection and MCP adapter, M3 list behavior through the core use case/projection and MCP adapter, and Slice 3.5 read-only API golden/tool-reference coverage. Real prompt files, hosted deployment, private suites, auth, and DB behavior are still later-slice work.
+This repository currently supports Slice 1 fixture-backed invocation, M2 source/cache/validation behavior, M3 inspect behavior through the core use case/projection and MCP adapter, M3 list behavior through the core use case/projection and MCP adapter, and Slice 3.5 read-only API golden/tool-reference coverage. Slice 4.1 may prepare prompt authoring conventions and metadata only; hosted deployment, private suites, auth/OAuth, DB behavior, and broader runtime work are still later-slice work.
 
 ## Future full document
 

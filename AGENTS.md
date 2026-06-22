@@ -41,9 +41,9 @@ For product-code work, also read the relevant full architecture, roadmap, standa
 
 ## Current phase
 
-Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, M2 source/cache/validation is complete through Slice 2.7 and M3 read-only API implementation is complete through Slice 3.5. No product slice is active. PL-79 QA and PL-80 Coordinator completion/readiness gates remain explicit and must not be bypassed.
+Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, M2 source/cache/validation is complete through Slice 2.7, M3 read-only API implementation is complete through Slice 3.5, PL-79 QA passed, and PL-80 accepted M3 completion/readiness. No product implementation is active. The next allowed product lane is Slice 4.1 prompt authoring baseline only.
 
-Do not proceed to real prompts, hosted deployment, private-suite behavior, auth, database work, Slice 4, or broader runtime work without the approved QA/coordinator gate path and an explicit coordinator or architecture decision.
+Do not proceed to real prompt files outside the approved Slice 4.1 authoring-baseline path, hosted deployment, private-suite behavior, auth/OAuth, database work, broader Slice 4 work, or broader runtime work without an explicit issue and coordinator or architecture decision.
 
 ## Non-negotiable product boundary
 
@@ -109,10 +109,10 @@ Approved M2 source/cache/validation behavior includes:
 - fake-source/fake-clock tests for source/cache behavior;
 - concise docs for implemented source/cache behavior.
 
-Still forbidden in the current post-Slice-3.5 gate-selection phase:
+Still forbidden in the current Slice 4.1 authoring-baseline readiness phase:
 
 - ChatGPT-facing cache refresh, diagnostics, or admin tools;
-- real prompt files under `prompts/`;
+- real prompt files under `prompts/` outside the approved Slice 4.1 authoring-baseline path;
 - new inspect/list scope outside the completed PL-74 through PL-78 boundaries;
 - private GitHub source, token/OAuth/auth, DB, or private-suite behavior;
 - hosted deployment.

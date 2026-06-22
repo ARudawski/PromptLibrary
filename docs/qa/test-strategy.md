@@ -1,9 +1,9 @@
 # Test Strategy — Project Prompt Library
 
 Status: QA strategy v2.0  
-Last updated: 2026-06-21
+Last updated: 2026-06-22
 Owner: QA Agent for verification; Coordinator Agent for QA-originated process findings
-Current phase: M3 - read-only API, implementation completed through Slice 3.5 inspect/list golden tests and tool reference; QA/coordinator completion gates pending
+Current phase: M3 read-only API complete via PL-80 after PL-79 QA; next allowed lane is Slice 4.1 prompt authoring baseline only
 
 ## 1. QA goal
 
@@ -226,5 +226,5 @@ Carry these forward until resolved by the relevant slice or issue:
 - `test:golden` has real Slice 2.7 source/cache coverage; future exact-payload behavior still needs slice-specific golden coverage where applicable.
 - `validate-prompts` is real local validation but may pass with zero prompt files until real prompt slices add approved prompt definitions.
 - npm audit findings must be reported when observed.
-- Inspect is implemented through the MCP adapter; list use-case/summary projection is implemented through Slice 3.3; the ChatGPT-facing list MCP adapter is implemented through Slice 3.4; inspect/list golden and tool-reference coverage is implemented through Slice 3.5. PL-79 QA and PL-80 Coordinator completion/readiness gates remain pending.
+- Inspect is implemented through the MCP adapter; list use-case/summary projection is implemented through Slice 3.3; the ChatGPT-facing list MCP adapter is implemented through Slice 3.4; inspect/list golden and tool-reference coverage is implemented through Slice 3.5. PL-79 QA passed, and PL-80 accepted M3 completion/readiness with Slice 4.1 prompt authoring baseline as the next allowed product lane.
 - Source/cache infrastructure is not equivalent to fully wired real prompt runtime behavior until later slices complete.
