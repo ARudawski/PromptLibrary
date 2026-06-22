@@ -150,3 +150,36 @@ Coding, Review, Coordinator, and Dispatcher evidence must carry the checkpoint
 when their work completes, merges, exposes, or selects a state-changing handoff.
 If no slice/lane state changes, the report may say no State Checkpoint was
 required; do not invent a checkpoint outcome for non-handoffs.
+
+If a required State Checkpoint is missing and the closing agent cannot update
+the ledger or prove it is already correct, the agent must create or link an
+executable Coordinator Agent state-repair issue before moving the original
+issue to `Done`. An executable state-repair issue must carry the Coordinator
+Agent marker, `lane:state-repair`, `agent:coordinator`, and the automation
+label required by the current workflow when recurring automation should pick it.
+When the repair requires repository mutation, such as a current-state ledger or
+workflow-doc update, the issue must explicitly authorize the required
+workflow/docs edits and durable PR workflow before it counts as executable.
+Non-automated monitor findings are evidence only; they do not satisfy
+`state-repair issue created/linked: PL-xxx` unless they link to a separate
+executable repair issue.
+
+State-repair handoffs repair operating state. They do not open a parallel
+product lane, promote the next product issue, or authorize later-slice work.
+
+## Live Claim Marker
+
+The canonical role-run live claim marker is:
+
+```text
+AGENT RUNNING
+claim_id:
+claim_expires_at:
+role:
+issue:
+```
+
+Use the exact `AGENT RUNNING` marker name and `claim_expires_at` field for
+role-agent live claims. Descriptive headings such as `Coordinator Agent live
+claim` are non-canonical and must not be relied on for dispatcher or monitor
+detection.

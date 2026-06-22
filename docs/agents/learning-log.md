@@ -153,3 +153,44 @@ Notes:
 - Required handoff outcomes are `ledger updated in this PR/issue`, `ledger already correct`, or `state-repair issue created/linked: PL-xxx`.
 - This learning does not authorize product implementation, new runtime tools,
   claim-mode adoption, or another role.
+
+## 2026-06-22 - Executable state-repair handoff before closeout
+
+Source:
+- PL-89
+- PL-87 and PL-88
+- PL-76 / PR #40
+- PL-82, PL-84, and PL-85
+
+Problem:
+The State Checkpoint invariant existed, but a closing agent could still report
+that coordinator/state repair was needed without leaving behind executable
+repair work. Non-automated monitor findings preserved evidence, but the
+dispatcher could not execute them.
+
+Decision:
+accepted
+
+Changed:
+- `docs/agents/README.md`
+- `docs/agents/review-agent.md`
+- `docs/agents/coordinator-agent.md`
+- `docs/agents/dispatcher.md`
+- `docs/workflows/dispatcher-and-learning-setup.md`
+- `docs/agents/learning-log.md`
+
+Notes:
+- When a required State Checkpoint is missing and cannot be updated or proven
+  correct in the current closeout, the closing agent must create or link an
+  executable Coordinator Agent state-repair issue before moving the original
+  issue to `Done`.
+- If that repair requires a ledger or workflow-doc repository update, the
+  state-repair issue must explicitly authorize the required workflow/docs edits
+  before the handoff counts as executable.
+- Non-automated monitor findings are reports only; they do not satisfy
+  `state-repair issue created/linked: PL-xxx` unless they link to a separate
+  executable repair issue.
+- Role-agent live claims use the canonical `AGENT RUNNING` marker with
+  `claim_expires_at`.
+- This learning does not authorize product implementation, PL-77 promotion,
+  new runtime tools, claim-mode adoption, or parallel product lanes.
