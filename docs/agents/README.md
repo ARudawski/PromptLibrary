@@ -12,7 +12,7 @@ This directory contains the durable operating specs for the agents used in Proje
 |---|---|---|
 | Dispatcher | [`dispatcher.md`](./dispatcher.md) | Proposed queue/claim/handoff router; not active until explicitly adopted. |
 | Coding Agent | [`coding-agent.md`](./coding-agent.md) | Implement one bounded Linear issue or docs task and produce a PR. |
-| Review Agent | [`review-agent.md`](./review-agent.md) | Review implementation or workflow-doc PRs, request changes, or approve/merge when safe. |
+| Review Agent | [`review-agent.md`](./review-agent.md) | Review implementation or workflow-doc PRs, request changes, approve/merge when safe, and make narrow checkpoint-doc amendments when allowed. |
 | QA Agent | [`qa-agent.md`](./qa-agent.md) | Independently verify accepted implementation evidence, runtime viability, docs, and tests. |
 | Coordinator Agent | [`coordinator-agent.md`](./coordinator-agent.md) | Synthesize coding/review/QA evidence, decide gates, and execute explicitly authorized workflow-doc repairs through PRs. |
 
@@ -163,6 +163,19 @@ workflow/docs edits and durable PR workflow before it counts as executable.
 Non-automated monitor findings are evidence only; they do not satisfy
 `state-repair issue created/linked: PL-xxx` unless they link to a separate
 executable repair issue.
+
+Review Agent may use the `ledger updated in this PR/issue` outcome without a
+separate Coordinator state-repair issue only through the narrow checkpoint-doc
+amendment path in [`review-agent.md`](./review-agent.md): the substantive review
+is complete, the target PR is otherwise approvable or mergeable, the amendment
+is limited to exact State Checkpoint/current-state ledger facts already proven
+by the PR, Linear, CI/local checks, or recorded merge/head evidence, and no
+product code, tests, runtime behavior, architecture scope, roadmap policy, or
+new slice work changes. The Review Agent must record the docs files changed,
+the reviewed head after amendment, the checkpoint outcome, and checks run or
+skipped. If evidence is ambiguous, conflicting, broader than checkpoint facts,
+post-failure, or policy-changing, create or link Coordinator state-repair
+instead.
 
 State-repair handoffs repair operating state. They do not open a parallel
 product lane, promote the next product issue, or authorize later-slice work.

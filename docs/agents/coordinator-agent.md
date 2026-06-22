@@ -190,13 +190,15 @@ state-repair issue created/linked: PL-xxx
 ```
 
 If the checkpoint is required, is not already correct, and cannot be updated in
-the same PR or issue, create or link an executable state-repair issue before
-closing the state-changing issue. The repair issue must be routeable to the
-Coordinator Agent, normally with `lane:state-repair`, `agent:coordinator`, and
-`agent:auto` when recurring automation should pick it. If the repair requires a
-ledger or workflow-doc repository update, the repair issue must explicitly
-authorize that workflow/docs mutation and PR workflow. A non-automated monitor
-finding is evidence only; it cannot stand in for the executable repair issue.
+the same PR or issue, first check whether the Review Agent recorded a valid
+narrow checkpoint-doc amendment with `ledger updated in this PR/issue`. If not,
+create or link an executable state-repair issue before closing the
+state-changing issue. The repair issue must be routeable to the Coordinator
+Agent, normally with `lane:state-repair`, `agent:coordinator`, and `agent:auto`
+when recurring automation should pick it. If the repair requires a ledger or
+workflow-doc repository update, the repair issue must explicitly authorize that
+workflow/docs mutation and PR workflow. A non-automated monitor finding is
+evidence only; it cannot stand in for the executable repair issue.
 If no executable repair path can be created or linked, report `BLOCKED PENDING
 EVIDENCE` or `NEEDS DOCS` instead of moving the issue to `Done`.
 

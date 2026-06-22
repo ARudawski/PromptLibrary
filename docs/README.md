@@ -42,7 +42,7 @@ These files are workflow contracts. They do not approve product scope or later-s
 
 ## Current project state
 
-The current phase is tracked in [`workflows/current-state-ledger.md`](workflows/current-state-ledger.md). At the time this index was updated, the repository has completed M2 through Slice 2.7, M3 inspect work through Slice 3.2, and M3 list work through Slice 3.4. No product slice is active; PL-78 / Slice 3.5 inspect/list golden tests and tool reference work is the next product candidate only after explicit queue selection or promotion.
+The current phase is tracked in [`workflows/current-state-ledger.md`](workflows/current-state-ledger.md). At the time this index was updated, the repository has completed M2 through Slice 2.7, M3 inspect work through Slice 3.2, M3 list work through Slice 3.4, and Slice 3.5 inspect/list golden tests and tool reference work through PL-78 / PR #45. No product slice is active; PL-79 QA and PL-80 Coordinator completion/readiness gates remain explicit before any later product lane.
 
 Current source/cache references:
 
@@ -50,4 +50,4 @@ Current source/cache references:
 - [`../src/cache/README.md`](../src/cache/README.md)
 - [`source-cache-behavior.md`](source-cache-behavior.md)
 
-Do not treat Slice 3.5 golden/tool-reference coverage, real prompt files, hosted behavior, private suites, auth, or database behavior as implemented unless the current-state ledger and coordinator gate say so.
+Do not treat real prompt files, hosted behavior, private suites, auth, database behavior, Slice 4, or broader runtime behavior as implemented unless the current-state ledger and coordinator gate say so.
