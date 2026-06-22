@@ -10,11 +10,11 @@ This ledger is the compact current-state pointer for agents. It prevents stale l
 
 ```text
 Last completed product milestone: M2 - Public source, cache, validation; M3 is in progress
-Last completed product gate: Slice 3.2 - Inspect MCP adapter
+Last completed product gate: Slice 3.3 - List use case and summary projection via PL-76 / PR #40
 Active product slice: none
-Current workflow lane: M3 / Slice 3.3 queue selection after Slice 3.2 closeout
-Next product lane: M3 / Slice 3.3 - List use case and summary projection, tracked by PL-76 and only after explicit queue selection or promotion
-Blocked product work: Slice 3.3+ implementation until the next issue is explicitly selected; real prompts, hosted deployment, private suites, auth, and DB remain later-slice work
+Current workflow lane: M3 / Slice 3.4 queue selection after Slice 3.3 closeout
+Next product lane: M3 / Slice 3.4 - List MCP adapter, tracked by PL-77 and only after explicit queue selection or promotion
+Blocked product work: Slice 3.4+ implementation until the next issue is explicitly selected; real prompts, hosted deployment, private suites, auth, and DB remain later-slice work
 ```
 
 ## Completed Gates
@@ -33,6 +33,7 @@ Slice 2.7: source/cache contract and golden tests - approved
 M2: public source, cache, validation - complete with non-blocking follow-ups
 Slice 3.1: inspect use case and projection - approved via PL-74 / PR #35
 Slice 3.2: inspect MCP adapter - approved via PL-75 / PR #36
+Slice 3.3: list use case and summary projection - approved via PL-76 / PR #40; reviewed head 6e1e56f838e5adef2046023b72d3cfffafa48c16; merge aa8f4c0bbb479d57e2051b22b8d0f892ea1bf9ea
 ```
 
 ## Active Caveats To Carry Forward
@@ -41,7 +42,7 @@ Slice 3.2: inspect MCP adapter - approved via PL-75 / PR #36
 - `validate-prompts` is a real local validator, but it may pass with zero local prompt files until real prompt slices add approved prompt definitions.
 - npm audit caveats must be reported when observed.
 - The public GitHub source adapter and cache are approved M2 infrastructure; real prompt files and broader runtime/user-facing behavior remain later-slice work.
-- `inspect_prompt_library_command` is implemented through Slice 3.2. `list_prompt_library_commands` is approved for V1 but not implemented yet; do not start PL-76 / Slice 3.3 list work without explicit queue selection or promotion.
+- `inspect_prompt_library_command` is implemented through Slice 3.2. `ListPromptsUseCase` and command summary projection are implemented through Slice 3.3. `list_prompt_library_commands` MCP adapter remains not implemented; do not start PL-77 / Slice 3.4 list MCP adapter work without explicit queue selection or promotion.
 - Hosted deployment, private suites, auth, and DB behavior are not implemented.
 - Dispatcher claim mode remains off until the handoff-consumer proof/adoption path is explicitly accepted.
 
