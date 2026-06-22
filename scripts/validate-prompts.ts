@@ -11,6 +11,7 @@ import {
 } from "../src/validation/index.js";
 
 const DEFAULT_PROMPTS_DIRECTORY = "prompts";
+const PROMPTS_DIRECTORY_DOCUMENTATION_FILES = new Set(["README.md"]);
 
 export interface ValidatePromptsOptions {
   readonly rootDirectory?: string;
@@ -210,6 +211,7 @@ async function loadLocalPromptFiles(
 
   const markdownFileNames = directoryEntries
     .filter((entry) => entry.isFile() && entry.name.endsWith(".md"))
+    .filter((entry) => !PROMPTS_DIRECTORY_DOCUMENTATION_FILES.has(entry.name))
     .map((entry) => entry.name)
     .sort((left, right) => left.localeCompare(right));
 
