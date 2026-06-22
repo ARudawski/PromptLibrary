@@ -9,6 +9,7 @@ import {
   inspectPromptLibraryCommand,
 } from "../../src/mcp/inspectPromptLibraryCommandTool.js";
 import { INVOKE_PROMPT_LIBRARY_COMMAND_TOOL_NAME } from "../../src/mcp/invokePromptLibraryCommandTool.js";
+import { LIST_PROMPT_LIBRARY_COMMANDS_TOOL_NAME } from "../../src/mcp/listPromptLibraryCommandsTool.js";
 import { createPromptLibraryServer } from "../../src/mcp/server.js";
 import { ScriptedPromptSource, validPromptFile } from "../helpers/sourceCacheTestHarness.js";
 import { loadValidatedPromptFixtures } from "../unit/promptFixtures.js";
@@ -16,6 +17,7 @@ import { loadValidatedPromptFixtures } from "../unit/promptFixtures.js";
 const APPROVED_CHATGPT_FACING_TOOLS = [
   INVOKE_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
   INSPECT_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
+  LIST_PROMPT_LIBRARY_COMMANDS_TOOL_NAME,
 ] as const;
 
 const EXPECTED_METADATA_KEYS = [
@@ -110,9 +112,6 @@ describe("inspect_prompt_library_command MCP adapter", () => {
 
       expect(listedTools.tools.map((tool) => tool.name).sort()).toEqual(
         [...APPROVED_CHATGPT_FACING_TOOLS].sort(),
-      );
-      expect(listedTools.tools.map((tool) => tool.name)).not.toContain(
-        "list_prompt_library_commands",
       );
       expect(listedTools.tools.map((tool) => tool.name)).not.toContain(
         "refresh_prompt_library_cache",

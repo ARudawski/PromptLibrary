@@ -5,17 +5,21 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import {
   createInspectPromptUseCase,
   createInvokePromptUseCase,
+  createListPromptsUseCase,
   type FixtureBackedPromptDefinitionOptions,
   type InspectPromptUseCase,
   type InvokePromptUseCase,
+  type ListPromptsUseCase,
   loadFixtureBackedPromptDefinitions,
 } from "../application/index.js";
 import { registerInspectPromptLibraryCommandTool } from "./inspectPromptLibraryCommandTool.js";
 import { registerInvokePromptLibraryCommandTool } from "./invokePromptLibraryCommandTool.js";
+import { registerListPromptLibraryCommandsTool } from "./listPromptLibraryCommandsTool.js";
 
 export interface PromptLibraryServerOptions extends FixtureBackedPromptDefinitionOptions {
   readonly invokeUseCase?: InvokePromptUseCase;
   readonly inspectUseCase?: InspectPromptUseCase;
+  readonly listUseCase?: ListPromptsUseCase;
 }
 
 export async function createPromptLibraryServer(
@@ -26,16 +30,20 @@ export async function createPromptLibraryServer(
     version: "0.0.0",
   });
   const fixtureBackedPrompts =
-    options.invokeUseCase === undefined || options.inspectUseCase === undefined
+    options.invokeUseCase === undefined ||
+    options.inspectUseCase === undefined ||
+    options.listUseCase === undefined
       ? await loadFixtureBackedPromptDefinitions(options)
       : undefined;
   const invokeUseCase =
     options.invokeUseCase ?? createInvokePromptUseCase(fixtureBackedPrompts ?? []);
   const inspectUseCase =
     options.inspectUseCase ?? createInspectPromptUseCase(fixtureBackedPrompts ?? []);
+  const listUseCase = options.listUseCase ?? createListPromptsUseCase(fixtureBackedPrompts ?? []);
 
   registerInvokePromptLibraryCommandTool(server, invokeUseCase);
   registerInspectPromptLibraryCommandTool(server, inspectUseCase);
+  registerListPromptLibraryCommandsTool(server, listUseCase);
 
   return server;
 }
