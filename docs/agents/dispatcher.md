@@ -328,8 +328,8 @@ Before reading repository docs or PRs beyond the current-state ledger:
 3. Fetch the selected Linear issue.
 4. Verify the selected role lane:
    - normal role issue: resolved issue title/body matches the selected role lane;
-  - review-ready handoff: resolved issue is a Coding Agent issue or Coordinator docs/workflow issue in `In Review` with a linked PR/review target, and selected role is Review Agent;
-  - fix-ready handoff: resolved issue is a Coding Agent issue or Coordinator docs/workflow issue in `In Progress` with requested-changes/fix-needed evidence, and selected role is the owning Coding or Coordinator Agent.
+   - review-ready handoff: resolved issue is a Coding Agent issue or Coordinator docs/workflow issue in `In Review` with a linked PR/review target, and selected role is Review Agent;
+   - fix-ready handoff: resolved issue is a Coding Agent issue or Coordinator docs/workflow issue in `In Progress` with requested-changes/fix-needed evidence, and selected role is the owning Coding or Coordinator Agent.
 5. Move normal Todo/Backlog Coding, QA, and Coordinator issues to `In Progress` if needed.
 6. Do not move review-ready Coding Agent issues or Coordinator docs/workflow
    issues out of `In Review` just to claim review.
