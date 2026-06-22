@@ -298,13 +298,28 @@ Non-blocking drift may continue only when all of these are true:
 - the selected issue itself is the tracked repair/workflow handoff, or the explicit current instruction and live Linear/GitHub evidence make the selected handoff unambiguous;
 - the mismatch does not change the selected role, issue, lane, dependency, or blocker status.
 
-Missing or stale State Checkpoint evidence may proceed only when the selected
-handoff is otherwise unambiguous and the missing checkpoint does not change
-candidate selection. Otherwise route to state repair before role execution.
+Treat State Checkpoint evidence separately from ordinary historical drift:
 
-For non-blocking drift or missing checkpoint evidence, include a short
-`<state_caveat>...</state_caveat>` in the handoff result and continue to Phase
-3 or Phase 4.
+- If the selected handoff is state-changing because it changes the allowed lane,
+  completed slice, active slice, next slice, or queue exposure, the dispatcher
+  must carry exactly one approved State Checkpoint outcome before emitting the
+  handoff:
+  - `ledger updated in this PR/issue`
+  - `ledger already correct`
+  - `state-repair issue created/linked: PL-xxx`
+- If the selected state-changing handoff lacks an approved State Checkpoint
+  outcome, do not continue with only a `<state_caveat>`. Return
+  `STATE_DRIFT_DETECTED` and route to state repair before role execution.
+- If missing or stale State Checkpoint evidence is historical, tracked, and
+  irrelevant to the current selected non-state-changing handoff, it may proceed
+  only as non-blocking drift with a short `<state_caveat>`.
+- If no slice/lane state changes, set `<state_checkpoint>` to `not required`
+  with the reason; do not invent one of the approved outcomes.
+
+For non-blocking drift, include a short `<state_caveat>...</state_caveat>` in
+the handoff result and continue to Phase 3 or Phase 4. For every handoff,
+include `<state_checkpoint>...</state_checkpoint>` so state-changing handoffs
+carry the approved checkpoint outcome.
 
 ## Phase 3 — Candidate mode handoff
 
@@ -319,6 +334,7 @@ If operating in candidate mode, do not mutate Linear. Emit:
   <current_state_ledger>docs/workflows/current-state-ledger.md</current_state_ledger>
   <linked_pr>PR URL or none</linked_pr>
   <state_caveat>Known non-blocking drift, or none.</state_caveat>
+  <state_checkpoint>ledger updated in this PR/issue | ledger already correct | state-repair issue created/linked: PL-xxx | not required: REASON</state_checkpoint>
   <message>Start a fresh ROLE Agent run manually or through an approved handoff consumer. Candidate mode supplies no claim_id.</message>
 </dispatcher_result>
 
@@ -387,6 +403,7 @@ If this run owns the claim, emit:
   <current_state_ledger>docs/workflows/current-state-ledger.md</current_state_ledger>
   <linked_pr>PR URL or none</linked_pr>
   <state_caveat>Known non-blocking drift, or none.</state_caveat>
+  <state_checkpoint>ledger updated in this PR/issue | ledger already correct | state-repair issue created/linked: PL-xxx | not required: REASON</state_checkpoint>
   <message>Handoff consumer must start a fresh ROLE Agent run and post DISPATCHER HANDOFF ACCEPTED plus AGENT RUNNING.</message>
 </dispatcher_result>
 
@@ -405,7 +422,7 @@ Minimum handoff consumer contract:
 - Verify the dispatcher claim is present, unexpired, and unique for the selected issue, with no terminal marker for the same `claim_id`.
 - Reject the handoff if comments already contain `DISPATCHER HANDOFF ACCEPTED` or `AGENT RUNNING` for the same `claim_id`; the first accepted/running consumer owns the role run.
 - Verify current executability still satisfies the `claim_rule`, not just the static handoff fields: issue state is still eligible, blockers are still resolved, review-ready or fix-ready evidence still exists when required, and any linked PR is still open and ready for that rule.
-- Verify the role, issue, claim rule, linked PR, and state caveat still match the handoff.
+- Verify the role, issue, claim rule, linked PR, state caveat, and state checkpoint still match the handoff.
 - Post the combined `DISPATCHER HANDOFF ACCEPTED` plus `AGENT RUNNING` comment before heavy role work.
 - Re-fetch the Linear issue and comments after posting, then proceed only if this consumer's combined accepted/running marker is the first one for the `claim_id` and current executability still satisfies the `claim_rule`.
 - Start one fresh role run for that issue and role, using the supplied `claim_id`.
