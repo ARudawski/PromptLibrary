@@ -17,7 +17,8 @@ The V1 product is retrieval-focused:
 - no private prompt suites in V1;
 - thin MCP adapter over framework-independent core;
 - runtime cache with 5-minute TTL, stale-while-revalidate / last-known-good behavior, partial-valid/cold-failure behavior, local validation tooling, and source/cache contract/golden coverage through M2;
-- inspect use case/projection and MCP adapter behavior through M3 Slice 3.2.
+- inspect use case/projection and MCP adapter behavior through M3 Slice 3.2;
+- list use case and summary projection behavior through M3 Slice 3.3.
 
 ## Hard boundary
 
@@ -27,7 +28,7 @@ The connector retrieves prompt definitions. The prompt text defines behavior. Th
 
 Before implementing the real architecture, Slice 0 must validate that ChatGPT can route `@pl proof` into a local MCP tool and apply the returned hardcoded prompt.
 
-Slice 0 was accepted with caveats through recorded Linear gate evidence, Slice 1 fixture-backed invocation has been approved as the baseline, M2 has been approved through Slice 2.7, and M3 inspect behavior has been approved through Slice 3.2. List implementation, real prompt files, hosted deployment, private suites, auth, and DB behavior remain later-slice work until explicitly approved.
+Slice 0 was accepted with caveats through recorded Linear gate evidence, Slice 1 fixture-backed invocation has been approved as the baseline, M2 has been approved through Slice 2.7, M3 inspect behavior has been approved through Slice 3.2, and M3 list core behavior has been approved through Slice 3.3. The ChatGPT-facing list MCP adapter, real prompt files, hosted deployment, private suites, auth, and DB behavior remain later-slice work until explicitly approved.
 
 ## Future full document
 

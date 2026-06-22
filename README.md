@@ -2,7 +2,7 @@
 
 Project Prompt Library is a small ChatGPT Apps / MCP connector for invoking exact, externally maintained prompt workflows from normal ChatGPT conversations using command-style requests such as `@pl grill-me`.
 
-This repository has passed the Slice 0 proof gate, Slice 1 invocation gate, M2 source/cache/validation gates through Slice 2.7, and M3 inspect gates through Slice 3.2. The current product implementation is in M3 with no active product slice; the next candidate is PL-76 / Slice 3.3 list use-case work only after explicit queue selection or promotion.
+This repository has passed the Slice 0 proof gate, Slice 1 invocation gate, M2 source/cache/validation gates through Slice 2.7, M3 inspect gates through Slice 3.2, and M3 list core work through Slice 3.3. The current product implementation is in M3 with no active product slice; the next candidate is PL-77 / Slice 3.4 list MCP adapter work only after explicit queue selection or promotion.
 
 The Slice 0 premise was:
 
@@ -23,10 +23,11 @@ The Slice 0 premise was:
 - M2: public source, cache, and validation, complete with non-blocking follow-ups.
 - Slice 3.1: inspect use case and projection, approved.
 - Slice 3.2: inspect MCP adapter, approved.
+- Slice 3.3: list use case and summary projection, approved.
 
 The compact current-state pointer for agents is [`docs/workflows/current-state-ledger.md`](./docs/workflows/current-state-ledger.md). If this README and the ledger disagree, use the ledger and raise a documentation drift finding.
 
-The current local MCP server registers `invoke_prompt_library_command` and `inspect_prompt_library_command` against local fixture prompt files through the PromptSource boundary. M2 added the public GitHub source adapter, runtime prompt cache TTL behavior, stale refresh and last-known-good preservation, partial-valid/cold-failure behavior, a real local `validate-prompts` script, and source/cache contract and golden coverage. M3 Slice 3.1/3.2 added active prompt inspection through core and MCP adapter layers. Real prompt files, list tool implementation, hosted deployment, private suites, auth, and DB behavior are not implemented yet.
+The current local MCP server registers `invoke_prompt_library_command` and `inspect_prompt_library_command` against local fixture prompt files through the PromptSource boundary. M2 added the public GitHub source adapter, runtime prompt cache TTL behavior, stale refresh and last-known-good preservation, partial-valid/cold-failure behavior, a real local `validate-prompts` script, and source/cache contract and golden coverage. M3 Slice 3.1/3.2 added active prompt inspection through core and MCP adapter layers. M3 Slice 3.3 added framework-independent active command listing through `ListPromptsUseCase` and summary projection. Real prompt files, the ChatGPT-facing list MCP adapter, hosted deployment, private suites, auth, and DB behavior are not implemented yet.
 
 ## Core V1 boundaries
 
@@ -59,7 +60,7 @@ Start here:
 
 ## Local development status
 
-The TypeScript/Node implementation currently supports deterministic local fixture invocation, the Slice 2.1 source boundary, the Slice 2.2 public GitHub source adapter behind that boundary, Slice 2.3 cache TTL behavior, Slice 2.4 stale/LKG behavior, Slice 2.5 partial-valid/cold-failure behavior, Slice 2.6 local prompt validation, and Slice 2.7 source/cache contract and golden coverage.
+The TypeScript/Node implementation currently supports deterministic local fixture invocation, the Slice 2.1 source boundary, the Slice 2.2 public GitHub source adapter behind that boundary, Slice 2.3 cache TTL behavior, Slice 2.4 stale/LKG behavior, Slice 2.5 partial-valid/cold-failure behavior, Slice 2.6 local prompt validation, Slice 2.7 source/cache contract and golden coverage, M3 inspect behavior through Slice 3.2, and M3 list use-case/summary projection behavior through Slice 3.3.
 
 ## CI quality gate
 
@@ -73,7 +74,7 @@ Do not add during the current M3 queue-selection phase:
 
 - ChatGPT-facing cache refresh, cache diagnostics, or admin tools;
 - real prompt files;
-- list implementation unless PL-76 / Slice 3.3 or PL-77 / Slice 3.4 is explicitly selected through the normal queue;
+- ChatGPT-facing list MCP adapter implementation unless PL-77 / Slice 3.4 is explicitly selected through the normal queue;
 - hosted deployment;
 - private-suite/auth/database design.
 
