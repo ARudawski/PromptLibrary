@@ -1,6 +1,6 @@
 # Roadmap Notes
 
-This directory will hold the implementation roadmap.
+This directory holds the implementation roadmap and milestone planning artifacts.
 
 ## Current roadmap sequence
 
@@ -17,20 +17,31 @@ Slice 5: Personal-use trial
 Slice 6: Hosted deployment, only after local MVP proves useful
 ```
 
-## Hard gate
+## Current focus
+
+M3 / the read-only API is complete. The next allowed product lane is **Slice 4.1 — prompt authoring baseline and metadata conventions**.
+
+Use the M4 plan before creating or executing real-prompt work:
+
+```text
+project-prompt-library-m4-plan.md
+```
+
+Do not add real prompt files, runtime-source changes, hosted deployment, private suites, auth/OAuth, DB behavior, or broader Slice 4 runtime work without an explicit issue and coordinator path.
+
+## Roadmap documents
+
+- [`project-prompt-library-roadmap.md`](project-prompt-library-roadmap.md) — full implementation roadmap.
+- [`project-prompt-library-m4-plan.md`](project-prompt-library-m4-plan.md) — M4 local-MVP planning and task outlines.
+
+## Hard gates
 
 If Slice 0 fails, do not proceed to parser/cache/GitHub implementation.
 
-Slice 0 was accepted with caveats through recorded Linear gate evidence, Slice 1 fixture-backed invocation has been approved as the implementation baseline, M2 has been approved through Slice 2.7, M3 inspect work has been approved through Slice 3.2, M3 list work has been approved through Slice 3.4, Slice 3.5 inspect/list golden tests and tool reference work has been approved through PL-78 / PR #45, and PL-80 accepted M3 completion/readiness after PL-79 QA. The next allowed product lane is Slice 4.1 prompt authoring baseline only.
+Before M4 real prompt files:
+- Slice 4.1 authoring baseline must be approved.
+- Runtime loading must be checked; if the local server is still fixture-backed, use the M4.1b task before claiming a local MVP.
 
-## Current focus
-
-This repository currently supports Slice 1 fixture-backed invocation, M2 source/cache/validation behavior, M3 inspect behavior through the core use case/projection and MCP adapter, M3 list behavior through the core use case/projection and MCP adapter, and Slice 3.5 read-only API golden/tool-reference coverage. Slice 4.1 may prepare prompt authoring conventions and metadata only; hosted deployment, private suites, auth/OAuth, DB behavior, and broader runtime work are still later-slice work.
-
-## Future full document
-
-The generated full implementation roadmap should be stored here as:
-
-```text
-project-prompt-library-roadmap.md
-```
+Before hosted deployment:
+- M4 local MVP must be accepted.
+- M5 personal-use trial must justify hosting.

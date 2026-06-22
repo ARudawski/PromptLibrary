@@ -8,7 +8,7 @@ This directory contains architecture, roadmap, standards, QA, workflow, and agen
 2. [`workflows/current-state-ledger.md`](workflows/current-state-ledger.md) — compact current phase, queue, and caveat ledger.
 3. [`agents/README.md`](agents/README.md) — role-specific agent operating specs and queue contract.
 4. [`architecture/README.md`](architecture/README.md) and [`architecture/project-prompt-library-architecture-plan.md`](architecture/project-prompt-library-architecture-plan.md).
-5. [`roadmap/README.md`](roadmap/README.md) and [`roadmap/project-prompt-library-roadmap.md`](roadmap/project-prompt-library-roadmap.md).
+5. [`roadmap/README.md`](roadmap/README.md), [`roadmap/project-prompt-library-roadmap.md`](roadmap/project-prompt-library-roadmap.md), and [`roadmap/project-prompt-library-m4-plan.md`](roadmap/project-prompt-library-m4-plan.md).
 6. [`standards/README.md`](standards/README.md) and [`standards/project-prompt-library-codex-agent-standards.md`](standards/project-prompt-library-codex-agent-standards.md).
 7. [`qa/test-strategy.md`](qa/test-strategy.md) and [`qa/ci-evidence.md`](qa/ci-evidence.md).
 
@@ -40,9 +40,13 @@ These files are workflow contracts. They do not approve product scope or later-s
 
 - [`tool-reference.md`](tool-reference.md)
 
+## M4 local MVP planning
+
+- [`roadmap/project-prompt-library-m4-plan.md`](roadmap/project-prompt-library-m4-plan.md)
+
 ## Current project state
 
-The current phase is tracked in [`workflows/current-state-ledger.md`](workflows/current-state-ledger.md). At the time this index was updated, the repository has completed M2 through Slice 2.7, M3 inspect work through Slice 3.2, M3 list work through Slice 3.4, and Slice 3.5 inspect/list golden tests and tool reference work through PL-78 / PR #45. No product slice is active; PL-79 QA and PL-80 Coordinator completion/readiness gates remain explicit before any later product lane.
+The current phase is tracked in [`workflows/current-state-ledger.md`](workflows/current-state-ledger.md). At the time this index was updated, M3 / the read-only API is complete and the next allowed product lane is Slice 4.1 prompt authoring baseline only.
 
 Current source/cache references:
 
@@ -50,4 +54,4 @@ Current source/cache references:
 - [`../src/cache/README.md`](../src/cache/README.md)
 - [`source-cache-behavior.md`](source-cache-behavior.md)
 
-Do not treat real prompt files, hosted behavior, private suites, auth, database behavior, Slice 4, or broader runtime behavior as implemented unless the current-state ledger and coordinator gate say so.
+Do not treat real prompt files, hosted behavior, private suites, auth, database behavior, broader Slice 4 work, or broader runtime behavior as implemented unless the current-state ledger and coordinator gate say so.
