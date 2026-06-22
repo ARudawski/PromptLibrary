@@ -439,8 +439,23 @@ Minimum handoff consumer contract:
 - Verify the role, issue, claim rule, linked PR, state caveat, and state checkpoint still match the handoff.
 - Post the combined `DISPATCHER HANDOFF ACCEPTED` plus `AGENT RUNNING` comment before heavy role work.
 - Re-fetch the Linear issue and comments after posting, then proceed only if this consumer's combined accepted/running marker is the first one for the `claim_id` and current executability still satisfies the `claim_rule`.
-- Start one fresh role run for that issue and role, using the supplied `claim_id`.
+- Start one fresh role run for that issue and role, using the supplied `claim_id` and an explicit role-specific reasoning setting.
 - End with exactly one terminal marker for the same `claim_id`.
+
+When the handoff consumer creates a Codex role thread, it must pass the
+explicit `thinking` value for the selected role:
+
+```text
+Coding Agent: high
+Review Agent: high by default; xhigh for approved-merge closeout, gate-risk reviews, architecture-impacting reviews, scope-drift calls, or contradictory CI/GitHub/Linear evidence
+QA Agent: high by default; xhigh for targeted gate QA, runtime/project-state viability verdicts, or stale-doc/source-of-truth conflicts
+Coordinator Agent: xhigh for gate, State Checkpoint, lane-exposure, state-repair, or evidence-synthesis decisions
+Future role agents: high unless the role is queue routing only; xhigh for irreversible or high-blast-radius judgment
+```
+
+Use Codex app `thinking` values such as `high` and `xhigh`; do not use prose
+labels such as `extra high` in tool calls. Include the selected reasoning value
+in the fresh role-agent prompt as dispatcher evidence.
 
 If the post-acceptance re-fetch shows another consumer accepted first, this consumer must stop before heavy work and must not post a terminal marker for the shared `claim_id`; the winning role run is responsible for the terminal marker.
 
@@ -501,6 +516,9 @@ Do not start a second issue in the same dispatcher run.
 ## Setup notes
 
 - Configure the dispatcher with low or medium reasoning by default.
+- Configure any handoff consumer that creates role-agent threads to pass the
+  explicit role-specific `thinking` value from Phase 5 instead of relying on
+  thread defaults.
 - Use candidate mode until the handoff consumer is explicitly adopted.
 - Use fresh role execution context per claimed issue/review/QA/gate.
 - Use live claim markers as the primary lock, not Linear state alone.

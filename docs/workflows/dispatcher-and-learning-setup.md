@@ -93,6 +93,7 @@ Dispatcher
 Fresh role run
   -> candidate mode: starts from ROLE_HANDOFF_CANDIDATE without claim markers
   -> claim mode: accepts ROLE_HANDOFF and posts AGENT RUNNING
+  -> starts with the explicit role-specific reasoning setting from this workflow
   -> reads role spec and issue context
   -> executes exactly one role workflow
   -> writes evidence, plus terminal claim marker when a claim_id exists
@@ -184,11 +185,18 @@ role execution in dispatcher run: no
 Fresh role execution after handoff:
 
 ```text
-coding: medium/high depending on issue complexity
-review: medium/high
-QA: medium/high when runtime/project-state viability matters
-coordinator: medium unless gate is ambiguous
+coding: high
+review: high by default; xhigh for approved-merge closeout, gate-risk reviews, architecture-impacting reviews, scope-drift calls, or contradictory CI/GitHub/Linear evidence
+QA: high by default; xhigh for targeted gate QA, runtime/project-state viability verdicts, or stale-doc/source-of-truth conflicts
+coordinator: xhigh for gate, State Checkpoint, lane-exposure, state-repair, or evidence-synthesis decisions
+future role agents: high unless the role is queue routing only; xhigh for irreversible or high-blast-radius judgment
 ```
+
+The handoff consumer must pass these as Codex app `thinking` values, for
+example `high` or `xhigh`, when it creates a fresh role-agent thread. It should
+also include the selected reasoning value in the role-agent prompt as dispatcher
+evidence. The dispatcher itself remains a cheap queue worker and should stay at
+low or medium reasoning.
 
 ## Claim lifecycle
 
@@ -275,6 +283,8 @@ Allowed consumer actions:
 - Reject the handoff if comments already contain `DISPATCHER HANDOFF ACCEPTED` or `AGENT RUNNING` for the same `claim_id`; the first accepted/running consumer owns the role run.
 - Verify current executability still satisfies the `claim_rule`, not just the static handoff fields: issue state is still eligible, blockers are still resolved, review-ready or fix-ready evidence still exists when required, and any linked PR is still open and ready for that rule.
 - Verify the handoff still matches the issue, role, claim rule, linked PR, state caveat, and state checkpoint.
+- Select the role-specific `thinking` value from Suggested settings and carry
+  it into the fresh role-agent thread.
 - Post one combined acceptance/running comment before heavy work:
 
 ```text
@@ -290,7 +300,8 @@ role:
 issue:
 ```
 
-- Start one fresh role-agent run for that issue and role, using the supplied `claim_id`.
+- Start one fresh role-agent run for that issue and role, using the supplied
+  `claim_id` and selected `thinking` value.
 - End the run with exactly one terminal marker for the same `claim_id`: `AGENT COMPLETE`, `AGENT BLOCKED`, `AGENT CLAIM RELEASED`, or `AGENT CLAIM EXPIRED`.
 
 After posting the combined acceptance/running comment, the consumer must re-fetch the Linear issue and comments. It may proceed only if its own combined marker is the first one for that `claim_id` and current executability still satisfies the `claim_rule`. If another consumer accepted first, stop before heavy work and do not post a terminal marker for the shared `claim_id`; the winning role run owns completion.
