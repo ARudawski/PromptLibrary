@@ -135,11 +135,12 @@ before handoff instead of continuing with only `<state_caveat>`.
 
 Non-automated monitor findings are reports, not executable work. When a finding
 identifies a missing State Checkpoint, the dispatcher may hand off only a
-separate executable Coordinator Agent state-repair issue. If no such issue is
-linked or selectable, or if a repo-mutating repair issue does not explicitly
-authorize the required workflow/docs edit, the correct result is
-`STATE_DRIFT_DETECTED` with the repair-path gap, not a role handoff from the
-finding itself.
+separate executable Coordinator Agent state-repair issue, or an open
+review-ready PR whose selected Review Agent target can still carry the narrow
+checkpoint-doc amendment safely. If neither path exists, or if a repo-mutating
+Coordinator repair issue does not explicitly authorize the required
+workflow/docs edit, the correct result is `STATE_DRIFT_DETECTED` with the
+repair-path gap, not a role handoff from the finding itself.
 
 Machine-readable dispatcher decisions:
 
@@ -168,7 +169,7 @@ Use this matrix as a lightweight review aid before changing the dispatcher promp
 | The current-state ledger is stale versus live Linear/GitHub, and the mismatch would change the selected role, issue, lane, dependency, or blocker status. | `STATE_DRIFT_DETECTED` | PL-63 makes blocking drift explicit instead of allowing a handoff from contradictory operating state. |
 | The current-state ledger is stale versus live Linear/GitHub, but exactly one candidate remains, the drift is tracked by PL-60 or explained by PL-62-style workflow rules, and it does not change the handoff. | `ROLE_HANDOFF_CANDIDATE` with `<state_caveat>` in candidate mode. | PL-63 allows known, tracked, non-blocking drift to proceed only after candidate selection proves the selected handoff is unaffected. |
 | State Checkpoint evidence is missing or stale, and that gap would change the selected role, issue, lane, dependency, blocker status, repair path, or current state-changing handoff. | `STATE_DRIFT_DETECTED` | PL-83 requires `No slice handoff without a State Checkpoint`; missing checkpoint evidence becomes a state-repair routing signal when it affects selection or would let a state-changing handoff proceed without an approved checkpoint. |
-| A non-automated monitor finding reports missing checkpoint evidence but no executable state-repair issue is linked or selectable, or the repair needs repo mutation without explicit workflow/docs edit authorization. | `STATE_DRIFT_DETECTED` | Findings preserve evidence but are not role work. The repair must be converted into a Coordinator Agent state-repair issue that authorizes the needed mutation before handoff. |
+| A non-automated monitor finding reports missing checkpoint evidence but no executable state-repair issue is linked or selectable, no open review-ready PR can safely carry the narrow Review Agent checkpoint-doc amendment, or the repair needs repo mutation without explicit workflow/docs edit authorization. | `STATE_DRIFT_DETECTED` | Findings preserve evidence but are not role work. The repair must be converted into a Coordinator Agent state-repair issue that authorizes the needed mutation or carried by the narrow review-ready PR amendment path before handoff. |
 | A `gate:manual` issue is visible but the selected role is not a permitted coordinator/human gate path, or the run lacks coordinator authority. | `DONT_NOTIFY` when no other candidate exists; otherwise skip that issue. | `gate:manual` requires human/coordinator decision authority and must not be executed by an ordinary Coding, Review, or QA handoff. |
 
 ## Suggested settings

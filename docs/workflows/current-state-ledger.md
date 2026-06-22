@@ -2,7 +2,7 @@
 
 Status: active workflow ledger
 Last updated: 2026-06-22
-Update authority: coordinator gate or explicit human workflow update
+Update authority: coordinator gate, explicit human workflow update, or narrow Review Agent State Checkpoint docs amendment under `docs/agents/review-agent.md`
 
 This ledger is the compact current-state pointer for agents. It prevents stale long-form docs from being treated as current operating state.
 

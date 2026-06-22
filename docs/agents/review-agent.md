@@ -112,16 +112,18 @@ If approved:
 1. record the approval on GitHub, or use a PR conversation comment if formal review is unavailable;
 2. resolve only review threads that are actually addressed;
 3. re-fetch the PR before merge;
-4. confirm reviewed head SHA still matches;
-5. merge only when PR is open, non-draft, mergeable, and evidence is sufficient;
-6. use an expected-head guard where available;
-7. when merge completion changes the allowed lane, completed slice, active
-   slice, next slice, or queue exposure, verify or record the State Checkpoint;
-8. if that required State Checkpoint is missing, either use the narrow
-   checkpoint-doc amendment path below or create/link an executable Coordinator
-   Agent state-repair issue before marking the target `Done`;
-9. post a Linear closeout comment;
-10. move the target Coding Agent or Coordinator docs/workflow issue to `Done`
+4. confirm reviewed head SHA still matches and the PR is open, non-draft,
+   mergeable, and evidence is sufficient;
+5. before merging, decide whether merge completion changes the allowed lane,
+   completed slice, active slice, next slice, or queue exposure; if so, verify
+   or record the State Checkpoint;
+6. if that required State Checkpoint is missing, either use the narrow
+   checkpoint-doc amendment path below before merge, then re-fetch and recheck
+   the amended head, or create/link an executable Coordinator Agent
+   state-repair issue before merge closeout;
+7. merge with an expected-head guard where available;
+8. post a Linear closeout comment;
+9. move the target Coding Agent or Coordinator docs/workflow issue to `Done`
    only after merge and closeout evidence.
 
 The State Checkpoint must use exactly one approved outcome:
