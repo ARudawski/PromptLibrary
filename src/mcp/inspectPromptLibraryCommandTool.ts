@@ -55,21 +55,9 @@ export const inspectOutputSchema = z
   })
   .strict();
 
-export const inspectFailureStructuredContentSchema = z
-  .object({
-    ok: z.literal(false),
-    type: z.literal("prompt_inspection_error"),
-    inspection_only: z.literal(true),
-    no_prompt_invoked: z.literal(true),
-    error_code: z.enum(INSPECT_ERROR_CODES),
-    message: z.string(),
-    suggestions: z.array(z.string()).optional(),
-  })
-  .strict();
-
 type InspectPromptFailureErrorCode = (typeof INSPECT_ERROR_CODES)[number];
 
-export interface InspectPromptFailureContent extends Record<string, unknown> {
+export interface InspectPromptFailureContent {
   readonly ok: false;
   readonly type: "prompt_inspection_error";
   readonly inspection_only: true;
@@ -131,9 +119,10 @@ export function inspectPromptLibraryCommand(
     ...(result.error.suggestions === undefined ? {} : { suggestions: result.error.suggestions }),
   };
 
+  // SDK clients validate any returned structuredContent against the advertised success schema
+  // after listTools(), so inspect failures keep their stable contract in model-visible text.
   return {
     isError: true,
-    structuredContent: failureContent,
     content: [
       {
         type: "text",

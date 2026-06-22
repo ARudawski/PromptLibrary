@@ -5,7 +5,6 @@ import { describe, expect, it } from "vitest";
 import { createInspectPromptUseCase } from "../../src/application/index.js";
 import {
   INSPECT_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
-  inspectFailureStructuredContentSchema,
   inspectOutputSchema,
   inspectPromptLibraryCommand,
 } from "../../src/mcp/inspectPromptLibraryCommandTool.js";
@@ -53,6 +52,33 @@ function textContent(result: unknown): string {
   expect(firstContentRecord.text).toBeTypeOf("string");
 
   return firstContentRecord.text as string;
+}
+
+function expectInspectionFailure(
+  result: unknown,
+  expected: {
+    readonly errorCode: string;
+    readonly message: string;
+    readonly suggestions?: readonly string[];
+  },
+): void {
+  const resultRecord = asRecord(result);
+
+  expect(resultRecord.isError).toBe(true);
+  expect(resultRecord).not.toHaveProperty("structuredContent");
+
+  const text = textContent(result);
+  expect(text).toContain("Inspection failed; no prompt was invoked.");
+  expect(text).toContain("inspection_only: true");
+  expect(text).toContain("no_prompt_invoked: true");
+  expect(text).toContain(`error_code: ${expected.errorCode}`);
+  expect(text).toContain(`message: ${expected.message}`);
+
+  if (expected.suggestions !== undefined) {
+    expect(text).toContain(`suggestions: ${expected.suggestions.join(", ")}`);
+  }
+
+  expect(JSON.stringify(result)).not.toContain("prompt_body");
 }
 
 async function withClient<T>(server: McpServer, run: (client: Client) => Promise<T>): Promise<T> {
@@ -112,7 +138,7 @@ describe("inspect_prompt_library_command MCP adapter", () => {
     });
   });
 
-  it("publishes an inspect success output schema requiring metadata and prompt body", async () => {
+  it("publishes a strict inspect success output schema requiring metadata and prompt body", async () => {
     await withDefaultClient(async (client) => {
       const listedTools = await client.listTools();
       const inspectTool = listedTools.tools.find(
@@ -151,7 +177,7 @@ describe("inspect_prompt_library_command MCP adapter", () => {
     });
   });
 
-  it("rejects invalid minimal success and failure structured-content payloads", () => {
+  it("rejects invalid minimal success and failure-shaped structured-content payloads", () => {
     expect(
       inspectOutputSchema.safeParse({
         ok: true,
@@ -168,24 +194,6 @@ describe("inspect_prompt_library_command MCP adapter", () => {
         no_prompt_invoked: true,
       }).success,
     ).toBe(false);
-    expect(
-      inspectFailureStructuredContentSchema.safeParse({
-        ok: false,
-        type: "prompt_inspection_error",
-        inspection_only: true,
-        no_prompt_invoked: true,
-      }).success,
-    ).toBe(false);
-    expect(
-      inspectFailureStructuredContentSchema.safeParse({
-        ok: false,
-        type: "prompt_inspection_error",
-        inspection_only: true,
-        no_prompt_invoked: true,
-        error_code: "PROMPT_NOT_FOUND",
-        message: 'Command "missing" was not found.',
-      }).success,
-    ).toBe(true);
   });
 
   it("returns active fixture inspection by alias with model-visible metadata and prompt body", async () => {
@@ -259,63 +267,47 @@ describe("inspect_prompt_library_command MCP adapter", () => {
         prompt_body: "Apply alpha.\n",
       });
       expect(staleSecondSnapshotResult.isError).toBe(true);
-      expect(staleSecondSnapshotResult.structuredContent).toMatchObject({
-        ok: false,
-        error_code: "PROMPT_NOT_FOUND",
+      expectInspectionFailure(staleSecondSnapshotResult, {
+        errorCode: "PROMPT_NOT_FOUND",
+        message: 'Command "beta" was not found.',
       });
     });
   });
 
-  it("fails closed for valid draft fixture prompts without returning prompt body", async () => {
+  it("delivers listTools-cached draft failures without returning prompt body", async () => {
     await withDefaultClient(async (client) => {
+      await client.listTools();
+
       const result = await client.callTool({
         name: INSPECT_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
         arguments: { command: "draft-valid" },
       });
 
-      expect(result.isError).toBe(true);
-      expect(result.structuredContent).toEqual({
-        ok: false,
-        type: "prompt_inspection_error",
-        inspection_only: true,
-        no_prompt_invoked: true,
-        error_code: "PROMPT_NOT_INVOKABLE",
+      expectInspectionFailure(result, {
+        errorCode: "PROMPT_NOT_INVOKABLE",
         message: 'Command "draft-valid" is not inspectable.',
       });
-      expect(JSON.stringify(result.structuredContent)).not.toContain("prompt_body");
-
-      const text = textContent(result);
-      expect(text).toContain("Inspection failed; no prompt was invoked.");
-      expect(text).toContain("inspection_only: true");
-      expect(text).toContain("no_prompt_invoked: true");
-      expect(text).toContain("error_code: PROMPT_NOT_INVOKABLE");
-      expect(text).not.toContain("prompt_body");
     });
   });
 
-  it("fails closed for unknown commands without returning prompt body", async () => {
+  it("delivers listTools-cached unknown failures without returning prompt body", async () => {
     await withDefaultClient(async (client) => {
+      await client.listTools();
+
       const result = await client.callTool({
         name: INSPECT_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
         arguments: { command: "active" },
       });
 
-      expect(result.isError).toBe(true);
-      expect(result.structuredContent).toEqual({
-        ok: false,
-        type: "prompt_inspection_error",
-        inspection_only: true,
-        no_prompt_invoked: true,
-        error_code: "PROMPT_NOT_FOUND",
+      expectInspectionFailure(result, {
+        errorCode: "PROMPT_NOT_FOUND",
         message: 'Command "active" was not found.',
         suggestions: ["active-basic", "active-with-alias"],
       });
-      expect(JSON.stringify(result.structuredContent)).not.toContain("prompt_body");
-      expect(textContent(result)).not.toContain("prompt_body");
     });
   });
 
-  it("fails closed for ambiguous commands without returning prompt body", async () => {
+  it("delivers listTools-cached ambiguous failures without returning prompt body", async () => {
     const server = await createPromptLibraryServer({
       promptPaths: [
         "test/fixtures/prompts-conflicts/alias-slug-conflict-a.md",
@@ -324,22 +316,17 @@ describe("inspect_prompt_library_command MCP adapter", () => {
     });
 
     await withClient(server, async (client) => {
+      await client.listTools();
+
       const result = await client.callTool({
         name: INSPECT_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
         arguments: { command: "conflict-target" },
       });
 
-      expect(result.isError).toBe(true);
-      expect(result.structuredContent).toEqual({
-        ok: false,
-        type: "prompt_inspection_error",
-        inspection_only: true,
-        no_prompt_invoked: true,
-        error_code: "PROMPT_AMBIGUOUS",
+      expectInspectionFailure(result, {
+        errorCode: "PROMPT_AMBIGUOUS",
         message: 'Command "conflict-target" is ambiguous and no prompt was inspected.',
       });
-      expect(JSON.stringify(result.structuredContent)).not.toContain("prompt_body");
-      expect(textContent(result)).not.toContain("prompt_body");
     });
   });
 
