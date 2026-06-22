@@ -2,7 +2,7 @@
 
 Status: active workflow contract  
 Scope: Project Prompt Library agent behavior  
-Last updated: 2026-06-21
+Last updated: 2026-06-22
 
 This directory contains the durable operating specs for the agents used in Project Prompt Library. These files are not product architecture and do not authorize new runtime behavior. They define how agents select work, gather evidence, update Linear/GitHub, and stop when scope is unclear.
 
@@ -12,9 +12,9 @@ This directory contains the durable operating specs for the agents used in Proje
 |---|---|---|
 | Dispatcher | [`dispatcher.md`](./dispatcher.md) | Proposed queue/claim/handoff router; not active until explicitly adopted. |
 | Coding Agent | [`coding-agent.md`](./coding-agent.md) | Implement one bounded Linear issue or docs task and produce a PR. |
-| Review Agent | [`review-agent.md`](./review-agent.md) | Review the coding issue and PR, request changes or approve/merge when safe. |
+| Review Agent | [`review-agent.md`](./review-agent.md) | Review implementation or workflow-doc PRs, request changes, or approve/merge when safe. |
 | QA Agent | [`qa-agent.md`](./qa-agent.md) | Independently verify accepted implementation evidence, runtime viability, docs, and tests. |
-| Coordinator Agent | [`coordinator-agent.md`](./coordinator-agent.md) | Synthesize coding/review/QA evidence and decide proceed/fix/re-QA/stop. |
+| Coordinator Agent | [`coordinator-agent.md`](./coordinator-agent.md) | Synthesize coding/review/QA evidence, decide gates, and execute explicitly authorized workflow-doc repairs through PRs. |
 
 Supporting docs:
 
@@ -82,7 +82,7 @@ Role markers:
 Coding Agent       -> title contains Coding Agent
 Review Agent       -> issue/PR is in review, or explicit review target is provided
 QA Agent           -> title contains QA Agent
-Coordinator Agent  -> title contains Coordinator Report, explicit coordinator gate marker, or legacy QA Coordinator process/state finding
+Coordinator Agent  -> title contains Coordinator Report, explicit coordinator gate marker, Coordinator Agent workflow/documentation wording, or legacy QA Coordinator process/state finding
 ```
 
 Expected labels:
@@ -107,6 +107,18 @@ Coding issue -> PR/review evidence on coding issue and PR -> QA issue -> coordin
 ```
 
 Separate Code Reviewer issues are optional. Use them only when review itself is large, risky, multi-PR, or explicitly required. A retired/canceled review issue must not block a coordinator gate if review evidence exists on the coding issue and PR.
+
+Coordinator-authored workflow-doc changes use the same durable repository path:
+
+```text
+Coordinator workflow/docs issue -> branch/commit/PR -> Review Agent review -> merge/closeout evidence -> Done
+```
+
+Decision-only coordinator work may close from recorded Linear/GitHub evidence
+without a PR when it does not mutate repository files. A Coordinator Agent issue
+with uncommitted, unpushed, unreviewed, or unmerged repository changes must
+report `BLOCKED`, `NEEDS PUBLISH`, or `NEEDS REVIEW` with the files/PR listed
+instead of moving to `Done`.
 
 ## Drift control
 

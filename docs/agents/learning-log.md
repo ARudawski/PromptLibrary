@@ -1,7 +1,7 @@
 # Agent Learning Log
 
 Status: proposed workflow audit log  
-Last updated: 2026-06-21
+Last updated: 2026-06-22
 
 This log records proposed, accepted, rejected, deferred, or superseded agent-learning decisions. It is an audit trail, not a runtime prompt. Agents should read the active role specs and current-state ledger first.
 
@@ -96,3 +96,32 @@ Notes:
 - Coordinator Agent owns process correction, queue repair, documentation-state
   reconciliation, and gate decisions from QA-originated findings.
 - Do not create new QA Coordinator issues.
+
+## 2026-06-22 - Coordinator docs changes require PR workflow
+
+Source:
+- PL-84
+- PL-85
+
+Problem:
+Coordinator/state-repair work may legitimately edit workflow docs, but PL-82
+closed after local, uncommitted docs changes. That left hidden repository state
+outside the ticket -> branch -> PR -> review -> merge/closeout path.
+
+Decision:
+accepted
+
+Changed:
+- `docs/agents/coordinator-agent.md`
+- `docs/agents/README.md`
+- `docs/agents/review-agent.md`
+- `docs/agents/dispatcher.md`
+- `docs/workflows/dispatcher-and-learning-setup.md`
+- `docs/agents/learning-log.md`
+
+Notes:
+- Coordinator decision-only work remains distinct from repo-mutating
+  workflow-doc work.
+- Coordinator repository mutations require explicit docs/workflow issue
+  authority and must be published through branch, commit, PR, review, and
+  merge/closeout evidence before the issue is Done.
