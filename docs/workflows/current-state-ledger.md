@@ -1,7 +1,7 @@
 # Current State Ledger - Project Prompt Library
 
 Status: active workflow ledger
-Last updated: 2026-06-21
+Last updated: 2026-06-22
 Update authority: coordinator gate or explicit human workflow update
 
 This ledger is the compact current-state pointer for agents. It prevents stale long-form docs from being treated as current operating state.
@@ -9,12 +9,12 @@ This ledger is the compact current-state pointer for agents. It prevents stale l
 ## Current State
 
 ```text
-Last completed product milestone: M2 - Public source, cache, validation
-Last completed product gate: Slice 2.7 - Source/cache contract and golden tests
+Last completed product milestone: M2 - Public source, cache, validation; M3 is in progress
+Last completed product gate: Slice 3.2 - Inspect MCP adapter
 Active product slice: none
-Current workflow lane: post-M2 state repair / workflow-documentation cleanup
-Next product lane: M3 / Slice 3.1 - Inspect use case and projection, only after an explicit issue is created, promoted, or targeted
-Blocked product work: Slice 3+ implementation until a coordinator/human opens the Slice 3.1 lane; real prompts, hosted deployment, private suites, auth, and DB remain later-slice work
+Current workflow lane: M3 / Slice 3.3 queue selection after Slice 3.2 closeout
+Next product lane: M3 / Slice 3.3 - List use case and summary projection, tracked by PL-76 and only after explicit queue selection or promotion
+Blocked product work: Slice 3.3+ implementation until the next issue is explicitly selected; real prompts, hosted deployment, private suites, auth, and DB remain later-slice work
 ```
 
 ## Completed Gates
@@ -31,15 +31,17 @@ Slice 2.5: partial valid cache and cold failure behavior - approved
 Slice 2.6: local validate-prompts script - approved
 Slice 2.7: source/cache contract and golden tests - approved
 M2: public source, cache, validation - complete with non-blocking follow-ups
+Slice 3.1: inspect use case and projection - approved via PL-74 / PR #35
+Slice 3.2: inspect MCP adapter - approved via PL-75 / PR #36
 ```
 
 ## Active Caveats To Carry Forward
 
-- `test:golden` now includes Slice 2.7 source/cache golden coverage; broaden golden coverage only as later slices add approved behavior.
+- `test:golden` now includes Slice 2.7 source/cache golden coverage; Slice 3.5 still needs inspect/list golden and tool-reference coverage when reached.
 - `validate-prompts` is a real local validator, but it may pass with zero local prompt files until real prompt slices add approved prompt definitions.
 - npm audit caveats must be reported when observed.
 - The public GitHub source adapter and cache are approved M2 infrastructure; real prompt files and broader runtime/user-facing behavior remain later-slice work.
-- `inspect_prompt_library_command` and `list_prompt_library_commands` are approved V1 tools but are not implemented yet; do not start Slice 3 inspect/list work without an explicit issue.
+- `inspect_prompt_library_command` is implemented through Slice 3.2. `list_prompt_library_commands` is approved for V1 but not implemented yet; do not start PL-76 / Slice 3.3 list work without explicit queue selection or promotion.
 - Hosted deployment, private suites, auth, and DB behavior are not implemented.
 - Dispatcher claim mode remains off until the handoff-consumer proof/adoption path is explicitly accepted.
 

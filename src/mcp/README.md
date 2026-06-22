@@ -26,13 +26,15 @@ Rules:
 - do not resolve aliases directly;
 - do not implement business logic here.
 
-## Current Slice 1 behavior
+## Current Slice 1 and Slice 3.2 behavior
 
-`server.ts` registers only `invoke_prompt_library_command` for the Slice 1
-fixture-backed invocation path.
+`server.ts` registers `invoke_prompt_library_command` for the Slice 1
+fixture-backed invocation path and `inspect_prompt_library_command` for the
+Slice 3.2 fixture-backed inspection path. `list_prompt_library_commands` is not
+implemented yet.
 
-Success `structuredContent` is the reduced invocation payload only, and the
-published `outputSchema` requires all four fields:
+Invocation success `structuredContent` is the reduced invocation payload only,
+and the published `outputSchema` requires all four fields:
 
 ```text
 title
@@ -41,12 +43,16 @@ input_mode
 prompt_body
 ```
 
+Inspect success `structuredContent` includes `ok: true`,
+`type: prompt_inspection`, `inspection_only: true`, `no_prompt_invoked: true`,
+full active prompt metadata, and `prompt_body`.
+
 Failure responses fail closed as `isError: true` with compact model-visible text
-content containing `no_prompt_invoked: true`, `error_code`, `message`, and
-optional non-executing `suggestions`. Failure responses intentionally omit
-`structuredContent` because the current MCP SDK validates any returned
-`structuredContent` against the advertised success `outputSchema` when clients
-cache `listTools`.
+content containing `inspection_only: true` where relevant,
+`no_prompt_invoked: true`, `error_code`, `message`, and optional non-executing
+`suggestions`. Failure responses intentionally omit `structuredContent` because
+the current MCP SDK validates any returned `structuredContent` against the
+advertised success `outputSchema` when clients cache `listTools`.
 
 Failure content must not include `prompt_body`.
 

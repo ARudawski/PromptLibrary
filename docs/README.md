@@ -38,7 +38,7 @@ These files are workflow contracts. They do not approve product scope or later-s
 
 ## Current project state
 
-The current phase is tracked in [`workflows/current-state-ledger.md`](workflows/current-state-ledger.md). At the time this index was updated, the repository has completed M2 through Slice 2.7 and is in post-M2 workflow/state-repair cleanup. M3 / Slice 3.1 inspect/list work is the next product lane only after an explicit issue is created, promoted, or targeted.
+The current phase is tracked in [`workflows/current-state-ledger.md`](workflows/current-state-ledger.md). At the time this index was updated, the repository has completed M2 through Slice 2.7 and M3 inspect work through Slice 3.2. No product slice is active; PL-76 / Slice 3.3 list use-case work is the next product candidate only after explicit queue selection or promotion.
 
 Current source/cache references:
 
@@ -46,4 +46,4 @@ Current source/cache references:
 - [`../src/cache/README.md`](../src/cache/README.md)
 - [`source-cache-behavior.md`](source-cache-behavior.md)
 
-Do not treat inspect/list implementation, real prompt files, hosted behavior, private suites, auth, or database behavior as implemented unless the current-state ledger and coordinator gate say so.
+Do not treat list implementation, real prompt files, hosted behavior, private suites, auth, or database behavior as implemented unless the current-state ledger and coordinator gate say so.
