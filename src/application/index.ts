@@ -16,6 +16,7 @@ export {
   type InvokePromptInput,
   InvokePromptUseCase,
 } from "./InvokePromptUseCase.js";
+export { createListPromptsUseCase, ListPromptsUseCase } from "./ListPromptsUseCase.js";
 export {
   type FixtureBackedPromptDefinitionOptions,
   loadFixtureBackedPromptDefinitions,

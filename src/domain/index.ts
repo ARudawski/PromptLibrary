@@ -1,4 +1,5 @@
 export { INPUT_MODES, type InputMode } from "./InputMode.js";
+export type { PromptCommandSummary } from "./PromptCommandSummary.js";
 export type { PromptDefinition } from "./PromptDefinition.js";
 export {
   PROMPT_ERROR_REASONS,
@@ -13,5 +14,6 @@ export type {
   DomainResult,
   PromptInspectionResult,
   PromptInvocationResult,
+  PromptListResult,
 } from "./PromptResult.js";
 export { PROMPT_STATUSES, type PromptStatus } from "./PromptStatus.js";

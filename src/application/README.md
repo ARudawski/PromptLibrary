@@ -10,11 +10,6 @@ createFixtureBackedInspectPromptUseCase.ts
 loadFixtureBackedPromptDefinitions.ts
 InvokePromptUseCase.ts
 InspectPromptUseCase.ts
-```
-
-Expected future files:
-
-```text
 ListPromptsUseCase.ts
 ```
 
@@ -72,3 +67,20 @@ Implemented behavior:
 - successful inspection includes `inspection_only: true` and
   `no_prompt_invoked: true`;
 - inspection does not invoke or apply a prompt.
+
+## Current Slice 3.3 behavior
+
+`ListPromptsUseCase` lists active invokable prompt commands through the derived
+prompt index.
+
+Implemented behavior:
+
+- active prompts appear once by canonical command slug;
+- aliases appear as summary metadata, not duplicate list entries;
+- draft and status-less prompts do not appear;
+- conflicted prompt commands do not appear as invokable summaries;
+- summaries are sorted deterministically by `command`;
+- summaries contain only `command`, `title`, `description`, `aliases`,
+  `lifecycle`, and `input_mode`;
+- prompt bodies, source/cache diagnostics, validation diagnostics, and
+  operational metadata are not returned.
