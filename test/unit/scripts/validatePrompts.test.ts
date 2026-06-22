@@ -57,6 +57,26 @@ describe("validate-prompts script", () => {
     expect(formatValidationReport(result)).toContain("no local prompt Markdown files found");
   });
 
+  it("ignores prompts directory documentation files", async () => {
+    const rootDirectory = await createPromptWorkspace({
+      "README.md": "# Prompt directory documentation\n",
+      "active.md": promptMarkdown({
+        slug: "active-command",
+        title: "Active Command",
+        aliases: [],
+        status: "active",
+      }),
+    });
+
+    const result = await validateLocalPrompts({ rootDirectory });
+
+    expect(result.ok).toBe(true);
+    expect(result.files).toEqual([join("prompts", "active.md")]);
+    expect(result.activePrompts.map(({ prompt }) => prompt.metadata.slug)).toEqual([
+      "active-command",
+    ]);
+  });
+
   it("fails closed when the prompts directory cannot be read", async () => {
     const rootDirectory = await createTemporaryRoot();
 
