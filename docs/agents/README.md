@@ -125,3 +125,28 @@ instead of moving to `Done`.
 Update `docs/workflows/current-state-ledger.md` only from coordinator gates or explicit workflow updates. Ordinary coding, review, and QA agents may report stale ledger information, but should not silently rewrite the ledger unless their issue explicitly asks for workflow documentation changes.
 
 Coordinator gates and workflow closeouts must follow the documentation/state closeout rule in [`coordinator-agent.md`](./coordinator-agent.md) before exposing the next lane or closing the issue.
+
+## State Checkpoint
+
+A State Checkpoint is the explicit evidence recorded when a slice handoff
+changes the allowed lane, completed slice, active slice, next slice, or queue
+exposure.
+
+Invariant:
+
+```text
+No slice handoff without a State Checkpoint.
+```
+
+When a State Checkpoint is required, record exactly one of:
+
+```text
+ledger updated in this PR/issue
+ledger already correct
+state-repair issue created/linked: PL-xxx
+```
+
+Coding, Review, Coordinator, and Dispatcher evidence must carry the checkpoint
+when their work completes, merges, exposes, or selects a state-changing handoff.
+If no slice/lane state changes, the report may say no State Checkpoint was
+required; do not invent a checkpoint outcome for non-handoffs.

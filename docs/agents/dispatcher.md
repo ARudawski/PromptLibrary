@@ -275,6 +275,7 @@ Post-selection blocking drift:
 - the drift is not tracked by a concrete repair issue and is not explained by an explicit current instruction;
 - the selected issue is not the repair/workflow issue needed to make the drift visible or routeable;
 - the dispatcher cannot explain why the stale state is irrelevant to this exact handoff.
+- missing or stale State Checkpoint evidence would change the selected role, issue, lane, dependency, blocker status, or repair path.
 
 For post-selection blocking drift, return:
 
@@ -297,7 +298,13 @@ Non-blocking drift may continue only when all of these are true:
 - the selected issue itself is the tracked repair/workflow handoff, or the explicit current instruction and live Linear/GitHub evidence make the selected handoff unambiguous;
 - the mismatch does not change the selected role, issue, lane, dependency, or blocker status.
 
-For non-blocking drift, include a short `<state_caveat>...</state_caveat>` in the handoff result and continue to Phase 3 or Phase 4.
+Missing or stale State Checkpoint evidence may proceed only when the selected
+handoff is otherwise unambiguous and the missing checkpoint does not change
+candidate selection. Otherwise route to state repair before role execution.
+
+For non-blocking drift or missing checkpoint evidence, include a short
+`<state_caveat>...</state_caveat>` in the handoff result and continue to Phase
+3 or Phase 4.
 
 ## Phase 3 — Candidate mode handoff
 

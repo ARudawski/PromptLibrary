@@ -114,6 +114,12 @@ Carry provisional drift notes into candidate selection when the final decision d
 
 Treat drift as a non-blocking caveat only after exactly one candidate remains and the mismatch does not change that handoff. PL-60 is the concrete repair path for stale current-state ledger/status docs. PL-62 is the workflow rule requiring coordinator closeouts to surface, update, link, or block on documentation/state drift. A dispatcher handoff may proceed with a `<state_caveat>` only when the drift is known, tracked, and irrelevant to the selected role/issue, or when the selected issue itself is the repair/workflow handoff.
 
+State Checkpoint evidence follows the same routing rule. Missing or stale
+checkpoint evidence may proceed only when the selected handoff is otherwise
+unambiguous and the missing checkpoint does not change candidate selection. If
+it changes the selected role, issue, lane, dependency, blocker status, or repair
+path, route to state repair before handoff.
+
 Machine-readable dispatcher decisions:
 
 ```text
@@ -140,6 +146,7 @@ Use this matrix as a lightweight review aid before changing the dispatcher promp
 | A Coding Agent issue or Coordinator docs/workflow issue is in `In Progress`, has requested-changes or fix-needed evidence, and has no live claim. | `ROLE_HANDOFF_CANDIDATE` for the owning Coding or Coordinator Agent in candidate mode. | `In Progress` can be fix-ready handoff state; the dispatcher should not treat the state itself as a lock. |
 | The current-state ledger is stale versus live Linear/GitHub, and the mismatch would change the selected role, issue, lane, dependency, or blocker status. | `STATE_DRIFT_DETECTED` | PL-63 makes blocking drift explicit instead of allowing a handoff from contradictory operating state. |
 | The current-state ledger is stale versus live Linear/GitHub, but exactly one candidate remains, the drift is tracked by PL-60 or explained by PL-62-style workflow rules, and it does not change the handoff. | `ROLE_HANDOFF_CANDIDATE` with `<state_caveat>` in candidate mode. | PL-63 allows known, tracked, non-blocking drift to proceed only after candidate selection proves the selected handoff is unaffected. |
+| State Checkpoint evidence is missing or stale, and that gap would change the selected role, issue, lane, dependency, blocker status, or repair path. | `STATE_DRIFT_DETECTED` | PL-83 requires `No slice handoff without a State Checkpoint`; missing checkpoint evidence becomes a state-repair routing signal when it affects selection. |
 | A `gate:manual` issue is visible but the selected role is not a permitted coordinator/human gate path, or the run lacks coordinator authority. | `DONT_NOTIFY` when no other candidate exists; otherwise skip that issue. | `gate:manual` requires human/coordinator decision authority and must not be executed by an ordinary Coding, Review, or QA handoff. |
 
 ## Suggested settings
