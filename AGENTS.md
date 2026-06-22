@@ -41,9 +41,9 @@ For product-code work, also read the relevant full architecture, roadmap, standa
 
 ## Current phase
 
-Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, M2 source/cache/validation is complete through Slice 2.7 and M3 list core work is complete through Slice 3.3. No product slice is active. M3 / Slice 3.4 list MCP adapter work may start only after its explicit issue is selected or promoted.
+Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, M2 source/cache/validation is complete through Slice 2.7 and M3 list work is complete through Slice 3.4. No product slice is active. M3 / Slice 3.5 inspect/list golden tests and tool reference work may start only after its explicit issue is selected or promoted.
 
-Do not proceed to ChatGPT-facing list MCP adapter implementation, real prompts, hosted deployment, private-suite behavior, auth, or database work without an explicit coordinator or architecture decision.
+Do not proceed to Slice 3.5 inspect/list golden tests and tool reference work, real prompts, hosted deployment, private-suite behavior, auth, or database work without an explicit coordinator or architecture decision.
 
 ## Non-negotiable product boundary
 
@@ -113,7 +113,7 @@ Still forbidden in the current M3 queue-selection phase:
 
 - ChatGPT-facing cache refresh, diagnostics, or admin tools;
 - real prompt files under `prompts/`;
-- `list_prompt_library_commands` MCP adapter implementation unless PL-77 / Slice 3.4 is explicitly selected through the normal queue;
+- Slice 3.5 inspect/list golden tests and tool-reference work unless PL-78 / Slice 3.5 is explicitly selected through the normal queue;
 - new `inspect_prompt_library_command` scope outside the completed PL-74 / PL-75 boundaries;
 - private GitHub source, token/OAuth/auth, DB, or private-suite behavior;
 - hosted deployment.
