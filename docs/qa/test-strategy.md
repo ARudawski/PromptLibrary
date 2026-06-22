@@ -3,7 +3,7 @@
 Status: QA strategy v2.0  
 Last updated: 2026-06-21
 Owner: QA Agent for verification; Coordinator Agent for QA-originated process findings
-Current phase: M2 — public source, cache, validation
+Current phase: M3 - read-only API, completed through Slice 3.2 inspect MCP adapter
 
 ## 1. QA goal
 
@@ -28,12 +28,18 @@ Slice 1: fixture-backed invocation walking skeleton — approved
 Slice 2.1: PromptSource boundary and fake source seam — approved
 Slice 2.2: public GitHub prompt source adapter — approved
 Slice 2.3: runtime cache with TTL — approved
+Slice 2.4: stale-while-revalidate and last-known-good cache behavior — approved
+Slice 2.5: partial valid cache and cold failure behavior — approved
+Slice 2.6: local validate-prompts script — approved
+Slice 2.7: source/cache contract and golden tests — approved
+Slice 3.1: inspect use case and projection — approved
+Slice 3.2: inspect MCP adapter — approved
 ```
 
 Current QA focus:
 
 ```text
-M2 source/cache QA
+M3 read-only API QA
 Current slice: see docs/workflows/current-state-ledger.md
 ```
 
@@ -41,7 +47,7 @@ Slice 0 is now historical, not the immediate next action. Keep its evidence beca
 
 ## 3. Current system under test
 
-For M2, the system under test includes:
+For the current implementation, the system under test includes:
 
 - prompt domain model;
 - Markdown/YAML frontmatter parsing;
@@ -53,9 +59,11 @@ For M2, the system under test includes:
 - `PromptSource` boundary;
 - public GitHub source adapter;
 - runtime cache with TTL and later approved cache behavior;
+- inspect use case and inspection projection;
+- inspect MCP adapter contract behavior;
 - deterministic CI gates and local QA worktrees.
 
-Later phases add inspect/list tools, real prompt files, personal-use trial evidence, and hosted deployment readiness.
+Later phases add list tools, real prompt files, personal-use trial evidence, and hosted deployment readiness.
 
 ## 4. QA levels
 
@@ -213,4 +221,5 @@ Carry these forward until resolved by the relevant slice or issue:
 - `test:golden` has real Slice 2.7 source/cache coverage; future exact-payload behavior still needs slice-specific golden coverage where applicable.
 - `validate-prompts` is real local validation but may pass with zero prompt files until real prompt slices add approved prompt definitions.
 - npm audit findings must be reported when observed.
+- Inspect is implemented through the MCP adapter; list behavior remains later M3 work.
 - Source/cache infrastructure is not equivalent to fully wired real prompt runtime behavior until later slices complete.

@@ -9,8 +9,9 @@ The full QA strategy lives in [`docs/qa/test-strategy.md`](../docs/qa/test-strat
 The repository has passed Slice 1 fixture-backed invocation, Slice 2.1
 source-boundary work, Slice 2.2 public GitHub source work, Slice 2.3 runtime
 cache TTL work, Slice 2.4 stale/LKG cache behavior, Slice 2.5 partial-valid
-cache and cold failure behavior, and Slice 2.6 local prompt validation.
-Slice 2.7 adds source/cache contract and golden coverage.
+cache and cold failure behavior, Slice 2.6 local prompt validation, Slice 2.7
+source/cache contract and golden coverage, Slice 3.1 inspect core behavior, and
+Slice 3.2 inspect MCP adapter behavior.
 
 Slice 0 was validated manually through Linear gate evidence. The local
 [`docs/slice-0-proof.md`](../docs/slice-0-proof.md) remains the proof checklist
@@ -23,9 +24,9 @@ and template because the important Slice 0 behavior was ChatGPT platform behavio
 
 Automated core tests started in Slice 1 and now include the Slice 2.1 source
 boundary, fake source helper, Slice 2.2 public GitHub source adapter tests,
-Slice 2.3/2.4/2.5 prompt cache tests, Slice 2.6 validate-prompts tests, and
-Slice 2.7 source/cache contract and golden tests. They must remain
-deterministic.
+Slice 2.3/2.4/2.5 prompt cache tests, Slice 2.6 validate-prompts tests, Slice
+2.7 source/cache contract and golden tests, Slice 3.1 inspect unit tests, and
+Slice 3.2 inspect contract tests. They must remain deterministic.
 
 ## Required deterministic test categories
 

@@ -6,12 +6,12 @@ Current files:
 
 ```text
 toInvocationPayload.ts
+toPromptInspection.ts
 ```
 
 Expected future files:
 
 ```text
-toPromptInspection.ts
 toPromptSummary.ts
 ```
 
@@ -36,3 +36,8 @@ Rules:
 - inspection projection may include full active-prompt metadata and body;
 - list projection must not include prompt bodies;
 - projection code must not fetch, validate, log, or mutate cache.
+
+## Current Slice 3.1 behavior
+
+`toPromptInspection` returns full active prompt metadata, full prompt body,
+`inspection_only: true`, and `no_prompt_invoked: true`.

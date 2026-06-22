@@ -21,11 +21,11 @@ Slice 6: Hosted deployment, only after local MVP proves useful
 
 If Slice 0 fails, do not proceed to parser/cache/GitHub implementation.
 
-Slice 0 was accepted with caveats through recorded Linear gate evidence, Slice 1 fixture-backed invocation has been approved as the implementation baseline, and M2 has been approved through Slice 2.7. The next product lane is M3 / Slice 3.1 inspect/list work, but only after an explicit issue is created, promoted, or targeted by coordinator/human workflow.
+Slice 0 was accepted with caveats through recorded Linear gate evidence, Slice 1 fixture-backed invocation has been approved as the implementation baseline, M2 has been approved through Slice 2.7, and M3 inspect work has been approved through Slice 3.2. The next product candidate is M3 / Slice 3.3 list use-case work, tracked by PL-76 and only after explicit queue selection or promotion by coordinator/human/automation workflow.
 
 ## Current focus
 
-This repository currently supports Slice 1 fixture-backed invocation plus M2 source/cache/validation behavior: the `PromptSource` boundary, public GitHub source adapter infrastructure, runtime cache TTL, stale-while-revalidate and last-known-good preservation, partial-valid/cold-failure behavior, local `validate-prompts`, and source/cache contract/golden coverage. Inspect/list implementation, real prompt files, hosted deployment, private suites, auth, and DB behavior are still later-slice work.
+This repository currently supports Slice 1 fixture-backed invocation, M2 source/cache/validation behavior, and M3 inspect behavior through the core use case/projection and MCP adapter. List implementation, real prompt files, hosted deployment, private suites, auth, and DB behavior are still later-slice work.
 
 ## Future full document
 

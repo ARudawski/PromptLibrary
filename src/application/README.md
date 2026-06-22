@@ -6,13 +6,15 @@ Current files:
 
 ```text
 createFixtureBackedInvokePromptUseCase.ts
+createFixtureBackedInspectPromptUseCase.ts
+loadFixtureBackedPromptDefinitions.ts
 InvokePromptUseCase.ts
+InspectPromptUseCase.ts
 ```
 
 Expected future files:
 
 ```text
-InspectPromptUseCase.ts
 ListPromptsUseCase.ts
 ```
 
@@ -42,10 +44,31 @@ Rules:
 
 ## Current ALJ-18 behavior
 
-`createFixtureBackedInvokePromptUseCase` composes the local fixture source,
-Markdown parser, prompt definition validator, and `InvokePromptUseCase` for the
-Slice 1 MCP adapter.
+`loadFixtureBackedPromptDefinitions` composes the local fixture source, Markdown
+parser, prompt definition validator, and collection validator once for the
+fixture-backed MCP adapter.
+
+`createFixtureBackedInvokePromptUseCase` and
+`createFixtureBackedInspectPromptUseCase` build invoke and inspect use cases from
+that shared prompt snapshot.
 
 Invalid or unparsable fixture files do not enter the use-case index. Collection
 conflicts are still handled by the derived prompt index and fail closed at
 invocation time.
+
+## Current Slice 3.1 behavior
+
+`InspectPromptUseCase` accepts an explicit tool command string and resolves it
+through the derived active prompt index.
+
+Implemented behavior:
+
+- active slug inspection returns full active prompt metadata and prompt body;
+- active alias inspection returns the same inspection data;
+- draft and status-less prompts fail closed as not invokable;
+- conflicted commands fail closed as ambiguous;
+- unknown commands fail closed and may include active-only non-executing
+  suggestions;
+- successful inspection includes `inspection_only: true` and
+  `no_prompt_invoked: true`;
+- inspection does not invoke or apply a prompt.

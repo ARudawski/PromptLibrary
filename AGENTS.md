@@ -41,9 +41,9 @@ For product-code work, also read the relevant full architecture, roadmap, standa
 
 ## Current phase
 
-Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, M2 source/cache/validation is complete through Slice 2.7 and no product slice is active. M3 / Slice 3.1 inspect/list work may start only after an explicit issue is created, promoted, or targeted.
+Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, M2 source/cache/validation is complete through Slice 2.7 and M3 inspect work is complete through Slice 3.2. No product slice is active. M3 / Slice 3.3 list work may start only after its explicit issue is selected or promoted.
 
-Do not proceed to inspect/list implementation, real prompts, hosted deployment, private-suite behavior, auth, or database work without an explicit coordinator or architecture decision.
+Do not proceed to list implementation, real prompts, hosted deployment, private-suite behavior, auth, or database work without an explicit coordinator or architecture decision.
 
 ## Non-negotiable product boundary
 
@@ -109,11 +109,12 @@ Approved M2 source/cache/validation behavior includes:
 - fake-source/fake-clock tests for source/cache behavior;
 - concise docs for implemented source/cache behavior.
 
-Still forbidden in the current post-M2 workflow-doc phase:
+Still forbidden in the current M3 queue-selection phase:
 
 - ChatGPT-facing cache refresh, diagnostics, or admin tools;
 - real prompt files under `prompts/`;
-- `inspect_prompt_library_command` and `list_prompt_library_commands` implementation unless an explicit M3 / Slice 3.1 issue is opened;
+- `list_prompt_library_commands` implementation unless PL-76 / Slice 3.3 or PL-77 / Slice 3.4 is explicitly selected through the normal queue;
+- new `inspect_prompt_library_command` scope outside the completed PL-74 / PL-75 boundaries;
 - private GitHub source, token/OAuth/auth, DB, or private-suite behavior;
 - hosted deployment.
 
