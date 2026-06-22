@@ -6,6 +6,7 @@ import {
   createFixtureBackedInvokePromptUseCase,
   createInvokePromptUseCase,
 } from "../../src/application/index.js";
+import { INSPECT_PROMPT_LIBRARY_COMMAND_TOOL_NAME } from "../../src/mcp/inspectPromptLibraryCommandTool.js";
 import {
   INVOKE_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
   invokePromptLibraryCommand,
@@ -76,11 +77,13 @@ describe("invoke_prompt_library_command MCP adapter", () => {
     await withDefaultClient(async (client) => {
       const listedTools = await client.listTools();
 
-      expect(listedTools.tools.map((tool) => tool.name)).toEqual([
-        INVOKE_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
-      ]);
+      expect(listedTools.tools.map((tool) => tool.name).sort()).toEqual(
+        [INVOKE_PROMPT_LIBRARY_COMMAND_TOOL_NAME, INSPECT_PROMPT_LIBRARY_COMMAND_TOOL_NAME].sort(),
+      );
 
-      const invokeTool = listedTools.tools[0];
+      const invokeTool = listedTools.tools.find(
+        (tool) => tool.name === INVOKE_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
+      );
       const inputSchema = asRecord(invokeTool?.inputSchema);
       const inputProperties = asRecord(inputSchema.properties);
       const outputSchema = asRecord(invokeTool?.outputSchema);

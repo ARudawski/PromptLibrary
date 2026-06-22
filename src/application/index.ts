@@ -1,4 +1,8 @@
 export {
+  createFixtureBackedInspectPromptUseCase,
+  type FixtureBackedInspectPromptUseCaseOptions,
+} from "./createFixtureBackedInspectPromptUseCase.js";
+export {
   createFixtureBackedInvokePromptUseCase,
   type FixtureBackedInvokePromptUseCaseOptions,
 } from "./createFixtureBackedInvokePromptUseCase.js";
@@ -12,3 +16,7 @@ export {
   type InvokePromptInput,
   InvokePromptUseCase,
 } from "./InvokePromptUseCase.js";
+export {
+  type FixtureBackedPromptDefinitionOptions,
+  loadFixtureBackedPromptDefinitions,
+} from "./loadFixtureBackedPromptDefinitions.js";
