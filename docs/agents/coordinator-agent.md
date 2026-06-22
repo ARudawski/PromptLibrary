@@ -166,6 +166,21 @@ not require a separate QA Coordinator pass.
 
 Before exposing the next lane or closing a coordinator/workflow issue, deliberately decide whether documentation or workflow state must change.
 
+For any state-changing slice handoff, record a State Checkpoint before exposing
+the next lane or closing the issue:
+
+```text
+No slice handoff without a State Checkpoint.
+```
+
+Use exactly one State Checkpoint outcome:
+
+```text
+ledger updated in this PR/issue
+ledger already correct
+state-repair issue created/linked: PL-xxx
+```
+
 Check at minimum:
 
 - `docs/workflows/current-state-ledger.md` for phase, gate, next-lane, queue, and caveat facts;
@@ -229,6 +244,7 @@ Deterministic checks:
 Documentation status:
 Documentation/state outcome:
 Repository mutation status:
+State checkpoint:
 Architecture boundary status:
 Decision:
 Blocking issues:

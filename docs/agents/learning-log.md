@@ -125,3 +125,31 @@ Notes:
 - Coordinator repository mutations require explicit docs/workflow issue
   authority and must be published through branch, commit, PR, review, and
   merge/closeout evidence before the issue is Done.
+
+## 2026-06-22 - State Checkpoint for slice handoffs
+
+Source:
+- PL-83
+- PL-60, PL-62, PL-81, and PL-82 drift-repair evidence
+
+Problem:
+Linear/GitHub slice state can advance while canonical repo state docs lag
+behind, causing repeated caveats and unsafe handoff ambiguity.
+
+Decision:
+accepted
+
+Changed:
+- `docs/agents/README.md`
+- `docs/agents/coordinator-agent.md`
+- `docs/agents/coding-agent.md`
+- `docs/agents/review-agent.md`
+- `docs/agents/dispatcher.md`
+- `docs/workflows/dispatcher-and-learning-setup.md`
+- `docs/agents/learning-log.md`
+
+Notes:
+- Active invariant: `No slice handoff without a State Checkpoint.`
+- Required handoff outcomes are `ledger updated in this PR/issue`, `ledger already correct`, or `state-repair issue created/linked: PL-xxx`.
+- This learning does not authorize product implementation, new runtime tools,
+  claim-mode adoption, or another role.

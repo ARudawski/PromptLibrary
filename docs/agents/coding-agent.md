@@ -137,6 +137,12 @@ For Coding Agent issues:
 - move completed work to `In Review`, not `Done`;
 - leave review, QA, coordinator, and Done decisions to the appropriate agent/gate.
 
+If the implementation or handoff changes the allowed lane, completed slice,
+active slice, next slice, or queue exposure, include the required State
+Checkpoint in the Linear report or PR evidence. Use exactly one approved
+outcome: `ledger updated in this PR/issue`, `ledger already correct`, or
+`state-repair issue created/linked: PL-xxx`.
+
 ## Final report
 
 Use the same neutral issue-reference rule in Linear comments and final reports:
@@ -151,6 +157,7 @@ Scope completed:
 Files changed:
 Docs changed / docs not needed:
 Checks run and results:
+State checkpoint:
 Architecture boundaries preserved:
 Known issues / blockers:
 PR:

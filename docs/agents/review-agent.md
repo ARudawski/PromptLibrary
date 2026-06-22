@@ -113,9 +113,16 @@ If approved:
 4. confirm reviewed head SHA still matches;
 5. merge only when PR is open, non-draft, mergeable, and evidence is sufficient;
 6. use an expected-head guard where available;
-7. post a Linear closeout comment;
-8. move the target Coding Agent or Coordinator docs/workflow issue to `Done`
+7. when merge completion changes the allowed lane, completed slice, active
+   slice, next slice, or queue exposure, verify or record the State Checkpoint
+   before closeout;
+8. post a Linear closeout comment;
+9. move the target Coding Agent or Coordinator docs/workflow issue to `Done`
    only after merge and closeout evidence.
+
+The State Checkpoint must use exactly one approved outcome:
+`ledger updated in this PR/issue`, `ledger already correct`, or
+`state-repair issue created/linked: PL-xxx`.
 
 ## Same-account review fallback
 
@@ -136,6 +143,7 @@ Important improvements:
 Minor issues:
 Docs status:
 Tests/checks reviewed or run:
+State checkpoint:
 Architecture boundary assessment:
 Recommended next action:
 ```
