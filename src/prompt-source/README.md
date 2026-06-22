@@ -8,6 +8,7 @@ Current source boundary files:
 LoadedPromptFile.ts
 PromptSource.ts
 LocalFixturePromptSource.ts
+LocalPromptFileSource.ts
 PublicGitHubPromptSource.ts
 ```
 
@@ -39,6 +40,18 @@ interface LoadedPromptFile {
 Prompt sources load raw Markdown files only. They do not parse frontmatter,
 validate prompt metadata, decide invokability, build indexes, format MCP
 responses, merge sources, or own cache state.
+
+## Current PL-105 behavior
+
+`LocalPromptFileSource` implements `PromptSource` for the local MVP runtime. It
+loads flat Markdown files from `prompts/*.md`, ignores `prompts/README.md` as
+directory documentation, and returns raw `LoadedPromptFile` values. It treats a
+missing prompts directory as an empty source so the repository can still pass
+pre-prompt-file validation before later M4 tasks add the real prompt bodies.
+
+`npm run dev` uses this local prompt-file source for the MCP server entrypoint.
+Deterministic contract and unit tests may still inject `LocalFixturePromptSource`
+or fake sources.
 
 ## Current ALJ-33 behavior
 
@@ -78,7 +91,7 @@ Source failures are mapped to `PublicGitHubPromptSourceError` with a stable
 `code`, and file failures include `sourcePath` for later cache behavior. The
 adapter does not authenticate, use tokens, cache data, parse Markdown, validate
 frontmatter, decide invokability, expose diagnostics through ChatGPT, or wire
-itself into the fixture-backed MCP runtime.
+itself into the local MCP runtime by default.
 
 Default unit tests inject a fake fetch function and do not hit the network.
 

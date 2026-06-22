@@ -1,3 +1,6 @@
+import { mkdir, mkdtemp, writeFile } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
@@ -11,7 +14,7 @@ import {
   listOutputSchema,
   listPromptLibraryCommands,
 } from "../../src/mcp/listPromptLibraryCommandsTool.js";
-import { createPromptLibraryServer } from "../../src/mcp/server.js";
+import { createLocalPromptLibraryServer, createPromptLibraryServer } from "../../src/mcp/server.js";
 import { ScriptedPromptSource, validPromptFile } from "../helpers/sourceCacheTestHarness.js";
 
 const APPROVED_CHATGPT_FACING_TOOLS = [
@@ -262,6 +265,74 @@ describe("list_prompt_library_commands MCP adapter", () => {
           },
         ],
       });
+    });
+  });
+
+  it("loads local runtime commands from prompts/*.md without using fixture defaults", async () => {
+    const repoRoot = await mkdtemp(join(tmpdir(), "prompt-library-runtime-"));
+    await mkdir(join(repoRoot, "prompts"));
+    await writeFile(join(repoRoot, "prompts", "README.md"), "# Prompt docs\n", "utf8");
+    await writeFile(
+      join(repoRoot, "prompts", "runtime-alpha.md"),
+      [
+        "---",
+        'schema_version: "1"',
+        "slug: runtime-alpha",
+        "title: Runtime Alpha",
+        "description: Runtime prompt loaded from local prompts directory.",
+        "aliases:",
+        "  - alpha-runtime",
+        "lifecycle: one_shot",
+        "input_mode: either",
+        "status: active",
+        "---",
+        "",
+        "Apply the runtime alpha prompt.",
+        "",
+      ].join("\n"),
+      "utf8",
+    );
+
+    await withClient(await createLocalPromptLibraryServer({ repoRoot }), async (client) => {
+      const listResult = await client.callTool({
+        name: LIST_PROMPT_LIBRARY_COMMANDS_TOOL_NAME,
+        arguments: {},
+      });
+      const invokeResult = await client.callTool({
+        name: INVOKE_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
+        arguments: { command: "alpha-runtime" },
+      });
+      const inspectResult = await client.callTool({
+        name: INSPECT_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
+        arguments: { command: "runtime-alpha" },
+      });
+
+      expect(listResult.structuredContent).toMatchObject({
+        ok: true,
+        type: "prompt_command_list",
+        commands: [
+          {
+            command: "runtime-alpha",
+            title: "Runtime Alpha",
+            aliases: ["alpha-runtime"],
+          },
+        ],
+      });
+      expect(invokeResult.structuredContent).toEqual({
+        title: "Runtime Alpha",
+        lifecycle: "one_shot",
+        input_mode: "either",
+        prompt_body: "Apply the runtime alpha prompt.\n",
+      });
+      expect(inspectResult.structuredContent).toMatchObject({
+        ok: true,
+        metadata: {
+          slug: "runtime-alpha",
+          title: "Runtime Alpha",
+        },
+        prompt_body: "Apply the runtime alpha prompt.\n",
+      });
+      expect(JSON.stringify(listResult)).not.toContain("Active Basic");
     });
   });
 

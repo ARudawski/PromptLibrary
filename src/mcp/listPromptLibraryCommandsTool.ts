@@ -44,7 +44,7 @@ export function registerListPromptLibraryCommandsTool(
     {
       title: "List Prompt Library Commands",
       description:
-        "Lists active fixture-backed Prompt Library commands for discovery without returning prompt bodies.",
+        "Lists active Prompt Library commands for discovery without returning prompt bodies.",
       inputSchema: listInputSchema,
       outputSchema: listOutputSchema,
     },

@@ -7,11 +7,17 @@ import {
   createInvokePromptUseCase,
   createListPromptsUseCase,
   type FixtureBackedPromptDefinitionOptions,
-  type InspectPromptUseCase,
-  type InvokePromptUseCase,
-  type ListPromptsUseCase,
+  InspectPromptUseCase,
+  InvokePromptUseCase,
+  ListPromptsUseCase,
   loadFixtureBackedPromptDefinitions,
 } from "../application/index.js";
+import type { PromptIndex } from "../cache/index.js";
+import { buildPromptIndex, PromptCache } from "../cache/index.js";
+import {
+  LocalPromptFileSource,
+  type LocalPromptFileSourceOptions,
+} from "../prompt-source/index.js";
 import { registerInspectPromptLibraryCommandTool } from "./inspectPromptLibraryCommandTool.js";
 import { registerInvokePromptLibraryCommandTool } from "./invokePromptLibraryCommandTool.js";
 import { registerListPromptLibraryCommandsTool } from "./listPromptLibraryCommandsTool.js";
@@ -21,6 +27,8 @@ export interface PromptLibraryServerOptions extends FixtureBackedPromptDefinitio
   readonly inspectUseCase?: InspectPromptUseCase;
   readonly listUseCase?: ListPromptsUseCase;
 }
+
+export type LocalPromptLibraryServerOptions = LocalPromptFileSourceOptions;
 
 export async function createPromptLibraryServer(
   options: PromptLibraryServerOptions = {},
@@ -48,8 +56,35 @@ export async function createPromptLibraryServer(
   return server;
 }
 
+export async function createLocalPromptLibraryServer(
+  options: LocalPromptLibraryServerOptions = {},
+): Promise<McpServer> {
+  const index = await loadLocalPromptIndex(options);
+
+  return createPromptLibraryServer({
+    invokeUseCase: new InvokePromptUseCase(index),
+    inspectUseCase: new InspectPromptUseCase(index),
+    listUseCase: new ListPromptsUseCase(index),
+  });
+}
+
+async function loadLocalPromptIndex(
+  options: LocalPromptLibraryServerOptions,
+): Promise<PromptIndex> {
+  const promptCache = new PromptCache({
+    promptSource: new LocalPromptFileSource(options),
+  });
+  const result = await promptCache.getIndex();
+
+  if (result.kind === "success") {
+    return result.index;
+  }
+
+  return buildPromptIndex([]);
+}
+
 async function main(): Promise<void> {
-  const server = await createPromptLibraryServer();
+  const server = await createLocalPromptLibraryServer();
   const transport = new StdioServerTransport();
   await server.connect(transport);
 }

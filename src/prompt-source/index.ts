@@ -4,6 +4,12 @@ export {
   LocalFixturePromptSource,
   type LocalFixturePromptSourceOptions,
 } from "./LocalFixturePromptSource.js";
+export {
+  DEFAULT_LOCAL_PROMPTS_DIRECTORY,
+  LOCAL_PROMPTS_DOCUMENTATION_FILES,
+  LocalPromptFileSource,
+  type LocalPromptFileSourceOptions,
+} from "./LocalPromptFileSource.js";
 export type { PromptSource } from "./PromptSource.js";
 export {
   DEFAULT_PUBLIC_GITHUB_API_BASE_URL,
