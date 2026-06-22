@@ -2,7 +2,7 @@
 
 Status: active workflow contract  
 Role: Codex Prompt Coordinator / gate coordinator  
-Last updated: 2026-06-21
+Last updated: 2026-06-22
 
 ## Purpose
 
@@ -14,6 +14,10 @@ The Coordinator Agent also owns QA-originated process, queue, and
 documentation-state findings. There is no separate active `QA Coordinator` role;
 legacy QA Coordinator tickets are handled as Coordinator Agent process findings
 unless their body clearly requires QA execution instead.
+
+Coordinator workflow/documentation issues may authorize repository workflow-doc
+edits. Those edits are not product code, but they are still repository
+mutations and must use the durable PR workflow below.
 
 ## Required reading
 
@@ -30,12 +34,48 @@ Before deciding, read:
 ## Eligible work
 
 Execute only a Linear issue whose title contains `Coordinator Report`, an
-explicit coordinator gate marker, or a legacy `QA Coordinator` process/state
-finding whose body describes process correction, queue repair, documentation
-state, or coordination follow-up. If an explicit issue does not match, stop and
-report the mismatch.
+explicit coordinator gate marker, `Coordinator Agent` workflow/documentation
+wording, or a legacy `QA Coordinator` process/state finding whose body
+describes process correction, queue repair, documentation state, or
+coordination follow-up. If an explicit issue does not match, stop and report the
+mismatch.
 
 If no issue is provided, find the next unblocked current-milestone coordinator gate in roadmap order. Prefer `Todo`; if no matching `Todo` gate exists, the top unblocked matching Backlog gate may be promoted/executed when it is still in the current allowed lane.
+
+## Repository mutation workflow
+
+Decision-only coordinator work may read repository docs, synthesize evidence,
+post Linear/GitHub comments, update allowed Linear state, or decide a gate
+without editing repository files. It may close the coordinator issue when the
+recorded decision satisfies the issue and no repository mutation is pending.
+
+Repo-mutating coordinator work is allowed only when the target issue explicitly
+authorizes workflow/docs edits. The invariant is:
+
+```text
+Coordinator Agent may write workflow docs only when explicitly authorized, but any repository mutation must follow a ticket -> branch -> PR -> review -> merge/closeout path before the issue is Done.
+```
+
+For any Coordinator Agent repository mutation:
+
+1. verify the correct repository, base, branch, and initial git state before
+   editing;
+2. use a scoped branch for the target issue;
+3. commit only the authorized repository changes;
+4. push the branch;
+5. open or update a PR with role evidence;
+6. route the PR through Review Agent review or the approved same-account
+   fallback review process;
+7. merge and record closeout evidence before moving the issue to `Done`.
+
+After opening a PR for coordinator-authored docs/workflow changes, report
+`NEEDS REVIEW` and move the issue to `In Review` if that state exists. Do not
+mark it `Done` until the PR has review/merge/closeout evidence.
+
+If coordinator-authored repository changes are uncommitted, report `BLOCKED`
+with the dirty files listed. If changes are committed but unpushed, report
+`NEEDS PUBLISH`. If a PR is open but not reviewed or merged, report
+`NEEDS REVIEW`. None of these states may be closed as `Done`.
 
 ## Required evidence
 
@@ -145,6 +185,12 @@ blocked pending human/coordinator decision
 
 Stale docs may be non-blocking for a product verdict when live evidence is stronger, but stale source-of-truth docs must be updated when in scope or tracked as an explicit follow-up when out of scope.
 
+For coordinator/workflow issues, run a final git state check after final
+Linear/GitHub writes and before moving the issue to `Done`. If that check shows
+dirty files, unpushed commits, or an unmerged/unreviewed PR for this issue,
+record the appropriate `BLOCKED`, `NEEDS PUBLISH`, or `NEEDS REVIEW` result
+instead of closing the issue.
+
 ## CI evidence
 
 Follow `docs/qa/ci-evidence.md`.
@@ -161,6 +207,8 @@ COMPLETE WITH NON-BLOCKING FOLLOW-UPS
 NEEDS FIXES
 NEEDS DOCS
 NEEDS QA
+NEEDS REVIEW
+NEEDS PUBLISH
 BLOCKED PENDING EVIDENCE
 STOP FOR ARCHITECTURE REVIEW
 ```
@@ -180,6 +228,7 @@ QA/process finding status:
 Deterministic checks:
 Documentation status:
 Documentation/state outcome:
+Repository mutation status:
 Architecture boundary status:
 Decision:
 Blocking issues:

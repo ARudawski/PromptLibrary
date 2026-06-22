@@ -1,7 +1,7 @@
 # Dispatcher and Role Learning Setup
 
 Status: proposed operating setup  
-Last updated: 2026-06-21  
+Last updated: 2026-06-22
 Scope: Project Prompt Library Codex/Linear/GitHub workflow
 
 This document designs the lightweight dispatcher setup and the role-learning loop for Project Prompt Library. It keeps runtime state in Linear/GitHub and keeps execution threads disposable.
@@ -33,8 +33,11 @@ Linear:
 - Labels exist for `agent:codex-local`, `agent:review`, `agent:qa-local`, `agent:coordinator`, `agent:auto`, and `gate:manual`.
 - Linear state is workflow position, not proof that an agent is currently running.
 - A live claim marker is the active-work lock.
-- `In Review` Coding Agent work is review-ready handoff state.
-- `In Progress` Coding Agent work may be fix-ready handoff state when review has requested changes and no live claim exists.
+- `In Review` Coding Agent work and Coordinator docs/workflow PR work are
+  review-ready handoff states.
+- `In Progress` Coding Agent work and Coordinator docs/workflow PR work may be
+  fix-ready handoff states when review has requested changes and no live claim
+  exists.
 - `Todo` is preferred for executable work, but the top unblocked matching Backlog item may be promoted/executed when no matching executable Todo exists and the current queue rule permits it.
 
 GitHub:
@@ -78,8 +81,8 @@ Dispatcher
   -> compare ledger, Linear queue, live claims, and recent PR state for hard blockers and provisional drift notes
   -> if a live claim exists: stop
   -> if hard state drift blocks candidate selection: stop
-  -> if review-ready In Review coding work exists: select review handoff
-  -> if fix-ready In Progress coding work exists: select coding handoff
+  -> if review-ready In Review coding or coordinator docs/workflow PR work exists: select review handoff
+  -> if fix-ready In Progress coding or coordinator docs/workflow PR work exists: select owning-role handoff
   -> else if matching executable Todo exists: select it
   -> else if no matching executable Todo exists: select top matching Backlog when allowed
   -> after exactly one candidate is selected: finalize provisional drift as blocking or non-blocking caveat
@@ -133,8 +136,8 @@ Use this matrix as a lightweight review aid before changing the dispatcher promp
 | A Done or Canceled issue still has `agent:auto`. | `DONT_NOTIFY` when no other candidate exists; otherwise ignore that issue and continue selection. | `agent:auto` grants automation permission only for otherwise executable issues; terminal states are never executable. |
 | A current coordinator gate is in Backlog, no matching executable Todo exists, it is top unblocked for the current lane, has `agent:coordinator`, and has the required Coordinator Agent/Coordinator Report marker. | `ROLE_HANDOFF_CANDIDATE` in candidate mode, or `ROLE_HANDOFF` only after adopted claim mode claims it. | PL-64 aligns the active policy to Todo first plus top-unblocked matching Backlog fallback; coordinator gates are eligible only under the normal role, blocker, lane, and claim checks. |
 | Multiple executable candidates remain after applying current lane, role label/title marker, blocker/dependency, roadmap/ledger order, and issue-order tiebreakers. | `AMBIGUOUS_QUEUE` | The dispatcher must select at most one candidate; unresolved ambiguity needs coordinator or human queue repair. |
-| A Coding Agent issue is in `In Review` with an attached or clearly linked PR. | `ROLE_HANDOFF_CANDIDATE` for the Review Agent in candidate mode. | `In Review` Coding Agent work is review-ready handoff state even when there is no separate review issue. |
-| A Coding Agent issue is in `In Progress`, has requested-changes or fix-needed evidence, and has no live claim. | `ROLE_HANDOFF_CANDIDATE` for the Coding Agent in candidate mode. | `In Progress` can be fix-ready handoff state; the dispatcher should not treat the state itself as a lock. |
+| A Coding Agent issue or Coordinator docs/workflow issue is in `In Review` with an attached or clearly linked PR. | `ROLE_HANDOFF_CANDIDATE` for the Review Agent in candidate mode. | `In Review` repository work is review-ready handoff state even when there is no separate review issue. |
+| A Coding Agent issue or Coordinator docs/workflow issue is in `In Progress`, has requested-changes or fix-needed evidence, and has no live claim. | `ROLE_HANDOFF_CANDIDATE` for the owning Coding or Coordinator Agent in candidate mode. | `In Progress` can be fix-ready handoff state; the dispatcher should not treat the state itself as a lock. |
 | The current-state ledger is stale versus live Linear/GitHub, and the mismatch would change the selected role, issue, lane, dependency, or blocker status. | `STATE_DRIFT_DETECTED` | PL-63 makes blocking drift explicit instead of allowing a handoff from contradictory operating state. |
 | The current-state ledger is stale versus live Linear/GitHub, but exactly one candidate remains, the drift is tracked by PL-60 or explained by PL-62-style workflow rules, and it does not change the handoff. | `ROLE_HANDOFF_CANDIDATE` with `<state_caveat>` in candidate mode. | PL-63 allows known, tracked, non-blocking drift to proceed only after candidate selection proves the selected handoff is unaffected. |
 | A `gate:manual` issue is visible but the selected role is not a permitted coordinator/human gate path, or the run lacks coordinator authority. | `DONT_NOTIFY` when no other candidate exists; otherwise skip that issue. | `gate:manual` requires human/coordinator decision authority and must not be executed by an ordinary Coding, Review, or QA handoff. |
@@ -301,15 +304,20 @@ The dispatcher stops when a live claim exists. It does not stop merely because a
 
 Selection order:
 
-1. Review-ready `In Review` Coding Agent issue with linked PR/review target.
-2. Fix-ready `In Progress` Coding Agent issue with requested-changes/fix-needed evidence and no live claim.
+1. Review-ready `In Review` Coding Agent issue or Coordinator docs/workflow
+   issue with linked PR/review target.
+2. Fix-ready `In Progress` Coding Agent issue or Coordinator docs/workflow
+   issue with requested-changes/fix-needed evidence and no live claim.
 3. Matching executable `Todo` issue.
 4. Top unblocked matching Backlog issue when no matching executable `Todo` exists and the current queue rule permits it.
 
 Completion routing happens in the fresh role run, not in the dispatcher:
 
 - Coding work ends in `In Review`, not `Done`.
-- Review work either returns the coding issue to `In Progress`, approves/merges and moves it to `Done`, or records `BLOCKED`.
+- Coordinator docs/workflow repository mutation ends in `In Review` after a PR
+  is opened, not `Done`.
+- Review work either returns the target issue to `In Progress`, approves/merges
+  and moves it to `Done`, or records `BLOCKED`.
 - QA work moves the QA issue to `Done` only after a PASS/PASS WITH MINOR ISSUES verdict.
 - Coordinator gates move to `Done` only after the decision is recorded.
 
@@ -334,9 +342,20 @@ Coding issue ready for review:
   labels: agent:codex-local
   linked PR present
 
+Coordinator docs/workflow issue ready for review:
+  state: In Review
+  labels: agent:coordinator
+  linked PR present
+
 Coding issue needing review fixes:
   state: In Progress
   labels: agent:codex-local
+  review requested changes present
+  no live claim present
+
+Coordinator docs/workflow issue needing review fixes:
+  state: In Progress
+  labels: agent:coordinator
   review requested changes present
   no live claim present
 ```

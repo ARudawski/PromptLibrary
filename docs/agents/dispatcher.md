@@ -1,7 +1,7 @@
 # Dispatcher Automation Prompt — Project Prompt Library
 
 Status: proposed dispatcher spec  
-Last updated: 2026-06-21  
+Last updated: 2026-06-22
 Scope: Codex dispatcher runs for `Project Prompt Library`
 
 This file is the durable prompt/spec for the lightweight dispatcher. The dispatcher is intentionally not a project brain and does not execute coding, review, QA, or coordinator work itself. It is a cheap queue gate that selects at most one Linear issue, emits a role handoff, and stops.
@@ -13,8 +13,10 @@ Adoption note: do not treat this dispatcher as active automation until a coordin
 - Minimize idle token use.
 - Avoid GitHub/repo/source reads when no issue is executable.
 - Avoid duplicate concurrent agent runs.
-- Allow normal handoff states such as Coding Agent work in `In Review` to become review targets.
-- Allow reviewed Coding Agent work in `In Progress` to be resumed when no live claim exists.
+- Allow normal handoff states such as Coding Agent work or Coordinator
+  docs/workflow PR work in `In Review` to become review targets.
+- Allow reviewed Coding Agent work or Coordinator docs/workflow PR work in `In
+  Progress` to be resumed by the owning role when no live claim exists.
 - Keep role execution fresh and issue-scoped.
 - Keep learning artifact-based, not hidden in long chats.
 
@@ -208,17 +210,27 @@ Do not return `STATE_DRIFT_DETECTED` for tracked repair/caveat drift before cand
 
 Look for exactly one executable issue in this order:
 
-1. Review-ready handoff: a current-lane Coding Agent issue in `In Review` with an attached or clearly linked PR/review target. Select this as Review Agent work even if there is no separate Code Reviewer issue.
-2. Fix-ready handoff: a current-lane Coding Agent issue in `In Progress` with requested-changes or fix-needed evidence and no live claim. Select this as Coding Agent work.
+1. Review-ready handoff: a current-lane Coding Agent issue or Coordinator
+   docs/workflow issue in `In Review` with an attached or clearly linked
+   PR/review target. Select this as Review Agent work even if there is no
+   separate Code Reviewer issue.
+2. Fix-ready handoff: a current-lane Coding Agent issue or Coordinator
+   docs/workflow issue in `In Progress` with requested-changes or fix-needed
+   evidence and no live claim. Select this as the owning role's work.
 3. Matching Todo: a Project Prompt Library issue in state `Todo` matching the current allowed lane and expected role label/title marker. Prefer `agent:auto` when present.
 4. Backlog fallback: if no matching executable Todo exists, use the current queue rule to select the top unblocked matching Backlog issue for the current allowed slice/lane only.
 
 A candidate must satisfy all relevant checks:
 
-- expected role label is present, or it is a review-ready/fix-ready handoff selected from a Coding Agent issue;
+- expected role label is present, or it is a review-ready/fix-ready handoff
+  selected from a Coding Agent issue or Coordinator docs/workflow issue;
 - expected title marker is present after resolving/fetching the issue;
-- for review-ready handoff, verify the Coding Agent marker and linked PR/review target, then hand off to the Review Agent;
-- for fix-ready handoff, verify the Coding Agent marker and requested-changes/fix-needed evidence, then hand off to the Coding Agent;
+- for review-ready handoff, verify the Coding Agent marker or Coordinator
+  docs/workflow marker and linked PR/review target, then hand off to the Review
+  Agent;
+- for fix-ready handoff, verify the Coding Agent marker or Coordinator
+  docs/workflow marker and requested-changes/fix-needed evidence, then hand off
+  to the owning Coding or Coordinator Agent;
 - dependencies/blockers are resolved;
 - issue belongs to the current allowed slice/lane from the ledger;
 - issue is not `gate:manual` unless the selected role is a coordinator/human gate and the role rules permit it.
@@ -316,11 +328,13 @@ Before reading repository docs or PRs beyond the current-state ledger:
 3. Fetch the selected Linear issue.
 4. Verify the selected role lane:
    - normal role issue: resolved issue title/body matches the selected role lane;
-   - review-ready handoff: resolved issue is a Coding Agent issue in `In Review` with a linked PR/review target, and selected role is Review Agent;
-   - fix-ready handoff: resolved issue is a Coding Agent issue in `In Progress` with requested-changes/fix-needed evidence, and selected role is Coding Agent.
+   - review-ready handoff: resolved issue is a Coding Agent issue or Coordinator docs/workflow issue in `In Review` with a linked PR/review target, and selected role is Review Agent;
+   - fix-ready handoff: resolved issue is a Coding Agent issue or Coordinator docs/workflow issue in `In Progress` with requested-changes/fix-needed evidence, and selected role is the owning Coding or Coordinator Agent.
 5. Move normal Todo/Backlog Coding, QA, and Coordinator issues to `In Progress` if needed.
-6. Do not move review-ready Coding Agent issues out of `In Review` just to claim review.
-7. Do not move fix-ready Coding Agent issues if they are already `In Progress`.
+6. Do not move review-ready Coding Agent issues or Coordinator docs/workflow
+   issues out of `In Review` just to claim review.
+7. Do not move fix-ready Coding Agent issues or Coordinator docs/workflow
+   issues if they are already `In Progress`.
 8. Record `claimed_from_state` and `claimed_from_labels` before any state or label mutation, using `none` only when nothing changed.
 9. Remove `agent:auto` only if the adopted handoff consumer is confirmed to start the fresh role run immediately.
 10. Add a Linear comment:
@@ -452,6 +466,8 @@ Do not start a second issue in the same dispatcher run.
 - Use candidate mode until the handoff consumer is explicitly adopted.
 - Use fresh role execution context per claimed issue/review/QA/gate.
 - Use live claim markers as the primary lock, not Linear state alone.
-- Treat `In Review` Coding Agent issues as review-ready handoffs.
-- Treat `In Progress` Coding Agent issues with requested changes as fix-ready handoffs when no live claim exists.
+- Treat `In Review` Coding Agent issues and Coordinator docs/workflow issues as
+  review-ready handoffs.
+- Treat `In Progress` Coding Agent issues and Coordinator docs/workflow issues
+  with requested changes as fix-ready handoffs when no live claim exists.
 - Prefer one active lane at a time for this solo project unless parallelism is explicitly opened.

@@ -2,11 +2,18 @@
 
 Status: active workflow contract  
 Role: PR / code review agent  
-Last updated: 2026-06-20
+Last updated: 2026-06-22
 
 ## Purpose
 
-The Review Agent reviews one implementation PR against the linked Linear issue, accepted predecessor evidence, architecture boundaries, deterministic quality gates, and GitHub discussion state. It does not implement fixes unless explicitly asked.
+The Review Agent reviews one implementation or workflow-documentation PR
+against the linked Linear issue, accepted predecessor evidence, architecture
+boundaries, deterministic quality gates, and GitHub discussion state. It does
+not implement fixes unless explicitly asked.
+
+Coordinator-authored docs/workflow PRs are valid review targets when the linked
+Coordinator Agent issue explicitly authorized repository workflow-doc edits.
+Review them as workflow changes, not as product-code implementation.
 
 ## Required reading
 
@@ -15,7 +22,8 @@ Before reviewing, read:
 1. `AGENTS.md`
 2. `docs/agents/README.md`
 3. `docs/workflows/current-state-ledger.md`
-4. the coding issue, comments, implementation report, blockers, and attachments
+4. the target issue, comments, implementation/workflow report, blockers, and
+   attachments
 5. the linked PR body, diff, changed files, comments, review threads, and CI/check evidence
 6. architecture, roadmap, standards, QA, source, and test docs relevant to the PR
 
@@ -25,9 +33,11 @@ If the user provides a Linear issue ID, PR number, or URL, review exactly that i
 
 If no target is provided:
 
-1. find Project Prompt Library issues in `In Review`;
-2. prefer the earliest current-slice issue in roadmap order;
-3. use the GitHub PR attached to the coding issue;
+1. find Project Prompt Library Coding Agent issues or Coordinator Agent
+   docs/workflow issues in `In Review`;
+2. prefer the earliest current-slice or current workflow-lane issue in roadmap
+   or ledger order;
+3. use the GitHub PR attached to the target issue;
 4. if no usable PR/evidence exists, report `BLOCKED` instead of inventing work.
 
 ## Review evidence pattern
@@ -91,7 +101,8 @@ If actionable issues are found:
 
 1. post a Linear comment with findings ordered by severity;
 2. add a GitHub review/comment when useful;
-3. move the coding issue back to `In Progress`;
+3. move the target Coding Agent or Coordinator docs/workflow issue back to
+   `In Progress`;
 4. do not merge the PR.
 
 If approved:
@@ -103,7 +114,8 @@ If approved:
 5. merge only when PR is open, non-draft, mergeable, and evidence is sufficient;
 6. use an expected-head guard where available;
 7. post a Linear closeout comment;
-8. move the coding issue to `Done` only after merge and closeout evidence.
+8. move the target Coding Agent or Coordinator docs/workflow issue to `Done`
+   only after merge and closeout evidence.
 
 ## Same-account review fallback
 
