@@ -184,6 +184,9 @@ Notes:
   correct in the current closeout, the closing agent must create or link an
   executable Coordinator Agent state-repair issue before moving the original
   issue to `Done`.
+- If that repair requires a ledger or workflow-doc repository update, the
+  state-repair issue must explicitly authorize the required workflow/docs edits
+  before the handoff counts as executable.
 - Non-automated monitor findings are reports only; they do not satisfy
   `state-repair issue created/linked: PL-xxx` unless they link to a separate
   executable repair issue.

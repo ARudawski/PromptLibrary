@@ -241,8 +241,10 @@ A candidate must satisfy all relevant checks:
 - issue is not `gate:manual` unless the selected role is a coordinator/human gate and the role rules permit it.
 - non-automated monitor findings are not executable candidates. If a finding
   exposes missing checkpoint evidence, select the linked executable
-  state-repair issue when one exists; otherwise return `STATE_DRIFT_DETECTED`
-  with a repair-path gap instead of handing off the finding itself.
+  state-repair issue when one exists and, when repo mutation is needed, that
+  issue explicitly authorizes the required workflow/docs edit; otherwise return
+  `STATE_DRIFT_DETECTED` with a repair-path gap instead of handing off the
+  finding itself.
 
 Role labels:
 
@@ -319,8 +321,9 @@ Treat State Checkpoint evidence separately from ordinary historical drift:
 - If the selected state-changing handoff lacks an approved State Checkpoint
   outcome, do not continue with only a `<state_caveat>`. Return
   `STATE_DRIFT_DETECTED` and route to state repair before role execution. When
-  an executable Coordinator Agent state-repair issue already exists, that issue
-  is the repair handoff; a non-automated finding is only source evidence.
+  an executable Coordinator Agent state-repair issue already exists and
+  explicitly authorizes any required workflow/docs repo mutation, that issue is
+  the repair handoff; a non-automated finding is only source evidence.
 - If missing or stale State Checkpoint evidence is historical, tracked, and
   irrelevant to the current selected non-state-changing handoff, it may proceed
   only as non-blocking drift with a short `<state_caveat>`.

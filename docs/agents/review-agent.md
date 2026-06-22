@@ -130,8 +130,9 @@ For the common post-merge case, a Review Agent that cannot update
 `docs/workflows/current-state-ledger.md` must not close with only a note that
 coordinator follow-up is needed. It must either prove the ledger is already
 correct or create/link an executable state-repair issue with Coordinator Agent
-and `lane:state-repair` routing. A non-automated monitor finding is useful
-evidence, but it is not executable repair work by itself.
+and `lane:state-repair` routing plus explicit authorization for the needed
+ledger/workflow-doc repository update. A non-automated monitor finding is
+useful evidence, but it is not executable repair work by itself.
 
 ## Same-account review fallback
 

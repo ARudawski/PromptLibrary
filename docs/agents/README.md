@@ -157,6 +157,9 @@ executable Coordinator Agent state-repair issue before moving the original
 issue to `Done`. An executable state-repair issue must carry the Coordinator
 Agent marker, `lane:state-repair`, `agent:coordinator`, and the automation
 label required by the current workflow when recurring automation should pick it.
+When the repair requires repository mutation, such as a current-state ledger or
+workflow-doc update, the issue must explicitly authorize the required
+workflow/docs edits and durable PR workflow before it counts as executable.
 Non-automated monitor findings are evidence only; they do not satisfy
 `state-repair issue created/linked: PL-xxx` unless they link to a separate
 executable repair issue.
