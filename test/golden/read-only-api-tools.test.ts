@@ -73,6 +73,26 @@ async function buildReadOnlyApiGolden(): Promise<Record<string, unknown>> {
         }),
       );
     }),
+    invoke_draft_failure: await withDefaultClient(async (client) => {
+      await client.listTools();
+
+      return normalizeToolResult(
+        await client.callTool({
+          name: INVOKE_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
+          arguments: { command: "draft-valid" },
+        }),
+      );
+    }),
+    invoke_ambiguous_failure: await withClient(await createAmbiguousServer(), async (client) => {
+      await client.listTools();
+
+      return normalizeToolResult(
+        await client.callTool({
+          name: INVOKE_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
+          arguments: { command: "conflict-target" },
+        }),
+      );
+    }),
     inspect_active_success: await withDefaultClient(async (client) =>
       normalizeToolResult(
         await client.callTool({
@@ -180,6 +200,7 @@ async function withClient<T>(server: McpServer, run: (client: Client) => Promise
 
 function normalizeToolResult(result: unknown): Record<string, unknown> {
   const resultRecord = asRecord(result);
+  assertAllowedToolResultKeys(resultRecord);
 
   return {
     isError: resultRecord.isError === true,
@@ -210,6 +231,8 @@ function assertReadOnlyApiBoundaries(golden: Record<string, unknown>): void {
 
   for (const key of [
     "invoke_unknown_failure",
+    "invoke_draft_failure",
+    "invoke_ambiguous_failure",
     "inspect_unknown_failure",
     "inspect_draft_failure",
     "inspect_ambiguous_failure",
@@ -219,6 +242,14 @@ function assertReadOnlyApiBoundaries(golden: Record<string, unknown>): void {
     expect(failure.isError).toBe(true);
     expect(failure.structuredContent).toBeNull();
     expect(JSON.stringify(failure)).not.toContain("prompt_body");
+  }
+}
+
+function assertAllowedToolResultKeys(result: Record<string, unknown>): void {
+  expect(Object.keys(result).sort()).toEqual(expect.arrayContaining(["content"]));
+
+  for (const key of Object.keys(result)) {
+    expect(["content", "isError", "structuredContent"]).toContain(key);
   }
 }
 

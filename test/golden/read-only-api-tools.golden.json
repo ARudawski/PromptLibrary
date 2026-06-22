@@ -24,6 +24,26 @@
       }
     ]
   },
+  "invoke_draft_failure": {
+    "isError": true,
+    "structuredContent": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "No prompt invoked.\nno_prompt_invoked: true\nerror_code: PROMPT_NOT_INVOKABLE\nmessage: Command \"draft-valid\" is not invokable."
+      }
+    ]
+  },
+  "invoke_ambiguous_failure": {
+    "isError": true,
+    "structuredContent": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "No prompt invoked.\nno_prompt_invoked: true\nerror_code: PROMPT_AMBIGUOUS\nmessage: Command \"conflict-target\" is ambiguous and no prompt was invoked."
+      }
+    ]
+  },
   "inspect_active_success": {
     "isError": false,
     "structuredContent": {
