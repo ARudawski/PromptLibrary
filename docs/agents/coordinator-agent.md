@@ -40,6 +40,12 @@ describes process correction, queue repair, documentation state, or
 coordination follow-up. If an explicit issue does not match, stop and report the
 mismatch.
 
+State-repair issues that exist only to record or reconcile State Checkpoints
+are Coordinator Agent work when they carry the Coordinator Agent marker and the
+state-repair lane. They may repair the current-state ledger, link the approved
+checkpoint evidence, or reconcile Linear/GitHub/repo state without opening a
+new product implementation lane.
+
 If no issue is provided, find the next unblocked current-milestone coordinator gate in roadmap order. Prefer `Todo`; if no matching `Todo` gate exists, the top unblocked matching Backlog gate may be promoted/executed when it is still in the current allowed lane.
 
 ## Repository mutation workflow
@@ -180,6 +186,15 @@ ledger updated in this PR/issue
 ledger already correct
 state-repair issue created/linked: PL-xxx
 ```
+
+If the checkpoint is required, is not already correct, and cannot be updated in
+the same PR or issue, create or link an executable state-repair issue before
+closing the state-changing issue. The repair issue must be routeable to the
+Coordinator Agent, normally with `lane:state-repair`, `agent:coordinator`, and
+`agent:auto` when recurring automation should pick it. A non-automated monitor
+finding is evidence only; it cannot stand in for the executable repair issue.
+If no executable repair path can be created or linked, report `BLOCKED PENDING
+EVIDENCE` or `NEEDS DOCS` instead of moving the issue to `Done`.
 
 Check at minimum:
 
