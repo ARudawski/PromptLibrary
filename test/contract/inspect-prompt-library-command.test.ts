@@ -5,10 +5,13 @@ import { describe, expect, it } from "vitest";
 import { createInspectPromptUseCase } from "../../src/application/index.js";
 import {
   INSPECT_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
+  inspectFailureStructuredContentSchema,
+  inspectOutputSchema,
   inspectPromptLibraryCommand,
 } from "../../src/mcp/inspectPromptLibraryCommandTool.js";
 import { INVOKE_PROMPT_LIBRARY_COMMAND_TOOL_NAME } from "../../src/mcp/invokePromptLibraryCommandTool.js";
 import { createPromptLibraryServer } from "../../src/mcp/server.js";
+import { ScriptedPromptSource, validPromptFile } from "../helpers/sourceCacheTestHarness.js";
 import { loadValidatedPromptFixtures } from "../unit/promptFixtures.js";
 
 const APPROVED_CHATGPT_FACING_TOOLS = [
@@ -109,7 +112,7 @@ describe("inspect_prompt_library_command MCP adapter", () => {
     });
   });
 
-  it("publishes an inspect output schema for success and failure responses", async () => {
+  it("publishes an inspect success output schema requiring metadata and prompt body", async () => {
     await withDefaultClient(async (client) => {
       const listedTools = await client.listTools();
       const inspectTool = listedTools.tools.find(
@@ -118,22 +121,24 @@ describe("inspect_prompt_library_command MCP adapter", () => {
       const outputSchema = asRecord(inspectTool?.outputSchema);
       const outputProperties = asRecord(outputSchema.properties);
       expect(Object.keys(outputProperties).sort()).toEqual([
-        "error_code",
         "inspection_only",
-        "message",
         "metadata",
         "no_prompt_invoked",
         "ok",
         "prompt_body",
-        "suggestions",
         "type",
       ]);
-      expect(outputSchema.required).toEqual(["ok", "type", "inspection_only", "no_prompt_invoked"]);
-      expect(outputSchema.additionalProperties).toBe(false);
-      expect(enumValues(outputProperties.type)).toEqual([
-        "prompt_inspection",
-        "prompt_inspection_error",
+      expect(outputSchema.required).toEqual([
+        "ok",
+        "type",
+        "inspection_only",
+        "no_prompt_invoked",
+        "metadata",
+        "prompt_body",
       ]);
+      expect(outputSchema.additionalProperties).toBe(false);
+      expect(propertyConst(outputProperties.ok)).toBe(true);
+      expect(propertyConst(outputProperties.type)).toBe("prompt_inspection");
       expect(propertyConst(outputProperties.inspection_only)).toBe(true);
       expect(propertyConst(outputProperties.no_prompt_invoked)).toBe(true);
 
@@ -143,10 +148,44 @@ describe("inspect_prompt_library_command MCP adapter", () => {
       expect(metadataSchema.additionalProperties).toBe(false);
 
       expect(outputProperties.prompt_body).toBeDefined();
-      expect(outputProperties.error_code).toBeDefined();
-      expect(outputProperties.message).toBeDefined();
-      expect(outputProperties.suggestions).toBeDefined();
     });
+  });
+
+  it("rejects invalid minimal success and failure structured-content payloads", () => {
+    expect(
+      inspectOutputSchema.safeParse({
+        ok: true,
+        type: "prompt_inspection",
+        inspection_only: true,
+        no_prompt_invoked: true,
+      }).success,
+    ).toBe(false);
+    expect(
+      inspectOutputSchema.safeParse({
+        ok: false,
+        type: "prompt_inspection_error",
+        inspection_only: true,
+        no_prompt_invoked: true,
+      }).success,
+    ).toBe(false);
+    expect(
+      inspectFailureStructuredContentSchema.safeParse({
+        ok: false,
+        type: "prompt_inspection_error",
+        inspection_only: true,
+        no_prompt_invoked: true,
+      }).success,
+    ).toBe(false);
+    expect(
+      inspectFailureStructuredContentSchema.safeParse({
+        ok: false,
+        type: "prompt_inspection_error",
+        inspection_only: true,
+        no_prompt_invoked: true,
+        error_code: "PROMPT_NOT_FOUND",
+        message: 'Command "missing" was not found.',
+      }).success,
+    ).toBe(true);
   });
 
   it("returns active fixture inspection by alias with model-visible metadata and prompt body", async () => {
@@ -181,6 +220,49 @@ describe("inspect_prompt_library_command MCP adapter", () => {
         },
       ]);
       expect(result).not.toHaveProperty("_meta.prompt_body");
+    });
+  });
+
+  it("builds invoke and inspect defaults from the same prompt-source snapshot", async () => {
+    const promptSource = new ScriptedPromptSource([
+      [validPromptFile("alpha", { body: "Apply alpha.\n", title: "Alpha Prompt" })],
+      [validPromptFile("beta", { body: "Apply beta.\n", title: "Beta Prompt" })],
+    ]);
+    const server = await createPromptLibraryServer({ promptSource });
+
+    expect(promptSource.loadCount).toBe(1);
+
+    await withClient(server, async (client) => {
+      const invokeResult = await client.callTool({
+        name: INVOKE_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
+        arguments: { command: "alpha" },
+      });
+      const inspectResult = await client.callTool({
+        name: INSPECT_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
+        arguments: { command: "alpha" },
+      });
+      const staleSecondSnapshotResult = await client.callTool({
+        name: INSPECT_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
+        arguments: { command: "beta" },
+      });
+
+      expect(invokeResult.structuredContent).toMatchObject({
+        title: "Alpha Prompt",
+        prompt_body: "Apply alpha.\n",
+      });
+      expect(inspectResult.structuredContent).toMatchObject({
+        ok: true,
+        metadata: {
+          slug: "alpha",
+          title: "Alpha Prompt",
+        },
+        prompt_body: "Apply alpha.\n",
+      });
+      expect(staleSecondSnapshotResult.isError).toBe(true);
+      expect(staleSecondSnapshotResult.structuredContent).toMatchObject({
+        ok: false,
+        error_code: "PROMPT_NOT_FOUND",
+      });
     });
   });
 
@@ -301,13 +383,4 @@ function propertyConst(propertySchema: unknown): unknown {
   }
 
   return undefined;
-}
-
-function enumValues(propertySchema: unknown): readonly unknown[] {
-  const propertyRecord = asRecord(propertySchema);
-  const values = propertyRecord.enum;
-
-  expect(values).toEqual(expect.any(Array));
-
-  return values as readonly unknown[];
 }

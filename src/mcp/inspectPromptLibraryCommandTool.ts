@@ -46,14 +46,23 @@ const promptMetadataOutputSchema = z
 
 export const inspectOutputSchema = z
   .object({
-    ok: z.boolean(),
-    type: z.enum(["prompt_inspection", "prompt_inspection_error"]),
+    ok: z.literal(true),
+    type: z.literal("prompt_inspection"),
     inspection_only: z.literal(true),
     no_prompt_invoked: z.literal(true),
-    metadata: promptMetadataOutputSchema.optional(),
-    prompt_body: z.string().optional(),
-    error_code: z.enum(INSPECT_ERROR_CODES).optional(),
-    message: z.string().optional(),
+    metadata: promptMetadataOutputSchema,
+    prompt_body: z.string(),
+  })
+  .strict();
+
+export const inspectFailureStructuredContentSchema = z
+  .object({
+    ok: z.literal(false),
+    type: z.literal("prompt_inspection_error"),
+    inspection_only: z.literal(true),
+    no_prompt_invoked: z.literal(true),
+    error_code: z.enum(INSPECT_ERROR_CODES),
+    message: z.string(),
     suggestions: z.array(z.string()).optional(),
   })
   .strict();
