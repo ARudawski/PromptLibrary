@@ -3,7 +3,7 @@
 Status: QA strategy v2.0  
 Last updated: 2026-06-21
 Owner: QA Agent for verification; Coordinator Agent for QA-originated process findings
-Current phase: M3 - read-only API, completed through Slice 3.4 list MCP adapter
+Current phase: M3 - read-only API, implementation completed through Slice 3.5 inspect/list golden tests and tool reference; QA/coordinator completion gates pending
 
 ## 1. QA goal
 
@@ -65,9 +65,10 @@ For the current implementation, the system under test includes:
 - inspect MCP adapter contract behavior;
 - list use case and command summary projection behavior;
 - list MCP adapter contract behavior;
+- inspect/list golden tests and tool-reference coverage;
 - deterministic CI gates and local QA worktrees.
 
-Later phases add inspect/list golden and tool-reference coverage, real prompt files, personal-use trial evidence, and hosted deployment readiness.
+Later phases add real prompt files, personal-use trial evidence, and hosted deployment readiness.
 
 ## 4. QA levels
 
@@ -225,5 +226,5 @@ Carry these forward until resolved by the relevant slice or issue:
 - `test:golden` has real Slice 2.7 source/cache coverage; future exact-payload behavior still needs slice-specific golden coverage where applicable.
 - `validate-prompts` is real local validation but may pass with zero prompt files until real prompt slices add approved prompt definitions.
 - npm audit findings must be reported when observed.
-- Inspect is implemented through the MCP adapter; list use-case/summary projection is implemented through Slice 3.3; the ChatGPT-facing list MCP adapter is implemented through Slice 3.4; inspect/list golden and tool-reference coverage remains later M3 work.
+- Inspect is implemented through the MCP adapter; list use-case/summary projection is implemented through Slice 3.3; the ChatGPT-facing list MCP adapter is implemented through Slice 3.4; inspect/list golden and tool-reference coverage is implemented through Slice 3.5. PL-79 QA and PL-80 Coordinator completion/readiness gates remain pending.
 - Source/cache infrastructure is not equivalent to fully wired real prompt runtime behavior until later slices complete.

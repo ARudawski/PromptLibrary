@@ -41,9 +41,9 @@ For product-code work, also read the relevant full architecture, roadmap, standa
 
 ## Current phase
 
-Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, M2 source/cache/validation is complete through Slice 2.7 and M3 list work is complete through Slice 3.4. No product slice is active. M3 / Slice 3.5 inspect/list golden tests and tool reference work may start only after its explicit issue is selected or promoted.
+Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, M2 source/cache/validation is complete through Slice 2.7 and M3 read-only API implementation is complete through Slice 3.5. No product slice is active. PL-79 QA and PL-80 Coordinator completion/readiness gates remain explicit and must not be bypassed.
 
-Do not proceed to Slice 3.5 inspect/list golden tests and tool reference work, real prompts, hosted deployment, private-suite behavior, auth, or database work without an explicit coordinator or architecture decision.
+Do not proceed to real prompts, hosted deployment, private-suite behavior, auth, database work, Slice 4, or broader runtime work without the approved QA/coordinator gate path and an explicit coordinator or architecture decision.
 
 ## Non-negotiable product boundary
 
@@ -109,12 +109,11 @@ Approved M2 source/cache/validation behavior includes:
 - fake-source/fake-clock tests for source/cache behavior;
 - concise docs for implemented source/cache behavior.
 
-Still forbidden in the current M3 queue-selection phase:
+Still forbidden in the current post-Slice-3.5 gate-selection phase:
 
 - ChatGPT-facing cache refresh, diagnostics, or admin tools;
 - real prompt files under `prompts/`;
-- Slice 3.5 inspect/list golden tests and tool-reference work unless PL-78 / Slice 3.5 is explicitly selected through the normal queue;
-- new `inspect_prompt_library_command` scope outside the completed PL-74 / PL-75 boundaries;
+- new inspect/list scope outside the completed PL-74 through PL-78 boundaries;
 - private GitHub source, token/OAuth/auth, DB, or private-suite behavior;
 - hosted deployment.
 
@@ -192,7 +191,7 @@ Core tests must not hit GitHub, ChatGPT, a tunnel, or a hosted MCP endpoint unle
 
 Known caveats must remain visible until resolved:
 
-- `test:golden` now includes Slice 2.7 source/cache golden coverage, but later slices still need their own meaningful golden coverage when applicable;
+- `test:golden` now includes Slice 2.7 source/cache golden coverage and Slice 3.5 read-only API golden coverage, but later slices still need their own meaningful golden coverage when applicable;
 - `validate-prompts` is a real local validator, but it may pass with zero local prompt files until real prompt slices add approved prompt definitions;
 - npm audit findings must be reported when observed.
 

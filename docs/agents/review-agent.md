@@ -9,7 +9,9 @@ Last updated: 2026-06-22
 The Review Agent reviews one implementation or workflow-documentation PR
 against the linked Linear issue, accepted predecessor evidence, architecture
 boundaries, deterministic quality gates, and GitHub discussion state. It does
-not implement fixes unless explicitly asked.
+not implement fixes unless explicitly asked. The only standing exception is the
+narrow State Checkpoint docs amendment path below; it is documentation-state
+closeout, not implementation authority.
 
 Coordinator-authored docs/workflow PRs are valid review targets when the linked
 Coordinator Agent issue explicitly authorized repository workflow-doc edits.
@@ -110,29 +112,55 @@ If approved:
 1. record the approval on GitHub, or use a PR conversation comment if formal review is unavailable;
 2. resolve only review threads that are actually addressed;
 3. re-fetch the PR before merge;
-4. confirm reviewed head SHA still matches;
-5. merge only when PR is open, non-draft, mergeable, and evidence is sufficient;
-6. use an expected-head guard where available;
-7. when merge completion changes the allowed lane, completed slice, active
-   slice, next slice, or queue exposure, verify or record the State Checkpoint;
-8. if that required State Checkpoint is missing and cannot be updated by the
-   Review Agent, create or link an executable Coordinator Agent state-repair
-   issue before marking the target `Done`;
-9. post a Linear closeout comment;
-10. move the target Coding Agent or Coordinator docs/workflow issue to `Done`
+4. confirm reviewed head SHA still matches and the PR is open, non-draft,
+   mergeable, and evidence is sufficient;
+5. before merging, decide whether merge completion changes the allowed lane,
+   completed slice, active slice, next slice, or queue exposure; if so, verify
+   or record the State Checkpoint;
+6. if that required State Checkpoint is missing, either use the narrow
+   checkpoint-doc amendment path below before merge, then re-fetch and recheck
+   the amended head, or create/link an executable Coordinator Agent
+   state-repair issue before merge closeout;
+7. merge with an expected-head guard where available;
+8. post a Linear closeout comment;
+9. move the target Coding Agent or Coordinator docs/workflow issue to `Done`
    only after merge and closeout evidence.
 
 The State Checkpoint must use exactly one approved outcome:
 `ledger updated in this PR/issue`, `ledger already correct`, or
 `state-repair issue created/linked: PL-xxx`.
 
-For the common post-merge case, a Review Agent that cannot update
-`docs/workflows/current-state-ledger.md` must not close with only a note that
-coordinator follow-up is needed. It must either prove the ledger is already
-correct or create/link an executable state-repair issue with Coordinator Agent
-and `lane:state-repair` routing plus explicit authorization for the needed
-ledger/workflow-doc repository update. A non-automated monitor finding is
-useful evidence, but it is not executable repair work by itself.
+## Narrow State Checkpoint Docs Amendment
+
+Review Agent may write a minimal checkpoint-doc amendment instead of creating a
+Coordinator state-repair issue only when all of these are true:
+
+- the substantive review is complete and the target PR is otherwise
+  approvable or mergeable;
+- the missing docs are limited to State Checkpoint, current-state ledger, or
+  exact workflow-state facts needed for closeout;
+- the facts are already proven by the reviewed PR, Linear issue, reviewed head,
+  merge SHA when available, CI/local-check evidence, or current-state ledger;
+- no product code, tests, runtime behavior, architecture scope, roadmap policy,
+  new slice work, or non-approved tool behavior changes;
+- the docs amendment can be committed to the same review target branch before
+  merge, or handled through the smallest safe Review Agent docs-only path
+  allowed by the repository workflow;
+- after amendment, the Review Agent rechecks the amended diff, records the new
+  reviewed head, and reruns or explicitly skips the relevant deterministic
+  checks with a reason.
+
+Allowed files are limited to the exact checkpoint surface, normally
+`docs/workflows/current-state-ledger.md` and adjacent active workflow docs only
+when their checkpoint wording would otherwise misroute the closeout.
+
+The Review Agent must still create or link executable Coordinator Agent
+state-repair when evidence is ambiguous, conflicting, broader than checkpoint
+facts, policy-changing, post-failure, requires product/test/runtime changes,
+changes a new lane decision, promotes a slice, rewrites roadmap or architecture
+policy, or cannot be safely committed through the review target or a narrowly
+documented docs-only path. A non-automated monitor finding is useful evidence,
+but it is not executable repair work by itself.
 
 ## Same-account review fallback
 

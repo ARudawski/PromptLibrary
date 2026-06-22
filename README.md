@@ -2,7 +2,7 @@
 
 Project Prompt Library is a small ChatGPT Apps / MCP connector for invoking exact, externally maintained prompt workflows from normal ChatGPT conversations using command-style requests such as `@pl grill-me`.
 
-This repository has passed the Slice 0 proof gate, Slice 1 invocation gate, M2 source/cache/validation gates through Slice 2.7, M3 inspect gates through Slice 3.2, and M3 list work through Slice 3.4. The current product implementation is in M3 with no active product slice; the next candidate is PL-78 / Slice 3.5 inspect/list golden tests and tool reference work only after explicit queue selection or promotion.
+This repository has passed the Slice 0 proof gate, Slice 1 invocation gate, M2 source/cache/validation gates through Slice 2.7, M3 inspect gates through Slice 3.2, M3 list work through Slice 3.4, and Slice 3.5 inspect/list golden tests and tool reference work through PL-78 / PR #45. The current product implementation is in M3 with no active product slice; PL-79 QA and PL-80 Coordinator completion/readiness gates remain explicit before any later product lane.
 
 The Slice 0 premise was:
 
@@ -28,7 +28,7 @@ The Slice 0 premise was:
 
 The compact current-state pointer for agents is [`docs/workflows/current-state-ledger.md`](./docs/workflows/current-state-ledger.md). If this README and the ledger disagree, use the ledger and raise a documentation drift finding.
 
-The current local MCP server registers `invoke_prompt_library_command`, `inspect_prompt_library_command`, and `list_prompt_library_commands` against local fixture prompt files through the PromptSource boundary. M2 added the public GitHub source adapter, runtime prompt cache TTL behavior, stale refresh and last-known-good preservation, partial-valid/cold-failure behavior, a real local `validate-prompts` script, and source/cache contract and golden coverage. M3 Slice 3.1/3.2 added active prompt inspection through core and MCP adapter layers. M3 Slice 3.3 added framework-independent active command listing through `ListPromptsUseCase` and summary projection. M3 Slice 3.4 exposed active command listing through the MCP adapter. Slice 3.5 inspect/list golden tests and tool-reference coverage, real prompt files, hosted deployment, private suites, auth, and DB behavior are not implemented yet.
+The current local MCP server registers `invoke_prompt_library_command`, `inspect_prompt_library_command`, and `list_prompt_library_commands` against local fixture prompt files through the PromptSource boundary. M2 added the public GitHub source adapter, runtime prompt cache TTL behavior, stale refresh and last-known-good preservation, partial-valid/cold-failure behavior, a real local `validate-prompts` script, and source/cache contract and golden coverage. M3 Slice 3.1/3.2 added active prompt inspection through core and MCP adapter layers. M3 Slice 3.3 added framework-independent active command listing through `ListPromptsUseCase` and summary projection. M3 Slice 3.4 exposed active command listing through the MCP adapter. Slice 3.5 added inspect/list golden tests and tool-reference coverage. Real prompt files, hosted deployment, private suites, auth, and DB behavior are not implemented yet.
 
 ## Core V1 boundaries
 
@@ -61,7 +61,7 @@ Start here:
 
 ## Local development status
 
-The TypeScript/Node implementation currently supports deterministic local fixture invocation, the Slice 2.1 source boundary, the Slice 2.2 public GitHub source adapter behind that boundary, Slice 2.3 cache TTL behavior, Slice 2.4 stale/LKG behavior, Slice 2.5 partial-valid/cold-failure behavior, Slice 2.6 local prompt validation, Slice 2.7 source/cache contract and golden coverage, M3 inspect behavior through Slice 3.2, and M3 list behavior through Slice 3.4.
+The TypeScript/Node implementation currently supports deterministic local fixture invocation, the Slice 2.1 source boundary, the Slice 2.2 public GitHub source adapter behind that boundary, Slice 2.3 cache TTL behavior, Slice 2.4 stale/LKG behavior, Slice 2.5 partial-valid/cold-failure behavior, Slice 2.6 local prompt validation, Slice 2.7 source/cache contract and golden coverage, M3 inspect behavior through Slice 3.2, M3 list behavior through Slice 3.4, and Slice 3.5 read-only API golden/tool-reference coverage.
 
 ## CI quality gate
 
@@ -75,7 +75,7 @@ Do not add during the current M3 queue-selection phase:
 
 - ChatGPT-facing cache refresh, cache diagnostics, or admin tools;
 - real prompt files;
-- Slice 3.5 inspect/list golden tests and tool-reference expansion unless PL-78 / Slice 3.5 is explicitly selected through the normal queue;
+- additional inspect/list scope beyond the completed PL-78 / Slice 3.5 read-only API coverage;
 - hosted deployment;
 - private-suite/auth/database design.
 

@@ -2,19 +2,19 @@
 
 Status: active workflow ledger
 Last updated: 2026-06-22
-Update authority: coordinator gate or explicit human workflow update
+Update authority: coordinator gate, explicit human workflow update, or narrow Review Agent State Checkpoint docs amendment under `docs/agents/review-agent.md`
 
 This ledger is the compact current-state pointer for agents. It prevents stale long-form docs from being treated as current operating state.
 
 ## Current State
 
 ```text
-Last completed product milestone: M2 - Public source, cache, validation; M3 is in progress
-Last completed product gate: Slice 3.4 - List MCP adapter via PL-77 / PR #43
+Last completed product milestone: M2 - Public source, cache, validation; M3 read-only API implementation is complete through Slice 3.5 and awaits QA/coordinator completion gates
+Last completed product gate: Slice 3.5 - Inspect/list golden tests and tool reference via PL-78 / PR #45
 Active product slice: none
-Current workflow lane: M3 / Slice 3.5 queue selection after Slice 3.4 closeout
-Next product lane: M3 / Slice 3.5 - Inspect/list golden tests and tool reference, tracked by PL-78 and only after explicit queue selection or promotion
-Blocked product work: Slice 3.5+ implementation until the next issue is explicitly selected; real prompts, hosted deployment, private suites, auth, and DB remain later-slice work
+Current workflow lane: post-Slice-3.5 QA/coordinator selection; PL-79 QA and PL-80 Coordinator completion gates remain explicit and must not be bypassed
+Next product lane: none until PL-79 QA and PL-80 Coordinator completion/readiness evidence decide the next allowed lane
+Blocked product work: real prompts, hosted deployment, private suites, auth, and DB remain later-slice work; do not start Slice 4 or broader runtime work without the approved gate path
 ```
 
 ## Completed Gates
@@ -35,15 +35,16 @@ Slice 3.1: inspect use case and projection - approved via PL-74 / PR #35
 Slice 3.2: inspect MCP adapter - approved via PL-75 / PR #36
 Slice 3.3: list use case and summary projection - approved via PL-76 / PR #40; reviewed head 6e1e56f838e5adef2046023b72d3cfffafa48c16; merge aa8f4c0bbb479d57e2051b22b8d0f892ea1bf9ea
 Slice 3.4: list MCP adapter - approved via PL-77 / PR #43; reviewed head 4ef12dc60ddd044ce80e2a7dad3ec77768333668; merge db48a19f57832f5806073f28926b6db0f2b421f7
+Slice 3.5: inspect/list golden tests and tool reference - approved via PL-78 / PR #45; reviewed head 324df68180cefc2c9cadc33c3b654e420f0134ec; merge 23bda0319154431a8e0d941bf954403a6856b85b
 ```
 
 ## Active Caveats To Carry Forward
 
-- `test:golden` now includes Slice 2.7 source/cache golden coverage; Slice 3.5 still needs inspect/list golden and tool-reference coverage when reached.
+- `test:golden` now includes Slice 2.7 source/cache golden coverage and Slice 3.5 read-only API golden coverage; `docs/tool-reference.md` documents the three approved V1 tools.
 - `validate-prompts` is a real local validator, but it may pass with zero local prompt files until real prompt slices add approved prompt definitions.
 - npm audit caveats must be reported when observed.
 - The public GitHub source adapter and cache are approved M2 infrastructure; real prompt files and broader runtime/user-facing behavior remain later-slice work.
-- `inspect_prompt_library_command` is implemented through Slice 3.2. `ListPromptsUseCase` and command summary projection are implemented through Slice 3.3. `list_prompt_library_commands` MCP adapter is implemented through Slice 3.4. Slice 3.5 inspect/list golden tests and tool-reference coverage remain not implemented; do not start PL-78 / Slice 3.5 work without explicit queue selection or promotion.
+- `inspect_prompt_library_command` is implemented through Slice 3.2. `ListPromptsUseCase` and command summary projection are implemented through Slice 3.3. `list_prompt_library_commands` MCP adapter is implemented through Slice 3.4. Slice 3.5 inspect/list golden tests and tool-reference coverage are implemented through PL-78 / PR #45. PL-79 QA and PL-80 Coordinator completion/readiness gates remain pending.
 - Hosted deployment, private suites, auth, and DB behavior are not implemented.
 - Dispatcher claim mode remains off until the handoff-consumer proof/adoption path is explicitly accepted.
 
@@ -95,4 +96,4 @@ Separate Code Reviewer issues are optional. They are special-case tracking, not 
 
 ## Update Rule
 
-Do not rewrite this ledger from ordinary coding, review, or QA runs unless the issue explicitly asks for workflow documentation changes. Agents may report stale ledger data as a finding.
+Do not rewrite this ledger from ordinary coding or QA runs unless the issue explicitly asks for workflow documentation changes. Review Agent may update it only through the narrow State Checkpoint docs amendment path in `docs/agents/review-agent.md`; otherwise agents may report stale ledger data as a finding.

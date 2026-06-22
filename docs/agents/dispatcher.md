@@ -242,7 +242,10 @@ A candidate must satisfy all relevant checks:
 - non-automated monitor findings are not executable candidates. If a finding
   exposes missing checkpoint evidence, select the linked executable
   state-repair issue when one exists and, when repo mutation is needed, that
-  issue explicitly authorizes the required workflow/docs edit; otherwise return
+  issue explicitly authorizes the required workflow/docs edit. For an open
+  review-ready PR, the repair path may instead be the Review Agent's narrow
+  checkpoint-doc amendment path, but only when the selected Review Agent target
+  can still carry that exact docs-only amendment safely. Otherwise return
   `STATE_DRIFT_DETECTED` with a repair-path gap instead of handing off the
   finding itself.
 
@@ -323,7 +326,9 @@ Treat State Checkpoint evidence separately from ordinary historical drift:
   `STATE_DRIFT_DETECTED` and route to state repair before role execution. When
   an executable Coordinator Agent state-repair issue already exists and
   explicitly authorizes any required workflow/docs repo mutation, that issue is
-  the repair handoff; a non-automated finding is only source evidence.
+  the repair handoff; when an open review-ready PR can safely carry the Review
+  Agent narrow checkpoint-doc amendment, the Review Agent handoff may be the
+  repair path. A non-automated finding is only source evidence.
 - If missing or stale State Checkpoint evidence is historical, tracked, and
   irrelevant to the current selected non-state-changing handoff, it may proceed
   only as non-blocking drift with a short `<state_caveat>`.
