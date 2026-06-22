@@ -26,12 +26,13 @@ Rules:
 - do not resolve aliases directly;
 - do not implement business logic here.
 
-## Current Slice 1 and Slice 3.2 behavior
+## Current Slice 1, Slice 3.2, and Slice 3.4 behavior
 
 `server.ts` registers `invoke_prompt_library_command` for the Slice 1
 fixture-backed invocation path and `inspect_prompt_library_command` for the
-Slice 3.2 fixture-backed inspection path. `list_prompt_library_commands` is not
-implemented yet.
+Slice 3.2 fixture-backed inspection path. It also registers
+`list_prompt_library_commands` for the Slice 3.4 fixture-backed active-command
+discovery path.
 
 Invocation success `structuredContent` is the reduced invocation payload only,
 and the published `outputSchema` requires all four fields:
@@ -46,6 +47,22 @@ prompt_body
 Inspect success `structuredContent` includes `ok: true`,
 `type: prompt_inspection`, `inspection_only: true`, `no_prompt_invoked: true`,
 full active prompt metadata, and `prompt_body`.
+
+List success `structuredContent` includes `ok: true`,
+`type: prompt_command_list`, and a `commands` array. Each command summary
+contains only:
+
+```text
+command
+title
+description
+aliases
+lifecycle
+input_mode
+```
+
+List output must not include prompt bodies, draft commands, cache diagnostics,
+validation diagnostics, or admin/debug inventory.
 
 Failure responses fail closed as `isError: true` with compact model-visible text
 content containing `inspection_only: true` where relevant,

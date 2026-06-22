@@ -11,6 +11,7 @@ import {
   INVOKE_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
   invokePromptLibraryCommand,
 } from "../../src/mcp/invokePromptLibraryCommandTool.js";
+import { LIST_PROMPT_LIBRARY_COMMANDS_TOOL_NAME } from "../../src/mcp/listPromptLibraryCommandsTool.js";
 import { createPromptLibraryServer } from "../../src/mcp/server.js";
 import { loadValidatedPromptFixtures } from "../unit/promptFixtures.js";
 
@@ -78,7 +79,11 @@ describe("invoke_prompt_library_command MCP adapter", () => {
       const listedTools = await client.listTools();
 
       expect(listedTools.tools.map((tool) => tool.name).sort()).toEqual(
-        [INVOKE_PROMPT_LIBRARY_COMMAND_TOOL_NAME, INSPECT_PROMPT_LIBRARY_COMMAND_TOOL_NAME].sort(),
+        [
+          INVOKE_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
+          INSPECT_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
+          LIST_PROMPT_LIBRARY_COMMANDS_TOOL_NAME,
+        ].sort(),
       );
 
       const invokeTool = listedTools.tools.find(
