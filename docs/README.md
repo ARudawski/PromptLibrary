@@ -36,6 +36,10 @@ These files are workflow contracts. They do not approve product scope or later-s
 - [`invocation-contract.md`](invocation-contract.md)
 - [`prompt-schema.md`](prompt-schema.md)
 
+## Read-only API reference
+
+- [`tool-reference.md`](tool-reference.md)
+
 ## Current project state
 
 The current phase is tracked in [`workflows/current-state-ledger.md`](workflows/current-state-ledger.md). At the time this index was updated, the repository has completed M2 through Slice 2.7, M3 inspect work through Slice 3.2, and M3 list work through Slice 3.4. No product slice is active; PL-78 / Slice 3.5 inspect/list golden tests and tool reference work is the next product candidate only after explicit queue selection or promotion.

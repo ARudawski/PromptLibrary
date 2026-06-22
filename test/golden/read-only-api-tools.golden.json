@@ -1,0 +1,124 @@
+{
+  "invoke_active_success": {
+    "isError": false,
+    "structuredContent": {
+      "title": "Active Basic",
+      "lifecycle": "one_shot",
+      "input_mode": "attached_input",
+      "prompt_body": "Apply the Active Basic fixture prompt to the attached input.\n"
+    },
+    "content": [
+      {
+        "type": "text",
+        "text": "Prompt invoked: Active Basic."
+      }
+    ]
+  },
+  "invoke_unknown_failure": {
+    "isError": true,
+    "structuredContent": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "No prompt invoked.\nno_prompt_invoked: true\nerror_code: PROMPT_NOT_FOUND\nmessage: Command \"active\" was not found.\nsuggestions: active-basic, active-with-alias"
+      }
+    ]
+  },
+  "inspect_active_success": {
+    "isError": false,
+    "structuredContent": {
+      "ok": true,
+      "type": "prompt_inspection",
+      "inspection_only": true,
+      "no_prompt_invoked": true,
+      "metadata": {
+        "schema_version": "1",
+        "slug": "active-with-alias",
+        "title": "Active With Alias",
+        "description": "Active fixture prompt with a command alias.",
+        "aliases": ["alias-basic"],
+        "lifecycle": "interactive_workflow",
+        "input_mode": "either",
+        "status": "active"
+      },
+      "prompt_body": "Use this fixture prompt as a simple alias-backed active command.\n"
+    },
+    "content": [
+      {
+        "type": "text",
+        "text": "Inspection only; no prompt was invoked. Prompt inspected: Active With Alias."
+      }
+    ]
+  },
+  "inspect_unknown_failure": {
+    "isError": true,
+    "structuredContent": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Inspection failed; no prompt was invoked.\ninspection_only: true\nno_prompt_invoked: true\nerror_code: PROMPT_NOT_FOUND\nmessage: Command \"active\" was not found.\nsuggestions: active-basic, active-with-alias"
+      }
+    ]
+  },
+  "inspect_draft_failure": {
+    "isError": true,
+    "structuredContent": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Inspection failed; no prompt was invoked.\ninspection_only: true\nno_prompt_invoked: true\nerror_code: PROMPT_NOT_INVOKABLE\nmessage: Command \"draft-valid\" is not inspectable."
+      }
+    ]
+  },
+  "inspect_ambiguous_failure": {
+    "isError": true,
+    "structuredContent": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Inspection failed; no prompt was invoked.\ninspection_only: true\nno_prompt_invoked: true\nerror_code: PROMPT_AMBIGUOUS\nmessage: Command \"conflict-target\" is ambiguous and no prompt was inspected."
+      }
+    ]
+  },
+  "list_active_success": {
+    "isError": false,
+    "structuredContent": {
+      "ok": true,
+      "type": "prompt_command_list",
+      "commands": [
+        {
+          "command": "active-basic",
+          "title": "Active Basic",
+          "description": "Basic active fixture prompt.",
+          "aliases": [],
+          "lifecycle": "one_shot",
+          "input_mode": "attached_input"
+        },
+        {
+          "command": "active-with-alias",
+          "title": "Active With Alias",
+          "description": "Active fixture prompt with a command alias.",
+          "aliases": ["alias-basic"],
+          "lifecycle": "interactive_workflow",
+          "input_mode": "either"
+        }
+      ]
+    },
+    "content": [
+      {
+        "type": "text",
+        "text": "Available active Prompt Library commands listed."
+      }
+    ]
+  },
+  "list_failure": {
+    "isError": true,
+    "structuredContent": null,
+    "content": [
+      {
+        "type": "text",
+        "text": "Command list failed; no prompt was invoked.\nno_prompt_invoked: true\nerror_code: PROMPT_LIBRARY_INVALID\nmessage: Prompt library index is invalid and no prompt summaries were listed."
+      }
+    ]
+  }
+}
