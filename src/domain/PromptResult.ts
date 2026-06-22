@@ -1,4 +1,5 @@
 import type { PromptLibraryError } from "./PromptErrors.js";
+import type { PromptInspection } from "./PromptInspection.js";
 import type { PromptInvocationPayload } from "./PromptInvocationPayload.js";
 
 export type DomainResult<TValue, TError extends PromptLibraryError = PromptLibraryError> =
@@ -12,3 +13,4 @@ export type DomainResult<TValue, TError extends PromptLibraryError = PromptLibra
     };
 
 export type PromptInvocationResult = DomainResult<PromptInvocationPayload>;
+export type PromptInspectionResult = DomainResult<PromptInspection>;
