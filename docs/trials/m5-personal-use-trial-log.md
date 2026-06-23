@@ -19,20 +19,32 @@ trial is approved to begin.
 | Trial surface | TBD |
 | Repository branch | TBD |
 | Repository commit | TBD |
+| Work sessions completed | 0 |
 | Local validation result | Not run for trial |
 | Overall verdict | Pending |
 
 ## Minimum Usage Tracker
 
-| Prompt | Required command | Minimum target | Completed uses | Status |
-|---|---|---:|---:|---|
-| Handoff | `handoff` | 2 | 0 | Not started |
-| Grill Me | `grill-me` | 2 | 0 | Not started |
-| Spec & Prompt Creator | `spec-prompt-creator` | 2 | 0 | Not started |
+| Prompt | Required command | Minimum target | Completed uses | Substitute/skipped uses | Substitute/skip reason | Status |
+|---|---|---:|---:|---:|---|---|
+| Handoff | `handoff` | 2 | 0 | 0 | TBD | Not started |
+| Grill Me | `grill-me` | 2 | 0 | 0 | TBD | Not started |
+| Spec & Prompt Creator | `spec-prompt-creator` | 2 | 0 | 0 | TBD | Not started |
 
 Allowed substitute: record at least 1 real use per prompt plus a reason why
 additional use was not useful, not available, or not safe during the trial
 window.
+
+## Work Session Tracker
+
+Use one session id for each distinct work session. The trial must span at least
+3 separate work sessions unless M5.3 explicitly accepts a hold/fail outcome.
+
+| Work session id | Date/time and timezone | Real work context | Trial entries | Repository commit | Notes |
+|---|---|---|---|---|---|
+| WS-001 | TBD | TBD | TBD | TBD | Not started |
+| WS-002 | TBD | TBD | TBD | TBD | Not started |
+| WS-003 | TBD | TBD | TBD | TBD | Not started |
 
 ## Local Validation Record
 
@@ -41,6 +53,7 @@ Complete this before the first trial use.
 | Check | Result | Evidence |
 |---|---|---|
 | `git status --short --branch` | Pending | TBD |
+| `git rev-parse HEAD` | Pending | TBD |
 | `npm run validate-prompts` | Pending | TBD |
 | Local MCP walkthrough server start | Pending | TBD |
 | `invoke_prompt_library_command` sanity check | Pending | TBD |
@@ -55,8 +68,11 @@ Copy the template below for every real use.
 
 | Field | Value |
 |---|---|
+| Entry id | M5-TRIAL-001 |
 | Date/time and timezone | TBD |
-| Trial surface | TBD |
+| Work session id | TBD |
+| Trial surface | Local MCP client |
+| ChatGPT/tunnel/platform approval evidence | Not applicable |
 | Repository branch | TBD |
 | Repository commit | TBD |
 | Prompt used | TBD |

@@ -72,9 +72,11 @@ Perform these steps from the repository root before recording trial evidence.
 
 ```bash
 git status --short --branch
+git rev-parse HEAD
 ```
 
-Record the branch and commit in the trial log.
+Record the branch from `git status --short --branch` and the exact commit from
+`git rev-parse HEAD` in the trial log.
 
 2. Install dependencies if needed:
 
@@ -118,6 +120,11 @@ trial as held and create or link a follow-up issue using the rules below.
 
 Each trial use must be a real personal work scenario, not a synthetic test.
 
+The default trial surface is a local MCP client using the stdio MCP server.
+Live ChatGPT, tunnel, hosted, or platform-mediated evidence does not count for
+this protocol unless a separate approved spike records explicit scope, setup
+evidence, and safety boundaries first.
+
 For each use:
 
 1. Pick one required scenario from the table above.
@@ -140,8 +147,10 @@ Every trial entry must record:
 
 - entry id;
 - date/time and timezone;
-- trial surface, such as local MCP client, ChatGPT local connector, or other
-  explicitly approved local setup;
+- work-session id;
+- trial surface, normally local MCP client; ChatGPT, tunnel, hosted, or
+  platform-mediated surfaces require explicit separate approval and setup
+  evidence before they count;
 - repository branch and commit;
 - prompt used;
 - command or alias used;
@@ -260,7 +269,11 @@ new findings document is added later, update the relevant indexes in
 Before M5.2 can be considered ready for M5.3 triage:
 
 - local validation result is recorded;
-- trial surface and repo commit are recorded;
+- repository branch and commit are recorded from the explicit setup commands;
+- trial surface is recorded, with separate approval/setup evidence for any
+  ChatGPT, tunnel, hosted, or platform-mediated surface;
+- at least three separate work-session ids are recorded, unless the trial is
+  held or failed with a reason;
 - required usage count is met or skipped uses have reasons;
 - every prompt has at least one entry or a documented skip;
 - every material friction has a follow-up issue link or an explicit "not worth
