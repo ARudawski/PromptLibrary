@@ -44,6 +44,9 @@ The role is manual-only by default:
 - `gate:manual` is expected for AI Automation Expert work unless a later adoption gate changes the policy.
 - Do not attach `agent:auto` as part of ordinary AI Automation Expert setup.
 - Do not define or rely on a recurring automation label for this role until a coordinator/human adoption gate updates the ledger, shared queue contract, dispatcher routing, and Linear labels.
+- A dispatcher/spawner may create an AI Automation Expert role thread only for
+  an exact issue explicitly targeted by a human or Coordinator Agent. This is a
+  manual-targeted handoff, not recurring automation pickup.
 - If an AI Automation Expert issue is visible to recurring automation before that adoption path exists, report it as queue exposure drift instead of executing it automatically.
 
 ## Responsibilities

@@ -99,10 +99,13 @@ gate:manual         manual or coordinator decision required
 ```
 
 The AI Automation Expert is manual-only. No recurring automation label is
-defined for it, and dispatcher/recurring automation must not select it unless a
+defined for it. A dispatcher/spawner may route it only when a human or
+Coordinator Agent explicitly targets the exact issue and the issue title or
+body names `AI Automation Expert`; recurring Todo/Backlog selection must skip
+it. Do not add `agent:auto` to AI Automation Expert issues by default, and
+treat any generic recurring exposure for this role as queue drift unless a
 later coordinator/human adoption gate updates the current-state ledger, shared
-queue contract, dispatcher routing, and Linear labels. Do not add `agent:auto`
-to AI Automation Expert issues by default.
+queue contract, dispatcher routing, and Linear labels.
 
 Backlog pickup must use roadmap/current-state order and must not skip gates or jump to later slices. Keep exactly one next executable Coding Agent issue at a time unless the user explicitly opens a parallel lane.
 

@@ -1,7 +1,7 @@
 # Dispatcher and Role Learning Setup
 
 Status: proposed operating setup  
-Last updated: 2026-06-22
+Last updated: 2026-06-23
 Scope: Project Prompt Library Codex/Linear/GitHub workflow
 
 This document designs the lightweight dispatcher setup and the role-learning loop for Project Prompt Library. It keeps runtime state in Linear/GitHub and keeps execution threads disposable.
@@ -16,6 +16,8 @@ Adoption note: this setup remains proposed until a coordinator/human adoption ga
 - Keep one thread per coherent unit of work.
 - Keep agents small, state-light, and evidence-driven.
 - Use Linear and GitHub for queue state, reports, claims, and learning decisions.
+- Keep AI Automation Expert handoffs manual-only unless a later adoption gate
+  changes the ledger, queue contract, dispatcher routing, and Linear labels.
 
 ## Current assumptions
 
@@ -83,6 +85,7 @@ Dispatcher
   -> if hard state drift blocks candidate selection: stop
   -> if review-ready In Review coding or coordinator docs/workflow PR work exists: select review handoff
   -> if fix-ready In Progress coding or coordinator docs/workflow PR work exists: select owning-role handoff
+  -> if an exact AI Automation Expert issue is explicitly targeted by a human or Coordinator Agent: select manual-only AI Automation Expert handoff
   -> else if matching executable Todo exists: select it
   -> else if no matching executable Todo exists: select top matching Backlog when allowed
   -> after exactly one candidate is selected: finalize provisional drift as blocking or non-blocking caveat
@@ -166,6 +169,8 @@ Use this matrix as a lightweight review aid before changing the dispatcher promp
 | Multiple executable candidates remain after applying current lane, role label/title marker, blocker/dependency, roadmap/ledger order, and issue-order tiebreakers. | `AMBIGUOUS_QUEUE` | The dispatcher must select at most one candidate; unresolved ambiguity needs coordinator or human queue repair. |
 | A Coding Agent issue or Coordinator docs/workflow issue is in `In Review` with an attached or clearly linked PR. | `ROLE_HANDOFF_CANDIDATE` for the Review Agent in candidate mode. | `In Review` repository work is review-ready handoff state even when there is no separate review issue. |
 | A Coding Agent issue or Coordinator docs/workflow issue is in `In Progress`, has requested-changes or fix-needed evidence, and has no live claim. | `ROLE_HANDOFF_CANDIDATE` for the owning Coding or Coordinator Agent in candidate mode. | `In Progress` can be fix-ready handoff state; the dispatcher should not treat the state itself as a lock. |
+| A human or Coordinator Agent explicitly targets an exact issue whose title/body names `AI Automation Expert`, and no live claim or active role-agent thread exists. | `ROLE_HANDOFF_CANDIDATE` for the AI Automation Expert in candidate mode. | The role is manual-only, so explicit targeting is required. This does not add `agent:auto`, adopt claim mode, or make the role recurring automation-pickable. |
+| An AI Automation Expert issue is merely visible in Todo/Backlog or has `agent:auto` without explicit human/coordinator targeting. | `DONT_NOTIFY` when no other candidate exists; otherwise skip it and carry queue exposure drift if relevant. | `agent:auto` is not valid permission for this manual-only role under the current ledger. |
 | The current-state ledger is stale versus live Linear/GitHub, and the mismatch would change the selected role, issue, lane, dependency, or blocker status. | `STATE_DRIFT_DETECTED` | PL-63 makes blocking drift explicit instead of allowing a handoff from contradictory operating state. |
 | The current-state ledger is stale versus live Linear/GitHub, but exactly one candidate remains, the drift is tracked by PL-60 or explained by PL-62-style workflow rules, and it does not change the handoff. | `ROLE_HANDOFF_CANDIDATE` with `<state_caveat>` in candidate mode. | PL-63 allows known, tracked, non-blocking drift to proceed only after candidate selection proves the selected handoff is unaffected. |
 | State Checkpoint evidence is missing or stale, and that gap would change the selected role, issue, lane, dependency, blocker status, repair path, or current state-changing handoff. | `STATE_DRIFT_DETECTED` | PL-83 requires `No slice handoff without a State Checkpoint`; missing checkpoint evidence becomes a state-repair routing signal when it affects selection or would let a state-changing handoff proceed without an approved checkpoint. |
@@ -190,6 +195,7 @@ coding: high
 review: high by default; xhigh for approved-merge closeout, gate-risk reviews, architecture-impacting reviews, scope-drift calls, or contradictory CI/GitHub/Linear evidence
 QA: high by default; xhigh for targeted gate QA, runtime/project-state viability verdicts, or stale-doc/source-of-truth conflicts
 coordinator: xhigh for gate, State Checkpoint, lane-exposure, state-repair, or evidence-synthesis decisions
+AI Automation Expert: xhigh by default for dispatcher, claim, handoff, monitor, State Checkpoint, worktree-safety, adoption, rollback, or compaction decisions; high only for narrow read-only docs consistency audits
 future role agents: high unless the role is queue routing only; xhigh for irreversible or high-blast-radius judgment
 ```
 
@@ -353,8 +359,11 @@ Selection order:
    issue with linked PR/review target.
 2. Fix-ready `In Progress` Coding Agent issue or Coordinator docs/workflow
    issue with requested-changes/fix-needed evidence and no live claim.
-3. Matching executable `Todo` issue.
-4. Top unblocked matching Backlog issue when no matching executable `Todo` exists and the current queue rule permits it.
+3. Explicit human/coordinator-targeted AI Automation Expert issue whose title
+   or body names the role, using `gate:manual` as the explicit-target guard and
+   no `agent:auto` dependency.
+4. Matching executable `Todo` issue.
+5. Top unblocked matching Backlog issue when no matching executable `Todo` exists and the current queue rule permits it.
 
 Completion routing happens in the fresh role run, not in the dispatcher:
 
@@ -403,6 +412,12 @@ Coordinator docs/workflow issue needing review fixes:
   labels: agent:coordinator
   review requested changes present
   no live claim present
+
+AI Automation Expert issue:
+  state: Todo or Backlog only when explicitly targeted by a human or Coordinator Agent
+  labels: gate:manual
+  no agent:auto
+  no recurring automation label
 ```
 
 ## Role learning model
