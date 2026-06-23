@@ -50,6 +50,8 @@ These files are workflow contracts. They do not approve product scope or later-s
 ## M5 personal-use trial planning
 
 - [`roadmap/project-prompt-library-m5-plan.md`](roadmap/project-prompt-library-m5-plan.md)
+- [`trials/m5-personal-use-trial-protocol.md`](trials/m5-personal-use-trial-protocol.md)
+- [`trials/m5-personal-use-trial-log.md`](trials/m5-personal-use-trial-log.md)
 
 ## Current project state
 

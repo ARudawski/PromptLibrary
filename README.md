@@ -69,6 +69,8 @@ Start here:
 - [`docs/qa/static-analysis.md`](./docs/qa/static-analysis.md) — SonarQube Cloud advisory setup and first-scan triage.
 - [`docs/slice-0-proof.md`](./docs/slice-0-proof.md) — Slice 0 proof checklist and result log template.
 - [`docs/local-mvp-walkthrough.md`](./docs/local-mvp-walkthrough.md) — local walkthrough for validating the three-prompt M4 MVP.
+- [`docs/trials/m5-personal-use-trial-protocol.md`](./docs/trials/m5-personal-use-trial-protocol.md) - M5 personal-use trial protocol.
+- [`docs/trials/m5-personal-use-trial-log.md`](./docs/trials/m5-personal-use-trial-log.md) - M5 personal-use trial evidence log template.
 
 ## Local development status
 
