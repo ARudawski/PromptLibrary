@@ -76,7 +76,7 @@ export function registerInspectPromptLibraryCommandTool(
     {
       title: "Inspect Prompt Library Command",
       description:
-        "Inspects an active fixture-backed Prompt Library command by exact slug or alias without invoking it.",
+        "Inspects an active Prompt Library command by exact slug or alias without invoking it.",
       inputSchema: inspectInputSchema,
       outputSchema: inspectOutputSchema,
     },

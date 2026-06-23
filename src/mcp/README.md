@@ -26,13 +26,13 @@ Rules:
 - do not resolve aliases directly;
 - do not implement business logic here.
 
-## Current Slice 1, Slice 3.2, and Slice 3.4 behavior
+## Current Slice 1, Slice 3.2, Slice 3.4, and PL-105 behavior
 
-`server.ts` registers `invoke_prompt_library_command` for the Slice 1
-fixture-backed invocation path and `inspect_prompt_library_command` for the
-Slice 3.2 fixture-backed inspection path. It also registers
-`list_prompt_library_commands` for the Slice 3.4 fixture-backed active-command
-discovery path.
+`server.ts` registers `invoke_prompt_library_command`,
+`inspect_prompt_library_command`, and `list_prompt_library_commands`. The
+`npm run dev` entrypoint loads local `prompts/*.md` files through
+`LocalPromptFileSource`; deterministic tests may still inject fixture or fake
+sources.
 
 Invocation success `structuredContent` is the reduced invocation payload only,
 and the published `outputSchema` requires all four fields:

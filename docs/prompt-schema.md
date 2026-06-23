@@ -125,23 +125,19 @@ Current parser behavior:
 The invocation projection does not append metadata or wrapper instructions to
 the prompt body.
 
-## Fixture-Backed Limitations
+## Runtime Source Status
 
-Current Slice 1 fixtures live under `test/fixtures/`.
+Current Slice 1 fixtures live under `test/fixtures/` and remain the deterministic
+test harness.
 
-The fixture-backed invocation path:
+The local MCP server entrypoint now loads local `prompts/*.md` files through the
+PromptSource boundary. Before the later M4 real-prompt tasks add prompt bodies,
+the local prompt directory may contain only documentation and no active prompt
+commands.
 
-- loads local fixture Markdown only;
-- does not fetch GitHub;
-- does not load real prompt files;
-- does not inspect or list commands through ChatGPT-facing tools.
-
-Slice 2.2 adds the public GitHub source adapter as infrastructure only. Slice
-2.3 adds core runtime cache TTL behavior as infrastructure only. Real prompt
-files under `prompts/*.md`, stale-while-revalidate, last-known-good
-preservation, partial-valid/cold-failure cache policy, and real MVP prompt
-authoring are later-slice work. Fixture-backed invocation remains the current
-ChatGPT-facing runtime path.
+The local runtime still does not fetch GitHub by default and does not add hosted
+deployment, private prompt suites, prompt editing, draft management, or
+ChatGPT-facing cache controls.
 
 ## Current Validation Coverage
 

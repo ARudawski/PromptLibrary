@@ -46,7 +46,7 @@ export function registerInvokePromptLibraryCommandTool(
     {
       title: "Invoke Prompt Library Command",
       description:
-        "Invokes an active fixture-backed Prompt Library command by exact slug or alias.",
+        "Invokes an active Prompt Library command by exact slug or alias and returns the stored prompt content for ChatGPT to apply.",
       inputSchema: invokeInputSchema,
       outputSchema: invokeOutputSchema,
     },
