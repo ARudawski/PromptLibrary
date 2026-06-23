@@ -19,28 +19,32 @@ Slice 6: Hosted deployment, only after local MVP proves useful
 
 ## Current focus
 
-M3 / the read-only API is complete. The next allowed product lane is **Slice 4.1 — prompt authoring baseline and metadata conventions**.
+M4 / the local MVP is complete after PL-111 accepted the gate following PL-110 QA. The next allowed product lane is **Slice 5.1 - personal-use trial protocol and results log**.
 
-Use the M4 plan before creating or executing real-prompt work:
+Use the M4 plan as historical context for the completed local MVP:
 
 ```text
 project-prompt-library-m4-plan.md
 ```
 
-Do not add real prompt files, runtime-source changes, hosted deployment, private suites, auth/OAuth, DB behavior, or broader Slice 4 runtime work without an explicit issue and coordinator path.
+Do not start M5.2, M5.3, M5.4, hosted deployment, private suites, auth/OAuth, DB behavior, additional real prompt files, or broader runtime work without an explicit issue and coordinator path.
 
 ## Roadmap documents
 
-- [`project-prompt-library-roadmap.md`](project-prompt-library-roadmap.md) — full implementation roadmap.
-- [`project-prompt-library-m4-plan.md`](project-prompt-library-m4-plan.md) — M4 local-MVP planning and task outlines.
+- [`project-prompt-library-roadmap.md`](project-prompt-library-roadmap.md) - full implementation roadmap.
+- [`project-prompt-library-m4-plan.md`](project-prompt-library-m4-plan.md) - M4 local-MVP planning and task outlines.
 
 ## Hard gates
 
 If Slice 0 fails, do not proceed to parser/cache/GitHub implementation.
 
 Before M4 real prompt files:
-- Slice 4.1 authoring baseline must be approved.
-- Runtime loading must be checked; if the local server is still fixture-backed, use the M4.1b task before claiming a local MVP.
+- Slice 4.1 authoring baseline was approved.
+- Runtime loading was aligned through M4.1b before the local MVP was accepted.
+
+Before M5 implementation beyond planning:
+- M5.1 personal-use trial planning must define the protocol and results log.
+- Do not tune routing, harden prompt wording from trial results, decide hosting readiness, or begin hosted deployment until the corresponding later M5/M6 issue is explicitly selected.
 
 Before hosted deployment:
 - M4 local MVP must be accepted.

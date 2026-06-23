@@ -2,7 +2,7 @@
 
 Project Prompt Library is a small ChatGPT Apps / MCP connector for invoking exact, externally maintained prompt workflows from normal ChatGPT conversations using command-style requests such as `@pl grill-me`.
 
-This repository has passed the Slice 0 proof gate, Slice 1 invocation gate, M2 source/cache/validation gates through Slice 2.7, M3 inspect gates through Slice 3.2, M3 list work through Slice 3.4, Slice 3.5 inspect/list golden tests and tool reference work through PL-78 / PR #45, and the M3 completion/readiness gate through PL-80 after PL-79 QA. The next allowed product lane is Slice 4.1 prompt authoring baseline only.
+This repository has passed the Slice 0 proof gate, Slice 1 invocation gate, M2 source/cache/validation gates through Slice 2.7, M3 read-only API completion/readiness through PL-80 after PL-79 QA, and M4 local MVP completion/readiness through PL-111 after PL-110 QA. The next allowed product lane is Slice 5.1 personal-use trial planning only.
 
 The Slice 0 premise was:
 
@@ -27,10 +27,17 @@ The Slice 0 premise was:
 - Slice 3.4: list MCP adapter, approved.
 - Slice 3.5: inspect/list golden tests and tool reference, approved.
 - M3: read-only API, complete with non-blocking follow-ups through PL-80 after PL-79 QA.
+- Slice 4.1: prompt authoring baseline and metadata conventions, approved.
+- Slice 4.1b: local runtime source alignment with real prompt files, approved.
+- Slice 4.2: active `handoff` MVP prompt, approved.
+- Slice 4.3: active `grill-me` MVP prompt, approved.
+- Slice 4.4: active `spec-prompt-creator` MVP prompt, approved.
+- Slice 4.5: real-prompt validation, golden tests, and local MVP walkthrough, approved.
+- M4: local MVP, complete through PL-111 after PL-110 QA.
 
 The compact current-state pointer for agents is [`docs/workflows/current-state-ledger.md`](./docs/workflows/current-state-ledger.md). If this README and the ledger disagree, use the ledger and raise a documentation drift finding.
 
-The current local MCP server registers `invoke_prompt_library_command`, `inspect_prompt_library_command`, and `list_prompt_library_commands` against local `prompts/*.md` files through the PromptSource boundary. M2 added the public GitHub source adapter, runtime prompt cache TTL behavior, stale refresh and last-known-good preservation, partial-valid/cold-failure behavior, a real local `validate-prompts` script, and source/cache contract and golden coverage. M3 Slice 3.1/3.2 added active prompt inspection through core and MCP adapter layers. M3 Slice 3.3 added framework-independent active command listing through `ListPromptsUseCase` and summary projection. M3 Slice 3.4 exposed active command listing through the MCP adapter. Slice 3.5 added inspect/list golden tests and tool-reference coverage, and PL-80 accepted M3 completion/readiness after PL-79 QA. Slice 4.1 prompt authoring baseline is the next allowed lane; hosted deployment, private suites, auth/OAuth, DB behavior, and broader runtime work are not implemented yet.
+The current local MCP server registers `invoke_prompt_library_command`, `inspect_prompt_library_command`, and `list_prompt_library_commands` against local `prompts/*.md` files through the PromptSource boundary. M2 added the public GitHub source adapter, runtime prompt cache TTL behavior, stale refresh and last-known-good preservation, partial-valid/cold-failure behavior, a real local `validate-prompts` script, and source/cache contract and golden coverage. M3 added active prompt inspection, command listing, inspect/list golden coverage, and tool-reference coverage. M4 added the three approved active local MVP prompts: `handoff`, `grill-me`, and `spec-prompt-creator`, plus coherent local MVP contract/golden coverage and the local walkthrough. M5.1 personal-use trial planning is the next allowed lane; hosted deployment, private suites, auth/OAuth, DB behavior, and broader runtime work are not implemented yet.
 
 ## Core V1 boundaries
 
@@ -64,7 +71,7 @@ Start here:
 
 ## Local development status
 
-The TypeScript/Node implementation currently supports local runtime loading from `prompts/*.md`, deterministic fixture-backed tests, the Slice 2.1 source boundary, the Slice 2.2 public GitHub source adapter behind that boundary, Slice 2.3 cache TTL behavior, Slice 2.4 stale/LKG behavior, Slice 2.5 partial-valid/cold-failure behavior, Slice 2.6 local prompt validation, Slice 2.7 source/cache contract and golden coverage, M3 inspect behavior through Slice 3.2, M3 list behavior through Slice 3.4, Slice 3.5 read-only API golden/tool-reference coverage, and the three local M4 MVP prompts: `handoff`, `grill-me`, and `spec-prompt-creator`. PL-80 accepted M3 as complete with non-blocking follow-ups.
+The TypeScript/Node implementation currently supports local runtime loading from `prompts/*.md`, deterministic fixture-backed tests, the Slice 2.1 source boundary, the Slice 2.2 public GitHub source adapter behind that boundary, Slice 2.3 cache TTL behavior, Slice 2.4 stale/LKG behavior, Slice 2.5 partial-valid/cold-failure behavior, Slice 2.6 local prompt validation, Slice 2.7 source/cache contract and golden coverage, M3 inspect/list behavior and read-only API golden/tool-reference coverage, and the three active local M4 MVP prompts: `handoff`, `grill-me`, and `spec-prompt-creator`. PL-111 accepted M4 as complete after PL-110 QA approved the local MVP behavior.
 
 ## CI quality gate
 
@@ -74,10 +81,10 @@ This is the deterministic default gate only. Live GitHub prompt-source checks, C
 
 ## Non-goals for the current phase
 
-Do not add outside the current Slice 4.1 prompt authoring baseline lane:
+Do not add outside the current Slice 5.1 personal-use trial planning lane:
 
 - ChatGPT-facing cache refresh, cache diagnostics, or admin tools;
-- real prompt files outside the approved Slice 4.1 authoring-baseline path;
+- real prompt files beyond the approved three-prompt M4 MVP set;
 - additional inspect/list scope beyond the completed PL-78 / Slice 3.5 read-only API coverage;
 - hosted deployment;
 - private-suite/auth/database design;

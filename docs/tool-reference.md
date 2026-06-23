@@ -73,7 +73,7 @@ returns the same reduced shape:
 Visible success content is a compact receipt:
 
 ```text
-Prompt invoked: Active Basic.
+Prompt invoked: Handoff.
 ```
 
 Normal invocation must not include slug, aliases, description, status,
@@ -86,8 +86,8 @@ Failure shape:
 No prompt invoked.
 no_prompt_invoked: true
 error_code: PROMPT_NOT_FOUND
-message: Command "active" was not found.
-suggestions: active-basic, active-with-alias
+message: Command "handoffs" was not found.
+suggestions: handoff, grill-me
 ```
 
 Suggestions are non-executing and reference active invokable commands only.
@@ -130,7 +130,7 @@ Success `structuredContent`:
 Visible success content states that inspection is not invocation:
 
 ```text
-Inspection only; no prompt was invoked. Prompt inspected: Active With Alias.
+Inspection only; no prompt was invoked. Prompt inspected: Grill Me.
 ```
 
 Failure shape:
@@ -140,7 +140,7 @@ Inspection failed; no prompt was invoked.
 inspection_only: true
 no_prompt_invoked: true
 error_code: PROMPT_NOT_INVOKABLE
-message: Command "draft-valid" is not inspectable.
+message: Command "draft-example" is not inspectable.
 ```
 
 Inspection may return full active prompt metadata and body, but it must always

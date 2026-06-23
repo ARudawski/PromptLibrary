@@ -1,10 +1,11 @@
 # Prompts Directory
 
-Status: Slice 4.1 authoring baseline
+Status: M4 local MVP active prompt set
 
-This directory is reserved for Project Prompt Library prompt definitions. Slice
-4.1 intentionally adds no real prompt files. Later M4 tasks will add the first
-three MVP prompts only after this authoring baseline is reviewed.
+This directory contains the approved Project Prompt Library local MVP prompt
+definitions. M4 added the first three active public prompt files after the
+Slice 4.1 authoring baseline, runtime-source alignment, prompt-specific slices,
+Slice 4.5 validation/walkthrough work, PL-110 QA, and PL-111 coordinator gate.
 
 Prompt files belong directly under this directory:
 
@@ -20,7 +21,7 @@ validation. See [`../docs/prompt-authoring.md`](../docs/prompt-authoring.md) for
 the full schema, alias rules, lifecycle and input-mode meanings, and validation
 instructions.
 
-Planned MVP metadata:
+Approved M4 MVP metadata:
 
 | Slug | Lifecycle | Input mode | Status | Aliases |
 |---|---|---|---|---|
@@ -34,9 +35,16 @@ Run validation from the repository root:
 npm run validate-prompts
 ```
 
-`validate-prompts` may pass with zero local prompt Markdown files before the
-real prompt slices add approved prompt definitions. Once real prompt work
-begins, the three MVP prompt files must validate and remain conflict-free.
+For the M4 local MVP, `validate-prompts` must report three prompt Markdown
+files, all valid and active:
+
+```text
+files: 3
+valid: 3
+active: 3
+drafts: 0
+statusless: 0
+```
 
 Do not add broader catalog prompts, draft-management behavior, prompt editing,
 private prompt suites, hosted deployment behavior, auth, database behavior,
