@@ -60,7 +60,7 @@ Every non-dispatcher role agent must read:
 1. `AGENTS.md`
 2. `docs/workflows/current-state-ledger.md`
 3. its role-specific file from this directory
-4. the target Linear issue and its comments/attachments
+4. the target Linear issue, including comments, blockers/dependencies, and attachments
 5. the linked PR/diff/commit when relevant
 6. the architecture, roadmap, standards, QA, and source docs required by the issue
 
