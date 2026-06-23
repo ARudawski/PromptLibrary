@@ -336,6 +336,80 @@ describe("list_prompt_library_commands MCP adapter", () => {
     });
   });
 
+  it("keeps the missing-prompts pre-M4 local runtime path as an empty command list", async () => {
+    const repoRoot = await mkdtemp(join(tmpdir(), "prompt-library-runtime-empty-"));
+
+    await withClient(await createLocalPromptLibraryServer({ repoRoot }), async (client) => {
+      const listResult = await client.callTool({
+        name: LIST_PROMPT_LIBRARY_COMMANDS_TOOL_NAME,
+        arguments: {},
+      });
+
+      expect(listResult.isError).not.toBe(true);
+      expect(listResult.structuredContent).toEqual({
+        ok: true,
+        type: "prompt_command_list",
+        commands: [],
+      });
+      expect(JSON.stringify(listResult)).not.toContain("Active Basic");
+    });
+  });
+
+  it("does not mask invalid local prompt files as an empty runtime library", async () => {
+    const repoRoot = await mkdtemp(join(tmpdir(), "prompt-library-runtime-invalid-"));
+    await mkdir(join(repoRoot, "prompts"));
+    await writeFile(
+      join(repoRoot, "prompts", "invalid.md"),
+      [
+        "---",
+        'schema_version: "1"',
+        "slug: invalid-runtime",
+        "title: Invalid Runtime",
+        "description: Missing aliases keeps this prompt invalid.",
+        "lifecycle: one_shot",
+        "input_mode: either",
+        "status: active",
+        "---",
+        "",
+        "This invalid local prompt must not be hidden as an empty library.",
+        "",
+      ].join("\n"),
+      "utf8",
+    );
+
+    await expect(createLocalPromptLibraryServer({ repoRoot })).rejects.toThrow(
+      "Prompt cache could not be built and no usable cache exists.",
+    );
+  });
+
+  it("does not mask all-draft local prompt files as an empty runtime library", async () => {
+    const repoRoot = await mkdtemp(join(tmpdir(), "prompt-library-runtime-draft-"));
+    await mkdir(join(repoRoot, "prompts"));
+    await writeFile(
+      join(repoRoot, "prompts", "draft.md"),
+      [
+        "---",
+        'schema_version: "1"',
+        "slug: draft-runtime",
+        "title: Draft Runtime",
+        "description: Draft local prompt not exposed by runtime tools.",
+        "aliases: []",
+        "lifecycle: one_shot",
+        "input_mode: either",
+        "status: draft",
+        "---",
+        "",
+        "This draft local prompt must not be hidden as an empty library.",
+        "",
+      ].join("\n"),
+      "utf8",
+    );
+
+    await expect(createLocalPromptLibraryServer({ repoRoot })).rejects.toThrow(
+      "Prompt cache could not be built and no usable cache exists.",
+    );
+  });
+
   it("delivers listTools-cached failures without structured content or prompt bodies", async () => {
     const server = await createPromptLibraryServer({ listUseCase: invalidListUseCase() });
 

@@ -15,8 +15,10 @@ import {
 import type { PromptIndex } from "../cache/index.js";
 import { buildPromptIndex, PromptCache } from "../cache/index.js";
 import {
+  type LoadedPromptFile,
   LocalPromptFileSource,
   type LocalPromptFileSourceOptions,
+  type PromptSource,
 } from "../prompt-source/index.js";
 import { registerInspectPromptLibraryCommandTool } from "./inspectPromptLibraryCommandTool.js";
 import { registerInvokePromptLibraryCommandTool } from "./invokePromptLibraryCommandTool.js";
@@ -71,8 +73,15 @@ export async function createLocalPromptLibraryServer(
 async function loadLocalPromptIndex(
   options: LocalPromptLibraryServerOptions,
 ): Promise<PromptIndex> {
+  const promptSource = new LocalPromptFileSource(options);
+  const loadedPromptFiles = await promptSource.loadAllPrompts();
+
+  if (loadedPromptFiles.length === 0) {
+    return buildPromptIndex([]);
+  }
+
   const promptCache = new PromptCache({
-    promptSource: new LocalPromptFileSource(options),
+    promptSource: new SnapshotPromptSource(loadedPromptFiles),
   });
   const result = await promptCache.getIndex();
 
@@ -80,7 +89,19 @@ async function loadLocalPromptIndex(
     return result.index;
   }
 
-  return buildPromptIndex([]);
+  throw new Error(result.error.message, { cause: result.error.cause });
+}
+
+class SnapshotPromptSource implements PromptSource {
+  readonly #loadedPromptFiles: readonly LoadedPromptFile[];
+
+  public constructor(loadedPromptFiles: readonly LoadedPromptFile[]) {
+    this.#loadedPromptFiles = loadedPromptFiles;
+  }
+
+  public async loadAllPrompts(): Promise<readonly LoadedPromptFile[]> {
+    return this.#loadedPromptFiles;
+  }
 }
 
 async function main(): Promise<void> {
