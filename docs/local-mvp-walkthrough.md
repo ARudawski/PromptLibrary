@@ -48,7 +48,11 @@ failure means the local MVP is not ready.
 
 ## Run The Local MCP Server
 
-Start the local server:
+The local server is a stdio MCP server. It should be launched by an MCP client,
+not used as an interactive shell. Do not type raw `@pl ...` text into the
+server process; the connector expects structured MCP tool calls.
+
+To start only the server process:
 
 ```bash
 npm run dev
@@ -63,6 +67,100 @@ invoke_prompt_library_command
 inspect_prompt_library_command
 list_prompt_library_commands
 ```
+
+## Call The Local MCP Tools
+
+Run this one-off PowerShell client from the repository root to spawn the local
+stdio server and call the three approved tools:
+
+```powershell
+@'
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
+
+const client = new Client({ name: "local-mvp-walkthrough", version: "0.0.0" });
+const transport = new StdioClientTransport({
+  command: process.platform === "win32" ? "npm.cmd" : "npm",
+  args: ["run", "dev"],
+});
+
+const calls = [
+  ["invoke handoff", "invoke_prompt_library_command", { command: "handoff" }],
+  ["invoke grill-me", "invoke_prompt_library_command", { command: "grill-me" }],
+  ["invoke grill alias", "invoke_prompt_library_command", { command: "grill" }],
+  [
+    "invoke spec-prompt-creator",
+    "invoke_prompt_library_command",
+    { command: "spec-prompt-creator" },
+  ],
+  [
+    "invoke spec-creator alias",
+    "invoke_prompt_library_command",
+    { command: "spec-creator" },
+  ],
+  [
+    "invoke prompt-creator alias",
+    "invoke_prompt_library_command",
+    { command: "prompt-creator" },
+  ],
+  ["inspect handoff", "inspect_prompt_library_command", { command: "handoff" }],
+  ["inspect grill alias", "inspect_prompt_library_command", { command: "grill" }],
+  [
+    "inspect prompt-creator alias",
+    "inspect_prompt_library_command",
+    { command: "prompt-creator" },
+  ],
+  ["list commands", "list_prompt_library_commands", {}],
+];
+
+await client.connect(transport);
+try {
+  const tools = await client.listTools();
+  console.log(
+    "tools:",
+    tools.tools.map((tool) => tool.name).sort(),
+  );
+
+  for (const [label, name, args] of calls) {
+    const result = await client.callTool({ name, arguments: args });
+    console.log(`\n${label}`);
+    console.log(JSON.stringify(summarize(result), null, 2));
+  }
+} finally {
+  await client.close();
+}
+
+function summarize(result) {
+  const structuredContent = summarizeStructuredContent(result.structuredContent);
+
+  return {
+    isError: result.isError === true,
+    structuredContent,
+    content: result.content,
+  };
+}
+
+function summarizeStructuredContent(value) {
+  if (value === undefined || value === null) {
+    return value;
+  }
+
+  if (typeof value !== "object") {
+    return value;
+  }
+
+  const summary = { ...value };
+  if (typeof summary.prompt_body === "string") {
+    summary.prompt_body = `[${summary.prompt_body.length} chars]`;
+  }
+  return summary;
+}
+'@ | node --input-type=module
+```
+
+The client uses the MCP SDK `StdioClientTransport`, so this is a real local MCP
+path over JSON-RPC stdio. GitHub, ChatGPT, tunnels, hosted deployment, private
+suites, auth, and a database are still not required for this walkthrough.
 
 ## Invoke The MVP Prompts
 
@@ -87,27 +185,54 @@ input_mode
 prompt_body
 ```
 
-Expected invocation examples:
+Expected local MCP tool calls:
 
-```text
-@pl handoff
+```json
+{
+  "name": "invoke_prompt_library_command",
+  "arguments": { "command": "handoff" }
+}
 ```
 
 Returns `Handoff`, lifecycle `one_shot`, input mode
 `conversation_context`, and the handoff prompt body.
 
-```text
-@pl grill-me
-@pl grill
+```json
+{
+  "name": "invoke_prompt_library_command",
+  "arguments": { "command": "grill-me" }
+}
+```
+
+```json
+{
+  "name": "invoke_prompt_library_command",
+  "arguments": { "command": "grill" }
+}
 ```
 
 Both resolve to `Grill Me`, lifecycle `interactive_workflow`, input mode
 `either`, and the same prompt body.
 
-```text
-@pl spec-prompt-creator
-@pl spec-creator
-@pl prompt-creator
+```json
+{
+  "name": "invoke_prompt_library_command",
+  "arguments": { "command": "spec-prompt-creator" }
+}
+```
+
+```json
+{
+  "name": "invoke_prompt_library_command",
+  "arguments": { "command": "spec-creator" }
+}
+```
+
+```json
+{
+  "name": "invoke_prompt_library_command",
+  "arguments": { "command": "prompt-creator" }
+}
 ```
 
 All three resolve to `Spec & Prompt Creator`, lifecycle
@@ -131,15 +256,48 @@ behavior. It must return:
 }
 ```
 
-Expected inspect examples:
+Expected local MCP tool calls:
 
-```text
-Inspect @pl handoff
-Inspect @pl grill-me
-Inspect @pl grill
-Inspect @pl spec-prompt-creator
-Inspect @pl spec-creator
-Inspect @pl prompt-creator
+```json
+{
+  "name": "inspect_prompt_library_command",
+  "arguments": { "command": "handoff" }
+}
+```
+
+```json
+{
+  "name": "inspect_prompt_library_command",
+  "arguments": { "command": "grill-me" }
+}
+```
+
+```json
+{
+  "name": "inspect_prompt_library_command",
+  "arguments": { "command": "grill" }
+}
+```
+
+```json
+{
+  "name": "inspect_prompt_library_command",
+  "arguments": { "command": "spec-prompt-creator" }
+}
+```
+
+```json
+{
+  "name": "inspect_prompt_library_command",
+  "arguments": { "command": "spec-creator" }
+}
+```
+
+```json
+{
+  "name": "inspect_prompt_library_command",
+  "arguments": { "command": "prompt-creator" }
+}
 ```
 
 Aliases inspect the same canonical prompt metadata and body as their canonical
@@ -147,6 +305,15 @@ commands. Inspection must always remain inspection-only and must not invoke the
 prompt as behavior.
 
 ## List Available Commands
+
+Expected local MCP tool call:
+
+```json
+{
+  "name": "list_prompt_library_commands",
+  "arguments": {}
+}
+```
 
 Listing returns active canonical commands only:
 
