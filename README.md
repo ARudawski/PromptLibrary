@@ -66,6 +66,7 @@ Start here:
 - [`docs/standards/project-prompt-library-codex-agent-standards.md`](./docs/standards/project-prompt-library-codex-agent-standards.md) — detailed architecture and code standards.
 - [`docs/qa/test-strategy.md`](./docs/qa/test-strategy.md) — QA strategy.
 - [`docs/qa/ci-evidence.md`](./docs/qa/ci-evidence.md) — CI/check evidence convention.
+- [`docs/qa/static-analysis.md`](./docs/qa/static-analysis.md) — SonarQube Cloud advisory setup and first-scan triage.
 - [`docs/slice-0-proof.md`](./docs/slice-0-proof.md) — Slice 0 proof checklist and result log template.
 - [`docs/local-mvp-walkthrough.md`](./docs/local-mvp-walkthrough.md) — local walkthrough for validating the three-prompt M4 MVP.
 
