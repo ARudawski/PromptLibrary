@@ -2,7 +2,7 @@
 
 Status: active workflow contract  
 Role: PR / code review agent  
-Last updated: 2026-06-22
+Last updated: 2026-06-23
 
 ## Purpose
 
@@ -19,15 +19,11 @@ Review them as workflow changes, not as product-code implementation.
 
 ## Required reading
 
-Before reviewing, read:
-
-1. `AGENTS.md`
-2. `docs/agents/README.md`
-3. `docs/workflows/current-state-ledger.md`
-4. the target issue, comments, implementation/workflow report, blockers, and
-   attachments
-5. the linked PR body, diff, changed files, comments, review threads, and CI/check evidence
-6. architecture, roadmap, standards, QA, source, and test docs relevant to the PR
+Before reviewing, follow the common operating contract in
+[`docs/agents/README.md`](./README.md). For Review Agent work, make sure the
+issue-specific pass includes the implementation/workflow report, PR body, diff,
+changed files, comments, review threads, CI/check evidence, and relevant
+architecture, roadmap, standards, QA, source, and test docs.
 
 ## Target resolution
 
@@ -44,13 +40,11 @@ If no target is provided:
 
 ## Review evidence pattern
 
-Default workflow:
-
-```text
-Coding issue -> PR/review evidence on coding issue and PR -> QA issue -> coordinator gate
-```
-
-Separate Code Reviewer Agent issues are optional. Do not require one unless the current workflow explicitly marks it active and blocking. If a separate review issue was canceled or retired, read review evidence from the coding issue and PR.
+Use the shared review evidence pattern in
+[`docs/agents/README.md`](./README.md#review-evidence-pattern). Separate Code
+Reviewer Agent issues are optional; require one only when the current workflow
+explicitly marks it active and blocking. If a separate review issue was canceled
+or retired, read review evidence from the coding issue and PR.
 
 ## Evidence checklist
 
@@ -58,9 +52,8 @@ Before a verdict, verify or explicitly mark unavailable:
 
 - issue title/role and acceptance criteria;
 - PR link, branch, base, head SHA, draft state, mergeability;
-- PR title/body, review report, and GitHub/Linear comment issue references are
-  intentional, with no non-goal issue ID next to closing or implementation
-  magic words;
+- PR title/body, review report, and GitHub/Linear comment issue references
+  follow the shared issue-reference safety rule;
 - changed files and relevant patches;
 - PR comments and review threads;
 - deterministic local checks and/or GitHub Actions run/job evidence;
@@ -126,9 +119,8 @@ If approved:
 9. move the target Coding Agent or Coordinator docs/workflow issue to `Done`
    only after merge and closeout evidence.
 
-The State Checkpoint must use exactly one approved outcome:
-`ledger updated in this PR/issue`, `ledger already correct`, or
-`state-repair issue created/linked: PL-xxx`.
+Use the shared [`State Checkpoint`](./README.md#state-checkpoint) rule for the
+approved checkpoint outcomes.
 
 ## Narrow State Checkpoint Docs Amendment
 
@@ -166,17 +158,14 @@ but it is not executable repair work by itself.
 
 If GitHub rejects a formal approval or change request because the PR belongs to the same account, do not drop the verdict. Post the full review as a top-level PR conversation comment and state that it is a formal-review fallback.
 
-Formal-review fallback comments must follow the same issue-reference safety rule
-as PR bodies: use neutral context wording for non-goal issue IDs and reserve
-closing or implementation wording for the target issue only.
+Formal-review fallback comments must follow the shared issue-reference safety
+rule.
 
 ## Report format
 
-If this run has a `claim_id` from an accepted dispatcher claim, append one
-canonical terminal marker from `docs/agents/README.md#claim-terminal-markers`
-after the report. Successful completion uses `AGENT COMPLETE`; do not use
-role-specific phrases as machine terminal markers. If there is no `claim_id`,
-do not invent claim lifecycle markers.
+Follow the shared
+[`Claim Terminal Markers`](./README.md#claim-terminal-markers) rule. Claim-free
+candidate-mode or manual runs must not invent claim lifecycle markers.
 
 ```text
 Review Report

@@ -2,7 +2,7 @@
 
 Status: active workflow contract  
 Role: QA Agent  
-Last updated: 2026-06-21
+Last updated: 2026-06-23
 
 ## Purpose
 
@@ -10,15 +10,11 @@ The QA Agent independently verifies whether completed implementation work is tru
 
 ## Required reading
 
-Before auditing, read:
-
-1. `AGENTS.md`
-2. `docs/agents/README.md`
-3. `docs/workflows/current-state-ledger.md`
-4. `docs/qa/test-strategy.md`
-5. `docs/qa/ci-evidence.md`
-6. the QA Linear issue, comments, dependencies, and predecessor reports
-7. linked PRs/commits/diffs and relevant source/test/docs files
+Before auditing, follow the common operating contract in
+[`docs/agents/README.md`](./README.md). For QA Agent work, also read
+`docs/qa/test-strategy.md`, `docs/qa/ci-evidence.md`, the QA issue's
+dependencies and predecessor reports, and linked PRs/commits/diffs plus
+relevant source/test/docs files.
 
 ## Eligibility
 
@@ -137,11 +133,9 @@ SWEEP COMPLETED
 
 Post the QA report as a Linear comment:
 
-If this run has a `claim_id` from an accepted dispatcher claim, append one
-canonical terminal marker from `docs/agents/README.md#claim-terminal-markers`
-after the report. Successful completion uses `AGENT COMPLETE`; do not use
-role-specific phrases such as `QA COMPLETE` as machine terminal markers. If
-there is no `claim_id`, do not invent claim lifecycle markers.
+Follow the shared
+[`Claim Terminal Markers`](./README.md#claim-terminal-markers) rule. Claim-free
+candidate-mode or manual runs must not invent claim lifecycle markers.
 
 ```text
 QA Agent Report
