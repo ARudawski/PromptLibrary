@@ -235,7 +235,7 @@ Default loop:
 
 ```text
 agent run
-  -> report includes Learning candidates
+  -> report includes Learning candidates only when a real candidate exists
   -> coordinator filters candidates
   -> accepted learning becomes a small docs/workflow PR or explicit Linear update
   -> active rule goes into exactly one canonical file
@@ -293,7 +293,11 @@ Context only: PL-60, PL-67. No lifecycle action requested for these issues.
 
 ## Learning candidates section
 
-Add this section to role reports when useful:
+Learning-candidate reporting is opt-in. Add this section to role reports only
+when the run observes an actual automation incident, near-miss, repeated
+friction, evidence gap, wrong-worktree event, duplicate claim, stale-state
+decision, unsafe selection, or workflow-learning task that may change future
+workflow behavior:
 
 ```text
 Learning candidates:
@@ -305,11 +309,9 @@ Learning candidates:
   apply now? yes/no
 ```
 
-If there is no useful learning, write:
-
-```text
-Learning candidates: none
-```
+If there is no useful learning, omit the section. Ordinary Coding, Review, QA,
+Coordinator, and AI Automation Expert reports do not need a no-op
+`Learning candidates: none` line.
 
 ## Learning acceptance bar
 
