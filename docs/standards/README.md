@@ -11,8 +11,8 @@ This directory holds standards for Codex agents and QA agents.
 - Do not add ChatGPT-facing admin, draft, cache-refresh, prompt-editing, auth, DB, or private-suite features in V1.
 - Do not implement work beyond the currently approved slice.
 - Slice 0 has passed with caveats, Slice 1 fixture-backed invocation is the approved baseline, M2 has been approved through Slice 2.7 source/cache/validation behavior, M3 read-only API completion/readiness was accepted through PL-80 after PL-79 QA, and M4 local MVP completion/readiness was accepted through PL-111 after PL-110 QA.
-- The current approved next product lane is Slice 5.1 personal-use trial protocol and results log only.
-- Do not treat M5.2/M5.3/M5.4 work, M6 hosted deployment, private/auth/DB behavior, additional real prompt files beyond the approved three-prompt M4 MVP set, or broader runtime behavior as implemented.
+- The current approved next product lane is PL-123 / Slice 5.2 personal-use trial execution and evidence recording only, after the PL-130 State Checkpoint is durable.
+- Do not treat M5.3/M5.4/M5.5/M5.QA/M5.Gate work, M6 hosted deployment, private/auth/DB behavior, additional real prompt files beyond the approved three-prompt M4 MVP set, or broader runtime behavior as implemented.
 
 ## Approved ChatGPT-facing tools
 
