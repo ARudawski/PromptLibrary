@@ -20,7 +20,7 @@ Current coverage:
 - inspect active success plus unknown, draft/not-invokable, and ambiguous failures;
 - list active success and invalid-index failure;
 - draft exclusion and prompt-body exclusion from list output.
-
-Planned later coverage:
-
-- real MVP prompt payloads after approved prompt files exist.
+- real MVP prompt payloads in the M4 prompt-specific goldens;
+- coherent local MVP catalog coverage in `m4-local-mvp.test.ts` and
+  `m4-local-mvp.golden.json`, including all three active prompts, aliases,
+  list behavior, and prompt body hashes.
