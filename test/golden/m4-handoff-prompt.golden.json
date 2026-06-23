@@ -1,0 +1,66 @@
+{
+  "invoke_handoff_success": {
+    "isError": false,
+    "structuredContent": {
+      "title": "Handoff",
+      "lifecycle": "one_shot",
+      "input_mode": "conversation_context",
+      "prompt_body": "Produce one concise handoff artifact from the current conversation context.\n\nDo not establish a persistent mode, ongoing role, or multi-turn workflow. Do not ask the connector to remember state. Use only the context already available in the conversation. If important details are missing, include them as explicit unknowns instead of asking follow-up questions.\n\nWrite the handoff as a standalone artifact that another person or agent can use to continue the work. Include:\n\n1. Target or objective.\n2. Current status.\n3. Important context and decisions.\n4. Files, links, issues, commands, or artifacts that matter.\n5. Known blockers, risks, or caveats.\n6. Recommended next action.\n\nKeep it specific, compact, and faithful to the conversation. Do not invent completed work, approvals, test results, or external facts that are not present in the context.\n"
+    },
+    "content": [
+      {
+        "type": "text",
+        "text": "Prompt invoked: Handoff."
+      }
+    ]
+  },
+  "inspect_handoff_success": {
+    "isError": false,
+    "structuredContent": {
+      "ok": true,
+      "type": "prompt_inspection",
+      "inspection_only": true,
+      "no_prompt_invoked": true,
+      "metadata": {
+        "schema_version": "1",
+        "slug": "handoff",
+        "title": "Handoff",
+        "description": "Produce a concise handoff from the current conversation context.",
+        "aliases": [],
+        "lifecycle": "one_shot",
+        "input_mode": "conversation_context",
+        "status": "active"
+      },
+      "prompt_body": "Produce one concise handoff artifact from the current conversation context.\n\nDo not establish a persistent mode, ongoing role, or multi-turn workflow. Do not ask the connector to remember state. Use only the context already available in the conversation. If important details are missing, include them as explicit unknowns instead of asking follow-up questions.\n\nWrite the handoff as a standalone artifact that another person or agent can use to continue the work. Include:\n\n1. Target or objective.\n2. Current status.\n3. Important context and decisions.\n4. Files, links, issues, commands, or artifacts that matter.\n5. Known blockers, risks, or caveats.\n6. Recommended next action.\n\nKeep it specific, compact, and faithful to the conversation. Do not invent completed work, approvals, test results, or external facts that are not present in the context.\n"
+    },
+    "content": [
+      {
+        "type": "text",
+        "text": "Inspection only; no prompt was invoked. Prompt inspected: Handoff."
+      }
+    ]
+  },
+  "list_handoff_success": {
+    "isError": false,
+    "structuredContent": {
+      "ok": true,
+      "type": "prompt_command_list",
+      "commands": [
+        {
+          "command": "handoff",
+          "title": "Handoff",
+          "description": "Produce a concise handoff from the current conversation context.",
+          "aliases": [],
+          "lifecycle": "one_shot",
+          "input_mode": "conversation_context"
+        }
+      ]
+    },
+    "content": [
+      {
+        "type": "text",
+        "text": "Available active Prompt Library commands listed."
+      }
+    ]
+  }
+}
