@@ -19,20 +19,21 @@ Slice 6: Hosted deployment, only after local MVP proves useful
 
 ## Current focus
 
-M4 / the local MVP is complete after PL-111 accepted the gate following PL-110 QA. The next allowed product lane is **Slice 5.1 - personal-use trial protocol and results log**.
+M4 / the local MVP is complete after PL-111 accepted the gate following PL-110 QA. The next allowed product lane is **Slice 5.1 — personal-use trial protocol and results log**.
 
-Use the M4 plan as historical context for the completed local MVP:
+Use the M5 plan before creating or executing trial work:
 
 ```text
-project-prompt-library-m4-plan.md
+project-prompt-library-m5-plan.md
 ```
 
 Do not start M5.2, M5.3, M5.4, hosted deployment, private suites, auth/OAuth, DB behavior, additional real prompt files, or broader runtime work without an explicit issue and coordinator path.
 
 ## Roadmap documents
 
-- [`project-prompt-library-roadmap.md`](project-prompt-library-roadmap.md) - full implementation roadmap.
-- [`project-prompt-library-m4-plan.md`](project-prompt-library-m4-plan.md) - M4 local-MVP planning and task outlines.
+- [`project-prompt-library-roadmap.md`](project-prompt-library-roadmap.md) — full implementation roadmap.
+- [`project-prompt-library-m4-plan.md`](project-prompt-library-m4-plan.md) — M4 local-MVP planning and task outlines.
+- [`project-prompt-library-m5-plan.md`](project-prompt-library-m5-plan.md) — M5 personal-use trial planning and task outlines.
 
 ## Hard gates
 
@@ -44,7 +45,8 @@ Before M4 real prompt files:
 
 Before M5 implementation beyond planning:
 - M5.1 personal-use trial planning must define the protocol and results log.
-- Do not tune routing, harden prompt wording from trial results, decide hosting readiness, or begin hosted deployment until the corresponding later M5/M6 issue is explicitly selected.
+- M5.2 trial execution, M5.3 evidence triage, M5.4 hardening, and M5.5 retesting must stay blocked until their predecessor gates pass.
+- All M5 agents must include documentation scope, documentation acceptance, and a documentation change log in their reports.
 
 Before hosted deployment:
 - M4 local MVP must be accepted.

@@ -8,7 +8,7 @@ This directory contains architecture, roadmap, standards, QA, workflow, and agen
 2. [`workflows/current-state-ledger.md`](workflows/current-state-ledger.md) — compact current phase, queue, and caveat ledger.
 3. [`agents/README.md`](agents/README.md) — role-specific agent operating specs and queue contract.
 4. [`architecture/README.md`](architecture/README.md) and [`architecture/project-prompt-library-architecture-plan.md`](architecture/project-prompt-library-architecture-plan.md).
-5. [`roadmap/README.md`](roadmap/README.md), [`roadmap/project-prompt-library-roadmap.md`](roadmap/project-prompt-library-roadmap.md), and [`roadmap/project-prompt-library-m4-plan.md`](roadmap/project-prompt-library-m4-plan.md).
+5. [`roadmap/README.md`](roadmap/README.md), [`roadmap/project-prompt-library-roadmap.md`](roadmap/project-prompt-library-roadmap.md), [`roadmap/project-prompt-library-m4-plan.md`](roadmap/project-prompt-library-m4-plan.md), and [`roadmap/project-prompt-library-m5-plan.md`](roadmap/project-prompt-library-m5-plan.md).
 6. [`standards/README.md`](standards/README.md) and [`standards/project-prompt-library-codex-agent-standards.md`](standards/project-prompt-library-codex-agent-standards.md).
 7. [`qa/test-strategy.md`](qa/test-strategy.md) and [`qa/ci-evidence.md`](qa/ci-evidence.md).
 
@@ -43,6 +43,10 @@ These files are workflow contracts. They do not approve product scope or later-s
 ## M4 local MVP planning
 
 - [`roadmap/project-prompt-library-m4-plan.md`](roadmap/project-prompt-library-m4-plan.md)
+
+## M5 personal-use trial planning
+
+- [`roadmap/project-prompt-library-m5-plan.md`](roadmap/project-prompt-library-m5-plan.md)
 
 ## Current project state
 
