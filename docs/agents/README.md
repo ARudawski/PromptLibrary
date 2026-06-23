@@ -214,3 +214,46 @@ Use the exact `AGENT RUNNING` marker name and `claim_expires_at` field for
 role-agent live claims. Descriptive headings such as `Coordinator Agent live
 claim` are non-canonical and must not be relied on for dispatcher or monitor
 detection.
+
+## Claim Terminal Markers
+
+When a role run opens or inherits a `claim_id` through `AGENT RUNNING`, its
+final Linear report must end with exactly one canonical terminal marker for the
+same `claim_id`:
+
+```text
+AGENT COMPLETE
+claim_id:
+completed_at:
+result:
+```
+
+```text
+AGENT BLOCKED
+claim_id:
+blocked_at:
+reason:
+```
+
+```text
+AGENT CLAIM RELEASED
+claim_id:
+released_at:
+reason:
+```
+
+```text
+AGENT CLAIM EXPIRED
+claim_id:
+observed_at:
+reason:
+```
+
+Successful completion uses `AGENT COMPLETE` unless the role explicitly releases,
+blocks, or expires the claim. Role-specific verdicts such as `PASS`, `APPROVE`,
+or `NEEDS CHANGES` remain human-readable report fields only. Do not use
+role-specific phrases such as `QA COMPLETE`, `REVIEW COMPLETE`, or
+`COORDINATOR COMPLETE` as machine terminal markers.
+
+Claim-free candidate-mode or manual role runs must not invent claim lifecycle
+markers.

@@ -177,6 +177,11 @@ observed_at:
 reason:
 ```
 
+Role-specific verdicts such as `PASS`, `APPROVE`, or `NEEDS CHANGES` are
+human-readable report fields only. Phrases such as `QA COMPLETE`,
+`REVIEW COMPLETE`, or `COORDINATOR COMPLETE` are not machine terminal markers
+and must not be used to close a claim.
+
 If a live claim exists, do not start new work. Return:
 
 <dispatcher_result>

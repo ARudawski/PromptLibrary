@@ -164,6 +164,7 @@ Use this matrix as a lightweight review aid before changing the dispatcher promp
 |---|---|---|
 | No executable Project Prompt Library issue exists after checking review-ready, fix-ready, Todo, and allowed Backlog fallback states. | `DONT_NOTIFY` | The dispatcher has no useful handoff to emit and should not wake a role agent. |
 | A candidate issue has a live `AGENT RUNNING` or `DISPATCHER CLAIM RUNNING` marker with no later terminal marker and an unexpired `claim_expires_at`. | `CLAIM_BLOCKED` | Live claim markers are the active-work lock; Linear state alone is not. |
+| A QA Agent role run has `AGENT RUNNING` with a `claim_id`, then posts a QA report ending with `AGENT COMPLETE` for the same `claim_id`. | The next dispatcher pass does not treat that claim as live; selection continues normally. | This covers the PL-104 terminal-marker incident: `QA COMPLETE` may be human-readable status, but only `AGENT COMPLETE` is the successful machine terminal marker. |
 | A Done or Canceled issue still has `agent:auto`. | `DONT_NOTIFY` when no other candidate exists; otherwise ignore that issue and continue selection. | `agent:auto` grants automation permission only for otherwise executable issues; terminal states are never executable. |
 | A current coordinator gate is in Backlog, no matching executable Todo exists, it is top unblocked for the current lane, has `agent:coordinator`, and has the required Coordinator Agent/Coordinator Report marker. | `ROLE_HANDOFF_CANDIDATE` in candidate mode, or `ROLE_HANDOFF` only after adopted claim mode claims it. | PL-64 aligns the active policy to Todo first plus top-unblocked matching Backlog fallback; coordinator gates are eligible only under the normal role, blocker, lane, and claim checks. |
 | Multiple executable candidates remain after applying current lane, role label/title marker, blocker/dependency, roadmap/ledger order, and issue-order tiebreakers. | `AMBIGUOUS_QUEUE` | The dispatcher must select at most one candidate; unresolved ambiguity needs coordinator or human queue repair. |
@@ -273,6 +274,11 @@ claim_id:
 observed_at:
 reason:
 ```
+
+Role-specific verdicts such as `PASS`, `APPROVE`, or `NEEDS CHANGES` are
+human-readable report fields only. Phrases such as `QA COMPLETE`,
+`REVIEW COMPLETE`, or `COORDINATOR COMPLETE` are not machine terminal markers
+and must not be used to close a claim.
 
 Candidate-mode handoffs do not create a `claim_id`; fresh role runs started from `ROLE_HANDOFF_CANDIDATE` must not invent claim lifecycle markers.
 
