@@ -27,6 +27,13 @@ Use the M5 plan before creating or executing trial work:
 project-prompt-library-m5-plan.md
 ```
 
+M5.1 trial documents:
+
+```text
+../trials/m5-personal-use-trial-protocol.md
+../trials/m5-personal-use-trial-log.md
+```
+
 Do not start M5.2, M5.3, M5.4, hosted deployment, private suites, auth/OAuth, DB behavior, additional real prompt files, or broader runtime work without an explicit issue and coordinator path.
 
 ## Roadmap documents
