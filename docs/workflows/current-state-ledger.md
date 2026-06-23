@@ -1,7 +1,7 @@
 # Current State Ledger - Project Prompt Library
 
 Status: active workflow ledger
-Last updated: 2026-06-22
+Last updated: 2026-06-23
 Update authority: coordinator gate, explicit human workflow update, or narrow Review Agent State Checkpoint docs amendment under `docs/agents/review-agent.md`
 
 This ledger is the compact current-state pointer for agents. It prevents stale long-form docs from being treated as current operating state.
@@ -9,12 +9,20 @@ This ledger is the compact current-state pointer for agents. It prevents stale l
 ## Current State
 
 ```text
-Last completed product milestone: M3 - Read-only API complete via PL-80 after PL-79 QA
-Last completed product gate: M3 completion/readiness gate - accepted via PL-80; Slice 3.5 implementation via PL-78 / PR #45
+Last completed product milestone: M3 - Read-only API complete via PL-80 after PL-79 QA; M4 local MVP is in progress through Slice 4.2
+Last completed product gate: Slice 4.2 active handoff MVP prompt - approved via PL-106 / PR #50 after PL-103, PL-104, and PL-105 predecessor evidence
 Active product slice: none
-Current workflow lane: Slice 4.1 prompt authoring baseline queue selection after PL-101 state-repair closeout
-Next product lane: Slice 4.1 prompt authoring baseline only
-Blocked product work: hosted deployment, private suites, auth/OAuth, DB, ChatGPT cache/admin/debug tools, prompt editing, draft management, semantic routing, workflow/session state, and real prompt files outside the approved Slice 4.1 authoring-baseline path remain later-slice work; do not start broader Slice 4 or runtime work without an explicit issue and coordinator path
+Current workflow lane: Slice 4.3 prompt-authoring queue selection after PL-113 state-repair closeout
+Next product lane: Slice 4.3 add active `grill-me` MVP prompt only; PL-107 is the next candidate after PL-113 is reviewed, merged, and closed out
+Blocked product work: PL-107 until PL-113 review/merge/closeout completes; PL-108, later M4 work, hosted deployment, private suites, auth/OAuth, DB, ChatGPT cache/admin/debug tools, prompt editing, draft management, semantic routing, workflow/session state, and additional real prompt files outside the ordered M4.3/M4.4 path remain blocked without an explicit issue and coordinator path
+```
+
+## State Checkpoint Record
+
+```text
+M4.2 State Checkpoint outcome: ledger updated in PL-113 state-repair issue/PR
+Evidence chain: PL-103 / PR #48 merged for Slice 4.1 prompt authoring baseline; PL-104 approved proceeding to prompt files; PL-105 / PR #49 merged at db80c97166d4724ef114f8cf5db351ad8c870868 for local runtime source alignment; PL-106 / PR #50 merged at ebdd0e6e48439d7713591bbfe9ddeec3c2b01e35 for the active handoff MVP prompt
+Downstream exposure rule: do not expose PL-107 until PL-113 repository mutation is reviewed, merged, and closed out; after that, only Slice 4.3 `grill-me` is eligible as the next product lane
 ```
 
 ## Completed Gates
@@ -37,16 +45,20 @@ Slice 3.3: list use case and summary projection - approved via PL-76 / PR #40; r
 Slice 3.4: list MCP adapter - approved via PL-77 / PR #43; reviewed head 4ef12dc60ddd044ce80e2a7dad3ec77768333668; merge db48a19f57832f5806073f28926b6db0f2b421f7
 Slice 3.5: inspect/list golden tests and tool reference - approved via PL-78 / PR #45; reviewed head 324df68180cefc2c9cadc33c3b654e420f0134ec; merge 23bda0319154431a8e0d941bf954403a6856b85b
 M3: read-only API - complete with non-blocking follow-ups via PL-80 after PL-79 QA
+Slice 4.1: prompt authoring baseline and metadata conventions - approved via PL-103 / PR #48; reviewed head 98c1188dc2e5fbc3f1b01fe94484bd5ecd51c343; merge 5172b769b77b19e67eba58d512e23c3af0944b49
+M4.QA.1: prompt authoring baseline review before real prompt files - approved via PL-104
+Slice 4.1b: local runtime source alignment with real prompt files - approved via PL-105 / PR #49; reviewed head 6cfb093aac432e814cec549c224ec38e8dc39db4; merge db80c97166d4724ef114f8cf5db351ad8c870868
+Slice 4.2: active handoff MVP prompt - approved via PL-106 / PR #50; reviewed head cc98aedd8594dce4f1a266e4cea32ebe237e9d6b; merge ebdd0e6e48439d7713591bbfe9ddeec3c2b01e35; State Checkpoint recorded via PL-113
 ```
 
 ## Active Caveats To Carry Forward
 
-- `test:golden` now includes Slice 2.7 source/cache golden coverage and Slice 3.5 read-only API golden coverage; `docs/tool-reference.md` documents the three approved V1 tools.
-- `validate-prompts` is a real local validator, but it may pass with zero local prompt files until real prompt slices add approved prompt definitions.
+- `test:golden` now includes Slice 2.7 source/cache golden coverage, Slice 3.5 read-only API golden coverage, and Slice 4.2 handoff golden coverage; `docs/tool-reference.md` documents the three approved V1 tools.
+- `validate-prompts` is a real local validator. As of PL-106 / PR #50 it validates one active local prompt, `handoff`; later approved prompt slices must add and validate `grill-me` and `spec-prompt-creator` in order.
 - npm audit caveats must be reported when observed.
-- The public GitHub source adapter and cache are approved M2 infrastructure; broader runtime/user-facing behavior remains later-slice work.
-- `inspect_prompt_library_command` is implemented through Slice 3.2. `ListPromptsUseCase` and command summary projection are implemented through Slice 3.3. `list_prompt_library_commands` MCP adapter is implemented through Slice 3.4. Slice 3.5 inspect/list golden tests and tool-reference coverage are implemented through PL-78 / PR #45. PL-79 QA passed, and PL-80 accepted M3 completion/readiness with Slice 4.1 prompt authoring baseline as the next allowed product lane.
-- Hosted deployment, private suites, auth/OAuth, DB behavior, ChatGPT cache/admin/debug tools, prompt editing, draft management, semantic routing, workflow/session state, and real prompt files outside the approved Slice 4.1 authoring-baseline path are not implemented.
+- The public GitHub source adapter and cache are approved M2 infrastructure; PL-105 / PR #49 aligned the local runtime with local `prompts/*.md` loading; broader hosted/private/source behavior remains later-slice work.
+- `inspect_prompt_library_command` is implemented through Slice 3.2. `ListPromptsUseCase` and command summary projection are implemented through Slice 3.3. `list_prompt_library_commands` MCP adapter is implemented through Slice 3.4. Slice 3.5 inspect/list golden tests and tool-reference coverage are implemented through PL-78 / PR #45. PL-79 QA passed, PL-80 accepted M3 completion/readiness, and M4 local MVP is in progress through the approved Slice 4.2 handoff prompt.
+- Hosted deployment, private suites, auth/OAuth, DB behavior, ChatGPT cache/admin/debug tools, prompt editing, draft management, semantic routing, workflow/session state, and additional real prompt files outside the ordered M4.3/M4.4 path are not implemented.
 - Dispatcher claim mode remains off until the handoff-consumer proof/adoption path is explicitly accepted.
 
 ## Queue Selection Rule
