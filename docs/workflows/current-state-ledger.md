@@ -87,6 +87,13 @@ issue is not blocked
 issue belongs to the current allowed slice/lane
 ```
 
+Manual AI Automation Expert handoffs are the explicit exception to the normal
+recurring formula: they require exact human/coordinator targeting, the
+AI Automation Expert title/body marker, `gate:manual`, resolved blockers, and no
+known active role-agent thread, but no recurring agent label and no product
+slice/lane match. Generic Todo/Backlog exposure for that role, especially with
+`agent:auto`, is queue drift rather than executable work.
+
 Expected labels:
 
 ```text

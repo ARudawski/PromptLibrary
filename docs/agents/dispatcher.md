@@ -52,7 +52,7 @@ Use claim mode only when a handoff consumer exists and is expected to start a fr
 Dispatcher output should use one of these compact decisions:
 
 - `DONT_NOTIFY` - no executable work is available, or the run has nothing useful to report.
-- `CLAIM_BLOCKED` - a live dispatcher or role claim already owns the relevant issue.
+- `CLAIM_BLOCKED` - a live dispatcher or role claim, or a known active role-agent thread, already owns the relevant issue.
 - `STATE_DRIFT_DETECTED` - dispatcher found blocking state drift between the current-state ledger, Linear queue, selected candidate, and recent GitHub PR metadata.
 - `AMBIGUOUS_QUEUE` - more than one executable candidate remains after applying the current lane, role, blocker, and ordering rules.
 - `ROLE_HANDOFF_CANDIDATE` - candidate mode selected exactly one role handoff without mutating Linear.
@@ -86,7 +86,7 @@ Do not read any other GitHub/repository files, AGENTS.md, role specs, PR diffs, 
 
 Decision taxonomy:
 - DONT_NOTIFY: no executable work is available, or the run has nothing useful to report.
-- CLAIM_BLOCKED: a live dispatcher or role claim already owns the relevant issue.
+- CLAIM_BLOCKED: a live dispatcher or role claim, or a known active role-agent thread, already owns the relevant issue.
 - STATE_DRIFT_DETECTED: dispatcher found blocking state drift between the current-state ledger, Linear queue, selected candidate, and recent GitHub PR metadata.
 - AMBIGUOUS_QUEUE: more than one executable candidate remains after applying the current lane, role, blocker, and ordering rules.
 - ROLE_HANDOFF_CANDIDATE: candidate mode selected exactly one role handoff without mutating Linear.
@@ -217,38 +217,46 @@ Do not return `STATE_DRIFT_DETECTED` for tracked repair/caveat drift before cand
 
 Look for exactly one executable issue in this order:
 
-1. Review-ready handoff: a current-lane Coding Agent issue or Coordinator
-   docs/workflow issue in `In Review` with an attached or clearly linked
-   PR/review target. Select this as Review Agent work even if there is no
-   separate Code Reviewer issue.
-2. Fix-ready handoff: a current-lane Coding Agent issue or Coordinator
-   docs/workflow issue in `In Progress` with requested-changes or fix-needed
-   evidence and no live claim. Select this as the owning role's work.
+1. Review-ready handoff: a current-lane Coding Agent issue, Coordinator
+   docs/workflow issue, or AI Automation Expert repo-mutating workflow-doc issue
+   in `In Review` with an attached or clearly linked PR/review target. Select
+   this as Review Agent work even if there is no separate Code Reviewer issue.
+2. Fix-ready handoff: a current-lane Coding Agent issue, Coordinator
+   docs/workflow issue, or AI Automation Expert repo-mutating workflow-doc issue
+   in `In Progress` with requested-changes or fix-needed evidence and no live
+   claim. Select this as the owning role's work.
 3. Explicit AI Automation Expert handoff: when a human or Coordinator Agent
    explicitly targets an exact Project Prompt Library issue whose title or body
    names `AI Automation Expert`, select it only as AI Automation Expert work
-   when it is not blocked and has no live claim. Do not discover AI Automation
-   Expert work from ordinary recurring Todo/Backlog selection, do not require
-   or add `agent:auto`, and treat generic recurring exposure as queue drift.
+   when it is not blocked, has no live claim, and has no known active
+   AI Automation Expert role-agent thread for the same issue. Do not discover AI
+   Automation Expert work from ordinary recurring Todo/Backlog selection, do not
+   require or add `agent:auto`, and treat generic recurring exposure as blocking
+   queue drift when no other safe candidate remains.
 4. Matching Todo: a Project Prompt Library issue in state `Todo` matching the current allowed lane and expected role label/title marker. Prefer `agent:auto` when present.
 5. Backlog fallback: if no matching executable Todo exists, use the current queue rule to select the top unblocked matching Backlog issue for the current allowed slice/lane only.
 
 A candidate must satisfy all relevant checks:
 
 - expected role label is present, or it is a review-ready/fix-ready handoff
-  selected from a Coding Agent issue or Coordinator docs/workflow issue;
+  selected from a Coding Agent issue, Coordinator docs/workflow issue, or
+  AI Automation Expert repo-mutating workflow-doc issue;
 - expected title marker is present after resolving/fetching the issue;
-- for review-ready handoff, verify the Coding Agent marker or Coordinator
-  docs/workflow marker and linked PR/review target, then hand off to the Review
-  Agent;
-- for fix-ready handoff, verify the Coding Agent marker or Coordinator
-  docs/workflow marker and requested-changes/fix-needed evidence, then hand off
-  to the owning Coding or Coordinator Agent;
+- for review-ready handoff, verify the Coding Agent marker, Coordinator
+  docs/workflow marker, or AI Automation Expert repo-mutating workflow-doc
+  marker and linked PR/review target, then hand off to the Review Agent;
+- for fix-ready handoff, verify the Coding Agent marker, Coordinator
+  docs/workflow marker, or AI Automation Expert repo-mutating workflow-doc
+  marker and requested-changes/fix-needed evidence, then hand off to the owning
+  Coding, Coordinator, or AI Automation Expert role;
 - for AI Automation Expert handoff, verify explicit human/coordinator targeting,
   the AI Automation Expert marker in the title or body, `gate:manual` as an
-  explicit-target guard, and no `agent:auto` dependency;
+  explicit-target guard, no `agent:auto` dependency, and no known active
+  AI Automation Expert role-agent thread for the same issue;
 - dependencies/blockers are resolved;
-- issue belongs to the current allowed slice/lane from the ledger;
+- issue belongs to the current allowed slice/lane from the ledger unless it is
+  an explicitly targeted AI Automation Expert workflow-audit issue, which is
+  manual workflow work rather than product-slice work;
 - issue is not `gate:manual` unless the selected role is a coordinator/human
   gate or explicitly targeted AI Automation Expert handoff and the role rules
   permit it.
@@ -271,7 +279,12 @@ Role labels:
 - no recurring label -> AI Automation Expert only when explicitly targeted by
   a human or Coordinator Agent
 
-If no executable issue exists, return:
+If the only otherwise visible issue is an AI Automation Expert issue exposed to
+generic recurring automation, such as by `agent:auto`, without explicit human or
+Coordinator Agent targeting, return `STATE_DRIFT_DETECTED` with a repair path to
+remove the unsafe exposure or obtain an explicit target.
+
+If no executable issue exists and no blocking queue drift is visible, return:
 
 <heartbeat>
   <decision>DONT_NOTIFY</decision>
@@ -544,11 +557,15 @@ Do not start a second issue in the same dispatcher run.
 - Use candidate mode until the handoff consumer is explicitly adopted.
 - Use fresh role execution context per claimed issue/review/QA/gate.
 - Use live claim markers as the primary lock, not Linear state alone.
-- Treat `In Review` Coding Agent issues and Coordinator docs/workflow issues as
-  review-ready handoffs.
-- Treat `In Progress` Coding Agent issues and Coordinator docs/workflow issues
-  with requested changes as fix-ready handoffs when no live claim exists.
+- Treat `In Review` Coding Agent issues, Coordinator docs/workflow issues, and
+  AI Automation Expert repo-mutating workflow-doc issues as review-ready
+  handoffs when they have linked PR/review targets.
+- Treat `In Progress` Coding Agent issues, Coordinator docs/workflow issues, and
+  AI Automation Expert repo-mutating workflow-doc issues with requested changes
+  as fix-ready handoffs when no live claim exists.
 - Treat AI Automation Expert issues as manual-only handoffs: route them only
   when a human or Coordinator Agent explicitly targets the exact issue, and do
-  not make them recurring automation-pickable.
+  not make them recurring automation-pickable. Before creating a manual-targeted
+  AI Automation Expert thread, check for an active role-agent thread for the same
+  issue when thread metadata is available.
 - Prefer one active lane at a time for this solo project unless parallelism is explicitly opened.

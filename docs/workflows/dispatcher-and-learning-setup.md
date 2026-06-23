@@ -83,9 +83,9 @@ Dispatcher
   -> compare ledger, Linear queue, live claims, and recent PR state for hard blockers and provisional drift notes
   -> if a live claim exists: stop
   -> if hard state drift blocks candidate selection: stop
-  -> if review-ready In Review coding or coordinator docs/workflow PR work exists: select review handoff
-  -> if fix-ready In Progress coding or coordinator docs/workflow PR work exists: select owning-role handoff
-  -> if an exact AI Automation Expert issue is explicitly targeted by a human or Coordinator Agent: select manual-only AI Automation Expert handoff
+  -> if review-ready In Review coding, coordinator docs/workflow, or AI Automation Expert repo-mutating workflow-doc PR work exists: select review handoff
+  -> if fix-ready In Progress coding, coordinator docs/workflow, or AI Automation Expert repo-mutating workflow-doc work exists: select owning-role handoff
+  -> if an exact AI Automation Expert issue is explicitly targeted by a human or Coordinator Agent and no active role-agent thread exists: select manual-only AI Automation Expert handoff
   -> else if matching executable Todo exists: select it
   -> else if no matching executable Todo exists: select top matching Backlog when allowed
   -> after exactly one candidate is selected: finalize provisional drift as blocking or non-blocking caveat
@@ -167,10 +167,10 @@ Use this matrix as a lightweight review aid before changing the dispatcher promp
 | A Done or Canceled issue still has `agent:auto`. | `DONT_NOTIFY` when no other candidate exists; otherwise ignore that issue and continue selection. | `agent:auto` grants automation permission only for otherwise executable issues; terminal states are never executable. |
 | A current coordinator gate is in Backlog, no matching executable Todo exists, it is top unblocked for the current lane, has `agent:coordinator`, and has the required Coordinator Agent/Coordinator Report marker. | `ROLE_HANDOFF_CANDIDATE` in candidate mode, or `ROLE_HANDOFF` only after adopted claim mode claims it. | PL-64 aligns the active policy to Todo first plus top-unblocked matching Backlog fallback; coordinator gates are eligible only under the normal role, blocker, lane, and claim checks. |
 | Multiple executable candidates remain after applying current lane, role label/title marker, blocker/dependency, roadmap/ledger order, and issue-order tiebreakers. | `AMBIGUOUS_QUEUE` | The dispatcher must select at most one candidate; unresolved ambiguity needs coordinator or human queue repair. |
-| A Coding Agent issue or Coordinator docs/workflow issue is in `In Review` with an attached or clearly linked PR. | `ROLE_HANDOFF_CANDIDATE` for the Review Agent in candidate mode. | `In Review` repository work is review-ready handoff state even when there is no separate review issue. |
-| A Coding Agent issue or Coordinator docs/workflow issue is in `In Progress`, has requested-changes or fix-needed evidence, and has no live claim. | `ROLE_HANDOFF_CANDIDATE` for the owning Coding or Coordinator Agent in candidate mode. | `In Progress` can be fix-ready handoff state; the dispatcher should not treat the state itself as a lock. |
+| A Coding Agent issue, Coordinator docs/workflow issue, or AI Automation Expert repo-mutating workflow-doc issue is in `In Review` with an attached or clearly linked PR. | `ROLE_HANDOFF_CANDIDATE` for the Review Agent in candidate mode. | `In Review` repository work is review-ready handoff state even when there is no separate review issue. |
+| A Coding Agent issue, Coordinator docs/workflow issue, or AI Automation Expert repo-mutating workflow-doc issue is in `In Progress`, has requested-changes or fix-needed evidence, and has no live claim. | `ROLE_HANDOFF_CANDIDATE` for the owning Coding, Coordinator, or AI Automation Expert role in candidate mode. | `In Progress` can be fix-ready handoff state; the dispatcher should not treat the state itself as a lock. |
 | A human or Coordinator Agent explicitly targets an exact issue whose title/body names `AI Automation Expert`, and no live claim or active role-agent thread exists. | `ROLE_HANDOFF_CANDIDATE` for the AI Automation Expert in candidate mode. | The role is manual-only, so explicit targeting is required. This does not add `agent:auto`, adopt claim mode, or make the role recurring automation-pickable. |
-| An AI Automation Expert issue is merely visible in Todo/Backlog or has `agent:auto` without explicit human/coordinator targeting. | `DONT_NOTIFY` when no other candidate exists; otherwise skip it and carry queue exposure drift if relevant. | `agent:auto` is not valid permission for this manual-only role under the current ledger. |
+| An AI Automation Expert issue is merely visible in Todo/Backlog or has `agent:auto` without explicit human/coordinator targeting. | `STATE_DRIFT_DETECTED` when it is the only visible candidate; otherwise skip it and carry queue exposure drift in the selected handoff. | `agent:auto` is not valid permission for this manual-only role under the current ledger, and silent no-op would hide unsafe exposure. |
 | The current-state ledger is stale versus live Linear/GitHub, and the mismatch would change the selected role, issue, lane, dependency, or blocker status. | `STATE_DRIFT_DETECTED` | PL-63 makes blocking drift explicit instead of allowing a handoff from contradictory operating state. |
 | The current-state ledger is stale versus live Linear/GitHub, but exactly one candidate remains, the drift is tracked by PL-60 or explained by PL-62-style workflow rules, and it does not change the handoff. | `ROLE_HANDOFF_CANDIDATE` with `<state_caveat>` in candidate mode. | PL-63 allows known, tracked, non-blocking drift to proceed only after candidate selection proves the selected handoff is unaffected. |
 | State Checkpoint evidence is missing or stale, and that gap would change the selected role, issue, lane, dependency, blocker status, repair path, or current state-changing handoff. | `STATE_DRIFT_DETECTED` | PL-83 requires `No slice handoff without a State Checkpoint`; missing checkpoint evidence becomes a state-repair routing signal when it affects selection or would let a state-changing handoff proceed without an approved checkpoint. |
@@ -355,13 +355,16 @@ The dispatcher stops when a live claim exists. It does not stop merely because a
 
 Selection order:
 
-1. Review-ready `In Review` Coding Agent issue or Coordinator docs/workflow
-   issue with linked PR/review target.
-2. Fix-ready `In Progress` Coding Agent issue or Coordinator docs/workflow
-   issue with requested-changes/fix-needed evidence and no live claim.
+1. Review-ready `In Review` Coding Agent issue, Coordinator docs/workflow
+   issue, or AI Automation Expert repo-mutating workflow-doc issue with linked
+   PR/review target.
+2. Fix-ready `In Progress` Coding Agent issue, Coordinator docs/workflow issue,
+   or AI Automation Expert repo-mutating workflow-doc issue with
+   requested-changes/fix-needed evidence and no live claim.
 3. Explicit human/coordinator-targeted AI Automation Expert issue whose title
    or body names the role, using `gate:manual` as the explicit-target guard and
-   no `agent:auto` dependency.
+   no `agent:auto` dependency, and only when no active role-agent thread for the
+   same issue is known.
 4. Matching executable `Todo` issue.
 5. Top unblocked matching Backlog issue when no matching executable `Todo` exists and the current queue rule permits it.
 
@@ -401,6 +404,11 @@ Coordinator docs/workflow issue ready for review:
   labels: agent:coordinator
   linked PR present
 
+AI Automation Expert workflow-doc issue ready for review:
+  state: In Review
+  labels: gate:manual
+  linked PR present
+
 Coding issue needing review fixes:
   state: In Progress
   labels: agent:codex-local
@@ -410,6 +418,12 @@ Coding issue needing review fixes:
 Coordinator docs/workflow issue needing review fixes:
   state: In Progress
   labels: agent:coordinator
+  review requested changes present
+  no live claim present
+
+AI Automation Expert workflow-doc issue needing review fixes:
+  state: In Progress
+  labels: gate:manual
   review requested changes present
   no live claim present
 

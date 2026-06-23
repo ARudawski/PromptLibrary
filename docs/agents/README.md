@@ -77,6 +77,11 @@ Default rule:
 Executable issue = (Linear state Todo or top unblocked matching Backlog item) + expected agent label + expected title marker + unblocked dependency state + current allowed slice/lane.
 ```
 
+The explicit AI Automation Expert route is the manual-only exception to the
+normal recurring executable formula: it requires an exact human/coordinator
+target, title/body role marker, resolved blockers, and `gate:manual`, but no
+recurring agent label and no product-slice lane match.
+
 Role markers:
 
 ```text
@@ -102,10 +107,12 @@ The AI Automation Expert is manual-only. No recurring automation label is
 defined for it. A dispatcher/spawner may route it only when a human or
 Coordinator Agent explicitly targets the exact issue and the issue title or
 body names `AI Automation Expert`; recurring Todo/Backlog selection must skip
-it. Do not add `agent:auto` to AI Automation Expert issues by default, and
-treat any generic recurring exposure for this role as queue drift unless a
-later coordinator/human adoption gate updates the current-state ledger, shared
-queue contract, dispatcher routing, and Linear labels.
+it. If it is the only otherwise visible item and carries `agent:auto`, report
+queue drift instead of returning a silent `DONT_NOTIFY`. Do not add `agent:auto`
+to AI Automation Expert issues by default, and treat any generic recurring
+exposure for this role as queue drift unless a later coordinator/human adoption
+gate updates the current-state ledger, shared queue contract, dispatcher
+routing, and Linear labels.
 
 Backlog pickup must use roadmap/current-state order and must not skip gates or jump to later slices. Keep exactly one next executable Coding Agent issue at a time unless the user explicitly opens a parallel lane.
 
