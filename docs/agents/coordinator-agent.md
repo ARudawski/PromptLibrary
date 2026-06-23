@@ -2,7 +2,7 @@
 
 Status: active workflow contract  
 Role: Codex Prompt Coordinator / gate coordinator  
-Last updated: 2026-06-22
+Last updated: 2026-06-23
 
 ## Purpose
 
@@ -307,18 +307,18 @@ Stop and report when:
 - current work violates roadmap order or V1 boundaries;
 - a decision would require architecture redesign.
 
-## Roadmap order for M2
+## Roadmap Ordering
 
-Preserve this order unless a later architecture decision changes it:
+Use `docs/workflows/current-state-ledger.md` as the active authority for the
+current phase, active lane, next allowed lane, queue exposure, and caveats. Use
+`docs/roadmap/README.md` and the approved roadmap documents for the current
+roadmap sequence.
 
-```text
-Slice 2.1: PromptSource boundary and fake source seam
-Slice 2.2: Public GitHub prompt source adapter
-Slice 2.3: Runtime cache with TTL
-Slice 2.4: Stale-while-revalidate and last-known-good behavior
-Slice 2.5: Partial valid cache and cold failure behavior
-Slice 2.6: Local validate-prompts script
-Slice 2.7: Source/cache contract golden tests and docs
-```
+Historical slice-order details, including completed M2 ordering, belong in the
+roadmap, current-state ledger history, QA strategy, or reviewed learning/history
+artifacts. Do not treat an old milestone order as current Coordinator Agent
+operating guidance when the ledger says a later lane is active.
 
-A coordinator report may recommend the next ordered slice, but must not execute it.
+A coordinator report may recommend the next ordered slice only when the ledger,
+roadmap, and selected Linear issue support that handoff. It must not execute the
+next slice.
