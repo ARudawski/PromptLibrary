@@ -2,7 +2,7 @@
 
 Status: active workflow contract  
 Scope: Project Prompt Library agent behavior  
-Last updated: 2026-06-22
+Last updated: 2026-06-23
 
 This directory contains the durable operating specs for the agents used in Project Prompt Library. These files are not product architecture and do not authorize new runtime behavior. They define how agents select work, gather evidence, update Linear/GitHub, and stop when scope is unclear.
 
@@ -15,6 +15,7 @@ This directory contains the durable operating specs for the agents used in Proje
 | Review Agent | [`review-agent.md`](./review-agent.md) | Review implementation or workflow-doc PRs, request changes, approve/merge when safe, and make narrow checkpoint-doc amendments when allowed. |
 | QA Agent | [`qa-agent.md`](./qa-agent.md) | Independently verify accepted implementation evidence, runtime viability, docs, and tests. |
 | Coordinator Agent | [`coordinator-agent.md`](./coordinator-agent.md) | Synthesize coding/review/QA evidence, decide gates, and execute explicitly authorized workflow-doc repairs through PRs. |
+| AI Automation Expert | [`ai-automation-expert.md`](./ai-automation-expert.md) | Manual-only audit role for dispatcher, claim, handoff, monitor, State Checkpoint, worktree-safety, adoption, and compaction decisions. |
 
 Supporting docs:
 
@@ -50,7 +51,7 @@ Dispatcher preflight may read only:
 
 The Dispatcher must not read `AGENTS.md`, role specs, PR diffs, CI logs, PR comments, review threads, source files, long issue histories, or broad project docs before emitting a handoff. Its job is to produce one machine-readable dispatcher decision, normally `ROLE_HANDOFF_CANDIDATE` in candidate mode or `ROLE_HANDOFF` in adopted claim mode, then stop.
 
-Fresh Coding, Review, QA, and Coordinator role runs follow the full common operating contract below.
+Fresh non-dispatcher role runs follow the full common operating contract below.
 
 ## Common operating contract
 
@@ -83,6 +84,7 @@ Coding Agent       -> title contains Coding Agent
 Review Agent       -> issue/PR is in review, or explicit review target is provided
 QA Agent           -> title contains QA Agent
 Coordinator Agent  -> title contains Coordinator Report, explicit coordinator gate marker, Coordinator Agent workflow/documentation wording, or legacy QA Coordinator process/state finding
+AI Automation Expert -> title or body names AI Automation Expert and a human/coordinator explicitly targets it
 ```
 
 Expected labels:
@@ -95,6 +97,12 @@ agent:coordinator   coordinator agent may execute gate issues
 agent:auto          recurring automation may pick this without manual target
 gate:manual         manual or coordinator decision required
 ```
+
+The AI Automation Expert is manual-only. No recurring automation label is
+defined for it, and dispatcher/recurring automation must not select it unless a
+later coordinator/human adoption gate updates the current-state ledger, shared
+queue contract, dispatcher routing, and Linear labels. Do not add `agent:auto`
+to AI Automation Expert issues by default.
 
 Backlog pickup must use roadmap/current-state order and must not skip gates or jump to later slices. Keep exactly one next executable Coding Agent issue at a time unless the user explicitly opens a parallel lane.
 

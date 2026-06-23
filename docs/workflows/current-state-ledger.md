@@ -69,6 +69,7 @@ M4.Gate: local MVP completion and M5 readiness - accepted via PL-111; next allow
 - `inspect_prompt_library_command` is implemented through Slice 3.2. `ListPromptsUseCase` and command summary projection are implemented through Slice 3.3. `list_prompt_library_commands` MCP adapter is implemented through Slice 3.4. Slice 3.5 inspect/list golden tests and tool-reference coverage are implemented through PL-78 / PR #45. PL-79 QA passed, PL-80 accepted M3 completion/readiness, PL-110 QA passed the M4 local MVP, and PL-111 accepted M4 completion/readiness.
 - Hosted deployment, private suites, auth/OAuth, DB behavior, ChatGPT cache/admin/debug tools, prompt editing, draft management, semantic routing, workflow/session state, and additional real prompt files beyond the approved three-prompt M4 MVP set are not implemented.
 - Dispatcher claim mode remains off until the handoff-consumer proof/adoption path is explicitly accepted.
+- The AI Automation Expert role is represented in the active agent setup as a manual-only workflow audit role. It is not recurring automation-pickable; do not attach `agent:auto` or route dispatcher handoffs to it unless a coordinator/human adoption gate updates this ledger, the shared queue contract, dispatcher routing, and Linear labels.
 
 ## Queue Selection Rule
 
