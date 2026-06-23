@@ -3,7 +3,7 @@
 Status: QA strategy v2.0  
 Last updated: 2026-06-22
 Owner: QA Agent for verification; Coordinator Agent for QA-originated process findings
-Current phase: M3 read-only API complete via PL-80 after PL-79 QA; next allowed lane is Slice 4.1 prompt authoring baseline only
+Current phase: M4 local MVP complete via PL-111 after PL-110 QA; next allowed lane is Slice 5.1 personal-use trial planning only
 
 ## 1. QA goal
 
@@ -41,11 +41,11 @@ Slice 3.4: list MCP adapter — approved
 Current QA focus:
 
 ```text
-M3 read-only API QA
+M5.1 personal-use trial planning readiness and M4 local MVP regression protection
 Current slice: see docs/workflows/current-state-ledger.md
 ```
 
-Slice 0 is now historical, not the immediate next action. Keep its evidence because it remains the product premise, but do not block current M2 work by treating Slice 0 as unattempted.
+Slice 0 and the M2/M3/M4 gates are now historical, not the immediate next action. Keep their evidence because they remain product premises and regression surfaces, but do not block M5.1 planning by treating earlier gates as unattempted.
 
 ## 3. Current system under test
 
@@ -57,7 +57,7 @@ For the current implementation, the system under test includes:
 - slug/alias collection validation;
 - active command index;
 - invocation projection;
-- fixture-backed MCP invocation path;
+- local `prompts/*.md` MCP invocation path;
 - `PromptSource` boundary;
 - public GitHub source adapter;
 - runtime cache with TTL and later approved cache behavior;
@@ -66,9 +66,11 @@ For the current implementation, the system under test includes:
 - list use case and command summary projection behavior;
 - list MCP adapter contract behavior;
 - inspect/list golden tests and tool-reference coverage;
+- the three active M4 MVP prompt files: `handoff`, `grill-me`, and `spec-prompt-creator`;
+- local MVP contract/golden coverage and stdio walkthrough expectations;
 - deterministic CI gates and local QA worktrees.
 
-Later phases add real prompt files, personal-use trial evidence, and hosted deployment readiness.
+Later phases add personal-use trial evidence, any approved routing/prompt hardening from that trial, and hosted deployment readiness.
 
 ## 4. QA levels
 
@@ -143,7 +145,7 @@ npm run validate-prompts
 
 Record exact pass/fail/skipped status.
 
-`validate-prompts` is a real local validator as of Slice 2.6. It may pass with zero local prompt files until approved real-prompt slices add prompt definitions; do not treat an empty prompt-set pass as live prompt coverage.
+`validate-prompts` is a real local validator as of Slice 2.6. For the M4 local MVP and later, it must validate the three approved active prompt files unless an issue explicitly scopes a different prompt set.
 
 ## 6. CI evidence
 
@@ -223,8 +225,8 @@ QA must treat accidental implementation of these as architecture drift, not bonu
 
 Carry these forward until resolved by the relevant slice or issue:
 
-- `test:golden` has real Slice 2.7 source/cache coverage; future exact-payload behavior still needs slice-specific golden coverage where applicable.
-- `validate-prompts` is real local validation but may pass with zero prompt files until real prompt slices add approved prompt definitions.
+- `test:golden` has real Slice 2.7 source/cache coverage, Slice 3.5 read-only API coverage, and M4 local MVP prompt/catalog coverage; future exact-payload behavior still needs slice-specific golden coverage where applicable.
+- `validate-prompts` is real local validation and, for the accepted M4 local MVP, validates three active prompt files.
 - npm audit findings must be reported when observed.
-- Inspect is implemented through the MCP adapter; list use-case/summary projection is implemented through Slice 3.3; the ChatGPT-facing list MCP adapter is implemented through Slice 3.4; inspect/list golden and tool-reference coverage is implemented through Slice 3.5. PL-79 QA passed, and PL-80 accepted M3 completion/readiness with Slice 4.1 prompt authoring baseline as the next allowed product lane.
-- Source/cache infrastructure is not equivalent to fully wired real prompt runtime behavior until later slices complete.
+- Inspect is implemented through the MCP adapter; list use-case/summary projection is implemented through Slice 3.3; the ChatGPT-facing list MCP adapter is implemented through Slice 3.4; inspect/list golden and tool-reference coverage is implemented through Slice 3.5. PL-79 QA passed, PL-80 accepted M3 completion/readiness, PL-110 QA passed the M4 local MVP, and PL-111 accepted M4 completion/readiness.
+- Source/cache infrastructure and local prompt runtime behavior are not equivalent to hosted, private-suite, auth/OAuth, DB, or deployment readiness until later slices explicitly complete that work.
