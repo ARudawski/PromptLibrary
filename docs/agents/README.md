@@ -22,6 +22,17 @@ Supporting docs:
 - [`learning-log.md`](./learning-log.md) — proposed compact audit log for role-learning decisions.
 - [`../workflows/dispatcher-and-learning-setup.md`](../workflows/dispatcher-and-learning-setup.md) — dispatcher/role-learning design rationale, proof guidance, dry-run review aids, and historical setup notes.
 
+## Reusable Codex execution assets
+
+Durable role behavior lives in this directory and `AGENTS.md`. Reusable execution prompts and optional Codex custom-agent configs live outside this directory so task prompts stay short and copyable:
+
+- [`../../codex-prompts/implement-slice.md`](../../codex-prompts/implement-slice.md) — default Coding Agent implementation prompt for one bounded issue/slice.
+- [`../../codex-prompts/qa-review-slice.md`](../../codex-prompts/qa-review-slice.md) — default read-only QA boundary review prompt for one issue/PR.
+- [`../../.codex/agents/ppl-slice-implementer.toml`](../../.codex/agents/ppl-slice-implementer.toml) — optional Codex custom-agent config for implementation runs.
+- [`../../.codex/agents/ppl-qa-boundary-reviewer.toml`](../../.codex/agents/ppl-qa-boundary-reviewer.toml) — optional Codex custom-agent config for read-only boundary review runs.
+
+These assets do not authorize new work. They package the existing workflow contract into faster, lower-token execution entry points.
+
 ## QA Coordinator retirement
 
 There is no separate active `QA Coordinator` role in the automated workflow.
