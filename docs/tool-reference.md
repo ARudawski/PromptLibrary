@@ -1,6 +1,6 @@
 # Tool Reference
 
-Status: Slice 3.5 read-only API reference
+Status: Slice 4.5 local MVP tool reference
 
 Project Prompt Library exposes exactly three V1 ChatGPT-facing tools:
 
@@ -44,10 +44,29 @@ Success `structuredContent` contains exactly the reduced invocation payload:
 
 ```json
 {
-  "title": "Active Basic",
+  "title": "Grill Me",
+  "lifecycle": "interactive_workflow",
+  "input_mode": "either",
+  "prompt_body": "You are Grill Me, an interactive interviewer..."
+}
+```
+
+Alias invocation resolves to the same canonical prompt payload:
+
+```text
+@pl grill
+```
+
+Normal invocation for `@pl handoff`, `@pl grill-me`, `@pl grill`,
+`@pl spec-prompt-creator`, `@pl spec-creator`, and `@pl prompt-creator`
+returns the same reduced shape:
+
+```json
+{
+  "title": "Handoff",
   "lifecycle": "one_shot",
-  "input_mode": "attached_input",
-  "prompt_body": "Apply the Active Basic fixture prompt to the attached input.\n"
+  "input_mode": "conversation_context",
+  "prompt_body": "Produce one concise handoff artifact..."
 }
 ```
 
@@ -96,15 +115,15 @@ Success `structuredContent`:
   "no_prompt_invoked": true,
   "metadata": {
     "schema_version": "1",
-    "slug": "active-with-alias",
-    "title": "Active With Alias",
-    "description": "Active fixture prompt with a command alias.",
-    "aliases": ["alias-basic"],
+    "slug": "grill-me",
+    "title": "Grill Me",
+    "description": "Interview the user one question at a time until intent and constraints are clear.",
+    "aliases": ["grill"],
     "lifecycle": "interactive_workflow",
     "input_mode": "either",
     "status": "active"
   },
-  "prompt_body": "Use this fixture prompt as a simple alias-backed active command.\n"
+  "prompt_body": "You are Grill Me, an interactive interviewer..."
 }
 ```
 
@@ -145,12 +164,28 @@ Success `structuredContent`:
   "type": "prompt_command_list",
   "commands": [
     {
-      "command": "active-basic",
-      "title": "Active Basic",
-      "description": "Basic active fixture prompt.",
+      "command": "grill-me",
+      "title": "Grill Me",
+      "description": "Interview the user one question at a time until intent and constraints are clear.",
+      "aliases": ["grill"],
+      "lifecycle": "interactive_workflow",
+      "input_mode": "either"
+    },
+    {
+      "command": "handoff",
+      "title": "Handoff",
+      "description": "Produce a concise handoff from the current conversation context.",
       "aliases": [],
       "lifecycle": "one_shot",
-      "input_mode": "attached_input"
+      "input_mode": "conversation_context"
+    },
+    {
+      "command": "spec-prompt-creator",
+      "title": "Spec & Prompt Creator",
+      "description": "Establish a chat mode for turning rough requests into precise specs and coding-agent prompts.",
+      "aliases": ["spec-creator", "prompt-creator"],
+      "lifecycle": "persistent_mode",
+      "input_mode": "either"
     }
   ]
 }

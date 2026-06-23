@@ -60,10 +60,11 @@ Start here:
 - [`docs/qa/test-strategy.md`](./docs/qa/test-strategy.md) — QA strategy.
 - [`docs/qa/ci-evidence.md`](./docs/qa/ci-evidence.md) — CI/check evidence convention.
 - [`docs/slice-0-proof.md`](./docs/slice-0-proof.md) — Slice 0 proof checklist and result log template.
+- [`docs/local-mvp-walkthrough.md`](./docs/local-mvp-walkthrough.md) — local walkthrough for validating the three-prompt M4 MVP.
 
 ## Local development status
 
-The TypeScript/Node implementation currently supports local runtime loading from `prompts/*.md`, deterministic fixture-backed tests, the Slice 2.1 source boundary, the Slice 2.2 public GitHub source adapter behind that boundary, Slice 2.3 cache TTL behavior, Slice 2.4 stale/LKG behavior, Slice 2.5 partial-valid/cold-failure behavior, Slice 2.6 local prompt validation, Slice 2.7 source/cache contract and golden coverage, M3 inspect behavior through Slice 3.2, M3 list behavior through Slice 3.4, and Slice 3.5 read-only API golden/tool-reference coverage. PL-80 accepted M3 as complete with non-blocking follow-ups.
+The TypeScript/Node implementation currently supports local runtime loading from `prompts/*.md`, deterministic fixture-backed tests, the Slice 2.1 source boundary, the Slice 2.2 public GitHub source adapter behind that boundary, Slice 2.3 cache TTL behavior, Slice 2.4 stale/LKG behavior, Slice 2.5 partial-valid/cold-failure behavior, Slice 2.6 local prompt validation, Slice 2.7 source/cache contract and golden coverage, M3 inspect behavior through Slice 3.2, M3 list behavior through Slice 3.4, Slice 3.5 read-only API golden/tool-reference coverage, and the three local M4 MVP prompts: `handoff`, `grill-me`, and `spec-prompt-creator`. PL-80 accepted M3 as complete with non-blocking follow-ups.
 
 ## CI quality gate
 
