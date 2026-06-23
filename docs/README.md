@@ -25,6 +25,8 @@ These files are workflow contracts. They do not approve product scope or later-s
 
 ## Workflow setup docs
 
+- [`workflows/ai-automation-development-process-presentation.md`](workflows/ai-automation-development-process-presentation.md) - human-facing presentation of the AI-assisted development process.
+
 - [`workflows/dispatcher-and-learning-setup.md`](workflows/dispatcher-and-learning-setup.md) — proposed dispatcher and role-learning setup.
 - [`agents/learning-log.md`](agents/learning-log.md) — proposed audit log for proposed/accepted/rejected/deferred/superseded role-learning decisions.
 
