@@ -8,6 +8,10 @@ This document designs the lightweight dispatcher setup and the role-learning loo
 
 Adoption note: this setup remains proposed until a coordinator/human adoption gate confirms that the current-state ledger, Linear queue, and handoff consumer are ready for it.
 
+This document is not an executable dispatcher prompt. Use
+[`docs/agents/dispatcher.md`](../agents/dispatcher.md) as the single canonical
+dispatcher prompt/spec.
+
 ## Design principles
 
 - Keep durable guidance in repo docs, not repeated long prompts.
@@ -48,117 +52,52 @@ GitHub:
 - Dispatcher preflight may read recent/open PR metadata only: number, title, state, draft state, base/head branch, merged/closed timestamps, and visible Linear issue links.
 - Dispatcher preflight must not read PR diffs, CI logs, PR comments, review threads, source files, or broad repo docs before handoff.
 
-## Dispatcher modes
+## Canonical source map
 
-Default until adoption: candidate mode.
+Use this map when changing or reviewing dispatcher/learning workflow docs.
+Active rules must live in exactly one canonical file.
 
-```text
-candidate mode:
-  cheap preflight: Linear + current-state ledger + recent PR metadata only
-  select one candidate
-  emit ROLE_HANDOFF_CANDIDATE
-  do not mutate Linear
-  stop
-```
+| Rule family | Canonical destination |
+|---|---|
+| Dispatcher operating modes, cheap preflight, decision taxonomy, drift handling, selection order, handoff payloads, claim-mode mechanics, handoff-consumer obligations, failure recovery, and role-thread reasoning settings | [`docs/agents/dispatcher.md`](../agents/dispatcher.md) |
+| Current phase, active lane, queue exposure, and caveats | [`docs/workflows/current-state-ledger.md`](./current-state-ledger.md) |
+| Shared queue contract, live role claim marker, and terminal claim markers | [`docs/agents/README.md`](../agents/README.md) |
+| Role-specific execution and reporting obligations | The matching role spec in [`docs/agents/`](../agents/) |
+| Reviewed workflow-learning decisions | [`docs/agents/learning-log.md`](../agents/learning-log.md) |
 
-Adopted only after explicit coordinator/human approval: claim mode.
+## Dispatcher adoption rationale
 
-```text
-claim mode:
-  cheap preflight: Linear + current-state ledger + recent PR metadata only
-  select one candidate
-  write DISPATCHER CLAIM RUNNING with claim_id and claim_expires_at
-  verify unique claim ownership
-  emit ROLE_HANDOFF
-  stop
-```
+Candidate mode remains the default because it lets the dispatcher identify one
+safe handoff without owning the Linear issue or stranding work in a claimed
+state. Claim mode remains off until a coordinator/human adoption gate proves a
+handoff consumer can accept exactly one claimed handoff, establish a fresh
+role-run claim, recover failures, and preserve candidate mode as fallback.
 
-Use claim mode only when a handoff consumer exists and is expected to start a fresh role run from `ROLE_HANDOFF`. Without that consumer, candidate mode is safer because it cannot strand a Linear issue in a claimed state.
+The design intent is stable even though the executable mechanics are centralized
+in the dispatcher spec:
 
-## Dispatcher model
+- the dispatcher stays a cheap queue worker, not a project reasoning hub;
+- cheap preflight stays limited to the current-state ledger, Linear queue/claim
+  metadata, and recent/open PR metadata;
+- live claim markers are the active-work lock, not Linear state alone;
+- review-ready and fix-ready repository work remains routeable without a
+  separate reviewer issue;
+- explicitly targeted AI Automation Expert work remains manual-only and is not
+  made recurring automation-pickable;
+- State Checkpoint gaps route to repair instead of being hidden as ordinary
+  caveats when they affect handoff selection or state-changing closeout.
 
-```text
-Dispatcher
-  -> cheap preflight: Linear + current-state ledger + recent PR metadata only
-  -> compare ledger, Linear queue, live claims, and recent PR state for hard blockers and provisional drift notes
-  -> if a live claim exists: stop
-  -> if hard state drift blocks candidate selection: stop
-  -> if review-ready In Review coding, coordinator docs/workflow, or AI Automation Expert repo-mutating workflow-doc PR work exists: select review handoff
-  -> if fix-ready In Progress coding, coordinator docs/workflow, or AI Automation Expert repo-mutating workflow-doc work exists: select owning-role handoff
-  -> if an exact AI Automation Expert issue is explicitly targeted by a human or Coordinator Agent and no active role-agent thread exists: select manual-only AI Automation Expert handoff
-  -> else if matching executable Todo exists: select it
-  -> else if no matching executable Todo exists: select top matching Backlog when allowed
-  -> after exactly one candidate is selected: finalize provisional drift as blocking or non-blocking caveat
-  -> if post-selection blocking drift exists: stop
-  -> candidate mode: emit ROLE_HANDOFF_CANDIDATE and stop
-  -> claim mode: claim, emit ROLE_HANDOFF, and stop
-
-Fresh role run
-  -> candidate mode: starts from ROLE_HANDOFF_CANDIDATE without claim markers
-  -> claim mode: accepts ROLE_HANDOFF and posts AGENT RUNNING
-  -> starts with the explicit role-specific reasoning setting from this workflow
-  -> reads role spec and issue context
-  -> executes exactly one role workflow
-  -> writes evidence, plus terminal claim marker when a claim_id exists
-```
-
-The dispatcher is a queue worker, not a reasoning hub. It should not build project understanding unless it has selected work. The only repo file it may read before handoff is `docs/workflows/current-state-ledger.md`, because the ledger is required to avoid stale Linear labels pulling later-slice work. Recent GitHub PR metadata is allowed only as a cheap drift signal, not as review evidence.
-
-## State-drift preflight
-
-The dispatcher must compare three cheap signals before selecting work:
-
-1. `docs/workflows/current-state-ledger.md` for current phase, gate, next lane, queue rule, and caveats.
-2. Linear queue state for active candidates, blockers, labels, comments, and live claim markers.
-3. Recent/open GitHub PR metadata for whether a linked issue was recently merged, closed, opened, or still active.
-
-Phase 1 drift classification is provisional unless the mismatch prevents safe candidate selection. Use `STATE_DRIFT_DETECTED` before selection only for hard blockers, such as a candidate set that cannot be formed safely, a later slice or gate appearing complete with no explicit target or repair path, unavailable cheap metadata needed to build the candidate set, or stale labels/states that expose multiple plausible lanes before ordering rules can be applied.
-
-Carry provisional drift notes into candidate selection when the final decision depends on which issue is selected, whether exactly one candidate remains, or whether the selected issue is the tracked repair/workflow handoff. After selection, use `STATE_DRIFT_DETECTED` and stop if the drift would change the selected lane, role, issue, dependency, or blocker decision.
-
-Treat drift as a non-blocking caveat only after exactly one candidate remains and the mismatch does not change that handoff. PL-60 is the concrete repair path for stale current-state ledger/status docs. PL-62 is the workflow rule requiring coordinator closeouts to surface, update, link, or block on documentation/state drift. A dispatcher handoff may proceed with a `<state_caveat>` only when the drift is known, tracked, and irrelevant to the selected role/issue, or when the selected issue itself is the repair/workflow handoff.
-
-State Checkpoint evidence follows a stricter routing rule for the selected
-handoff. Historical missing or stale checkpoint evidence may proceed as a
-`<state_caveat>` only when it is tracked, irrelevant to the selected
-non-state-changing handoff, and does not change candidate selection. If the
-selected handoff itself changes the allowed lane, completed slice, active slice,
-next slice, or queue exposure, dispatcher evidence must include exactly one approved
-`<state_checkpoint>` outcome before handoff:
-
-```text
-ledger updated in this PR/issue
-ledger already correct
-state-repair issue created/linked: PL-xxx
-```
-
-If that approved checkpoint outcome is unavailable for a selected
-state-changing handoff, use `STATE_DRIFT_DETECTED` and route to state repair
-before handoff instead of continuing with only `<state_caveat>`.
-
-Non-automated monitor findings are reports, not executable work. When a finding
-identifies a missing State Checkpoint, the dispatcher may hand off only a
-separate executable Coordinator Agent state-repair issue, or an open
-review-ready PR whose selected Review Agent target can still carry the narrow
-checkpoint-doc amendment safely. If neither path exists, or if a repo-mutating
-Coordinator repair issue does not explicitly authorize the required
-workflow/docs edit, the correct result is `STATE_DRIFT_DETECTED` with the
-repair-path gap, not a role handoff from the finding itself.
-
-Machine-readable dispatcher decisions:
-
-```text
-DONT_NOTIFY
-CLAIM_BLOCKED
-STATE_DRIFT_DETECTED
-AMBIGUOUS_QUEUE
-ROLE_HANDOFF_CANDIDATE
-ROLE_HANDOFF
-```
+For the executable decision flow, use
+[`docs/agents/dispatcher.md#dispatcher-prompt`](../agents/dispatcher.md#dispatcher-prompt).
 
 ## Dry-run scenario matrix
 
-Use this matrix as a lightweight review aid before changing the dispatcher prompt or adopting claim mode. These are expected dry-run outcomes, not an automated harness.
+Use this matrix as a lightweight review aid before changing the dispatcher
+prompt or adopting claim mode. These are expected dry-run outcomes, not an
+automated harness or a second executable spec. If the matrix and
+[`docs/agents/dispatcher.md`](../agents/dispatcher.md) disagree, update the
+matrix or the dispatcher spec explicitly instead of treating both as active
+truth.
 
 | Scenario | Expected dispatcher output | Why |
 |---|---|---|
@@ -180,165 +119,31 @@ Use this matrix as a lightweight review aid before changing the dispatcher promp
 
 ## Suggested settings
 
-Dispatcher:
+The setup-level recommendation is to keep the dispatcher inexpensive and keep
+role execution in fresh issue-scoped threads. The canonical role-thread
+`thinking` values and handoff-consumer obligation to pass them live in
+[`docs/agents/dispatcher.md#dispatcher-prompt`](../agents/dispatcher.md#dispatcher-prompt)
+and are summarized in
+[`docs/agents/dispatcher.md#setup-notes`](../agents/dispatcher.md#setup-notes).
 
-```text
-reasoning: low or medium
-GitHub/repo access before handoff: current-state ledger plus recent PR metadata only
-Linear access before handoff: yes
-role execution in dispatcher run: no
-```
+## Claim and handoff-consumer references
 
-Fresh role execution after handoff:
+Claim mode remains off until the consumer contract is proven and explicitly
+adopted. The canonical claim lifecycle, accepted-handoff transition, terminal
+markers, consumer obligations, and failure recovery behavior live in:
 
-```text
-coding: high
-review: high by default; xhigh for approved-merge closeout, gate-risk reviews, architecture-impacting reviews, scope-drift calls, or contradictory CI/GitHub/Linear evidence
-QA: high by default; xhigh for targeted gate QA, runtime/project-state viability verdicts, or stale-doc/source-of-truth conflicts
-coordinator: xhigh for gate, State Checkpoint, lane-exposure, state-repair, or evidence-synthesis decisions
-AI Automation Expert: xhigh by default for dispatcher, claim, handoff, monitor, State Checkpoint, worktree-safety, adoption, rollback, or compaction decisions; high only for narrow read-only docs consistency audits
-future role agents: high unless the role is queue routing only; xhigh for irreversible or high-blast-radius judgment
-```
+- [`docs/agents/dispatcher.md#dispatcher-prompt`](../agents/dispatcher.md#dispatcher-prompt)
+- [`docs/agents/dispatcher.md#setup-notes`](../agents/dispatcher.md#setup-notes)
+- [`docs/agents/README.md#claim-terminal-markers`](../agents/README.md#claim-terminal-markers)
 
-The handoff consumer must pass these as Codex app `thinking` values, for
-example `high` or `xhigh`, when it creates a fresh role-agent thread. It should
-also include the selected reasoning value in the role-agent prompt as dispatcher
-evidence. The dispatcher itself remains a cheap queue worker and should stay at
-low or medium reasoning.
+Setup guidance that still matters for adoption:
 
-## Claim lifecycle
-
-A live claim is one of these markers without a later terminal marker for the same `claim_id` and with `claim_expires_at` still in the future:
-
-```text
-DISPATCHER CLAIM RUNNING
-claim_id:
-claim_expires_at:
-role:
-issue:
-claim_rule:
-claimed_from_state:
-claimed_from_labels:
-```
-
-```text
-AGENT RUNNING
-claim_id:
-claim_expires_at:
-role:
-issue:
-```
-
-Role-agent claims must use the exact `AGENT RUNNING` marker name and
-`claim_expires_at` field. Descriptive headings or alternate expiry fields are
-non-canonical and should not be treated as reliable live-claim markers by
-dispatcher or monitor logic.
-
-Claim-mode handoff transition marker:
-
-```text
-DISPATCHER HANDOFF ACCEPTED
-claim_id:
-accepted_at:
-consumer:
-```
-
-`DISPATCHER HANDOFF ACCEPTED` is not a terminal marker by itself. In claim mode, the handoff consumer must post it together with `AGENT RUNNING` before doing heavy work so ownership moves from dispatcher claim to role-run claim without a lock gap.
-
-Terminal markers:
-
-```text
-AGENT COMPLETE
-claim_id:
-completed_at:
-result:
-```
-
-```text
-AGENT BLOCKED
-claim_id:
-blocked_at:
-reason:
-```
-
-```text
-AGENT CLAIM RELEASED
-claim_id:
-released_at:
-reason:
-```
-
-```text
-AGENT CLAIM EXPIRED
-claim_id:
-observed_at:
-reason:
-```
-
-Role-specific verdicts such as `PASS`, `APPROVE`, or `NEEDS CHANGES` are
-human-readable report fields only. Phrases such as `QA COMPLETE`,
-`REVIEW COMPLETE`, or `COORDINATOR COMPLETE` are not machine terminal markers
-and must not be used to close a claim.
-
-Candidate-mode handoffs do not create a `claim_id`; fresh role runs started from `ROLE_HANDOFF_CANDIDATE` must not invent claim lifecycle markers.
-
-In claim mode, the handoff consumer must post `DISPATCHER HANDOFF ACCEPTED` and `AGENT RUNNING` in the same Linear comment before the fresh role run performs heavy work. `AGENT RUNNING` is mandatory for claim-mode role runs, and the role run must end with a terminal marker.
-
-## Handoff consumer contract
-
-Claim mode remains off until this contract is proven and explicitly adopted by a coordinator or human decision. The consumer is a small bridge between `ROLE_HANDOFF` and a fresh role-agent run; it is not a scheduler and it does not select work.
-
-Allowed consumer actions:
-
-- Read exactly one dispatcher `ROLE_HANDOFF` result.
-- Re-fetch the selected Linear issue and comments.
-- Verify the dispatcher claim is live: the `DISPATCHER CLAIM RUNNING` marker exists, `claim_expires_at` is in the future, no earlier unexpired live claim owns the issue, and no terminal marker exists for the same `claim_id`.
-- Reject the handoff if comments already contain `DISPATCHER HANDOFF ACCEPTED` or `AGENT RUNNING` for the same `claim_id`; the first accepted/running consumer owns the role run.
-- Verify current executability still satisfies the `claim_rule`, not just the static handoff fields: issue state is still eligible, blockers are still resolved, review-ready or fix-ready evidence still exists when required, and any linked PR is still open and ready for that rule.
-- Verify the handoff still matches the issue, role, claim rule, linked PR, state caveat, and state checkpoint.
-- Select the role-specific `thinking` value from Suggested settings and carry
-  it into the fresh role-agent thread.
-- Post one combined acceptance/running comment before heavy work:
-
-```text
-DISPATCHER HANDOFF ACCEPTED
-claim_id:
-accepted_at:
-consumer:
-
-AGENT RUNNING
-claim_id:
-claim_expires_at:
-role:
-issue:
-```
-
-- Start one fresh role-agent run for that issue and role, using the supplied
-  `claim_id` and selected `thinking` value.
-- End the run with exactly one terminal marker for the same `claim_id`: `AGENT COMPLETE`, `AGENT BLOCKED`, `AGENT CLAIM RELEASED`, or `AGENT CLAIM EXPIRED`.
-
-After posting the combined acceptance/running comment, the consumer must re-fetch the Linear issue and comments. It may proceed only if its own combined marker is the first one for that `claim_id` and current executability still satisfies the `claim_rule`. If another consumer accepted first, stop before heavy work and do not post a terminal marker for the shared `claim_id`; the winning role run owns completion.
-
-Forbidden consumer actions:
-
-- Do not consume `ROLE_HANDOFF_CANDIDATE` as a claim-mode run.
-- Do not invent or change a `claim_id`.
-- Do not select a different issue, role, PR, or lane.
-- Do not start parallel active lanes.
-- Do not activate claim mode by documentation alone.
-- Do not remove candidate mode or make it unavailable as fallback.
-- Do not require cloud infrastructure.
-- Do not change product runtime behavior.
-
-Failure handling:
-
-| Case | Required behavior |
-|---|---|
-| Missed handoff pickup | If `claim_expires_at` passes before the combined acceptance/running comment exists, do not start heavy work. Before posting `AGENT CLAIM EXPIRED`, restore any state or label mutation recorded in `claimed_from_state` or `claimed_from_labels`; if safe restoration is not possible, post an explicit repair/blocker note so the issue is not stranded as ordinary `In Progress`. |
-| Expired claim | The consumer must refuse the handoff. Before posting `AGENT CLAIM EXPIRED`, restore any state or label mutation recorded in `claimed_from_state` or `claimed_from_labels`; if humans or another agent changed the issue and restoration would be unsafe, post `AGENT BLOCKED` or a repair note that makes the stranded state explicit, then stop. |
-| Duplicate claims | The earliest unexpired live claim for the issue wins. Later claimants post `AGENT CLAIM RELEASED` for their own `claim_id` when possible, return `CLAIM_BLOCKED`, and stop. |
-| Interrupted role run | Resume only when the same `claim_id` is still unexpired and no terminal marker exists. If expiry passed, post `AGENT CLAIM EXPIRED` or `AGENT BLOCKED` with the interruption reason and stop. |
-| Role-run refusal | If the fresh role run refuses due to title, role, blocker, architecture, or evidence mismatch, post `AGENT CLAIM RELEASED` before heavy work or `AGENT BLOCKED` after acceptance, then stop. |
+- candidate-mode handoffs create no `claim_id`, and role runs started from
+  `ROLE_HANDOFF_CANDIDATE` must not invent claim lifecycle markers;
+- claim-mode proof must verify ownership transfer from dispatcher claim to
+  role-run claim before heavy work;
+- candidate mode must remain available as fallback after any claim-mode proof
+  or partial adoption.
 
 ## Claim-mode proof checklist
 
@@ -355,34 +160,16 @@ Use this checklist before moving from candidate mode to any claim-mode adoption.
 
 Recommendation: keep claim mode off for recurring automation until the manual proof above passes. After proof, adopt claim mode only for the narrow role/lane named in the adoption decision; keep candidate mode as the default fallback.
 
-## Queue rules
+## Queue exposure rationale
 
-The dispatcher stops when a live claim exists. It does not stop merely because an issue is `In Progress` or `In Review`.
+The executable queue-selection order lives in
+[`docs/agents/dispatcher.md#dispatcher-prompt`](../agents/dispatcher.md#dispatcher-prompt).
+The shared role/label contract lives in
+[`docs/agents/README.md#queue-selection-contract`](../agents/README.md#queue-selection-contract).
 
-Selection order:
-
-1. Review-ready `In Review` Coding Agent issue, Coordinator docs/workflow
-   issue, or AI Automation Expert repo-mutating workflow-doc issue with linked
-   PR/review target.
-2. Fix-ready `In Progress` Coding Agent issue, Coordinator docs/workflow issue,
-   or AI Automation Expert repo-mutating workflow-doc issue with
-   requested-changes/fix-needed evidence and no live claim.
-3. Explicit human/coordinator-targeted AI Automation Expert issue whose title
-   or body names the role, using `gate:manual` as the explicit-target guard and
-   no `agent:auto` dependency, and only when no active role-agent thread for the
-   same issue is known.
-4. Matching executable `Todo` issue.
-5. Top unblocked matching Backlog issue when no matching executable `Todo` exists and the current queue rule permits it.
-
-Completion routing happens in the fresh role run, not in the dispatcher:
-
-- Coding work ends in `In Review`, not `Done`.
-- Coordinator docs/workflow repository mutation ends in `In Review` after a PR
-  is opened, not `Done`.
-- Review work either returns the target issue to `In Progress`, approves/merges
-  and moves it to `Done`, or records `BLOCKED`.
-- QA work moves the QA issue to `Done` only after a PASS/PASS WITH MINOR ISSUES verdict.
-- Coordinator gates move to `Done` only after the decision is recorded.
+This setup doc keeps only exposure examples for review and adoption planning.
+If an example conflicts with the canonical dispatcher or shared queue contract,
+fix the relevant canonical file and update the example in the same PR.
 
 ## Recommended issue exposure
 
@@ -576,12 +363,17 @@ At the end of each milestone, run a small workflow compaction:
 - Put history in the learning log, not in active prompts.
 - Prefer deleting obsolete text over appending caveats forever.
 
-## Initial rollout
+## Historical initial rollout
 
-1. Add `docs/agents/dispatcher.md`.
-2. Add this setup document.
-3. Add `docs/agents/learning-log.md`.
-4. Link the documents from `docs/README.md` and `docs/agents/README.md`.
-5. Start in candidate mode.
-6. Review the first dispatcher candidates before adopting claim mode.
-7. Adopt claim mode only after the handoff consumer contract is manually proven and accepted by coordinator/human evidence.
+This is a completed setup record, not active instructions for future agents:
+
+- `docs/agents/dispatcher.md` was added as the dispatcher prompt/spec.
+- This setup document was added for design rationale, proof guidance, dry-run
+  review aids, role-learning notes, and historical context.
+- `docs/agents/learning-log.md` was added as the reviewed learning audit log.
+- The documents were linked from the repository docs and agent index.
+
+Do not add these files again. Current changes should edit the existing
+canonical files through the normal branch/PR/review workflow. Candidate mode
+remains the default unless a later coordinator/human adoption gate proves and
+adopts claim mode.

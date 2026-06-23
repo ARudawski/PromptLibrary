@@ -20,7 +20,7 @@ This directory contains the durable operating specs for the agents used in Proje
 Supporting docs:
 
 - [`learning-log.md`](./learning-log.md) — proposed compact audit log for role-learning decisions.
-- [`../workflows/dispatcher-and-learning-setup.md`](../workflows/dispatcher-and-learning-setup.md) — proposed operating setup for dispatcher and role-learning workflow.
+- [`../workflows/dispatcher-and-learning-setup.md`](../workflows/dispatcher-and-learning-setup.md) — dispatcher/role-learning design rationale, proof guidance, dry-run review aids, and historical setup notes.
 
 ## QA Coordinator retirement
 
