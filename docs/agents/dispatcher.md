@@ -4,7 +4,13 @@ Status: proposed dispatcher spec
 Last updated: 2026-06-23
 Scope: Codex dispatcher runs for `Project Prompt Library`
 
-This file is the durable prompt/spec for the lightweight dispatcher. The dispatcher is intentionally not a project brain and does not execute coding, review, QA, coordinator, or AI Automation Expert work itself. It is a cheap queue gate that selects at most one Linear issue, emits a role handoff, and stops.
+This file is the single executable prompt/spec for the lightweight dispatcher.
+Other workflow docs may explain rationale, adoption, and proof guidance, but
+dispatcher mechanics should link here instead of duplicating a second active
+prompt. The dispatcher is intentionally not a project brain and does not
+execute coding, review, QA, coordinator, or AI Automation Expert work itself.
+It is a cheap queue gate that selects at most one Linear issue, emits a role
+handoff, and stops.
 
 Adoption note: do not treat this dispatcher as active automation until a coordinator/human adoption gate confirms that the current-state ledger, Linear queue, and handoff consumer are ready for it.
 
