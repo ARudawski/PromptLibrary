@@ -122,8 +122,9 @@ truth.
 The setup-level recommendation is to keep the dispatcher inexpensive and keep
 role execution in fresh issue-scoped threads. The canonical role-thread
 `thinking` values and handoff-consumer obligation to pass them live in
-[`docs/agents/dispatcher.md#phase-5--fresh-role-run-obligations`](../agents/dispatcher.md#phase-5--fresh-role-run-obligations)
-and [`docs/agents/dispatcher.md#setup-notes`](../agents/dispatcher.md#setup-notes).
+[`docs/agents/dispatcher.md#dispatcher-prompt`](../agents/dispatcher.md#dispatcher-prompt)
+and are summarized in
+[`docs/agents/dispatcher.md#setup-notes`](../agents/dispatcher.md#setup-notes).
 
 ## Claim and handoff-consumer references
 
@@ -131,9 +132,8 @@ Claim mode remains off until the consumer contract is proven and explicitly
 adopted. The canonical claim lifecycle, accepted-handoff transition, terminal
 markers, consumer obligations, and failure recovery behavior live in:
 
-- [`docs/agents/dispatcher.md#phase-1--cheap-preflight`](../agents/dispatcher.md#phase-1--cheap-preflight)
-- [`docs/agents/dispatcher.md#phase-4--claim-mode-handoff`](../agents/dispatcher.md#phase-4--claim-mode-handoff)
-- [`docs/agents/dispatcher.md#phase-5--fresh-role-run-obligations`](../agents/dispatcher.md#phase-5--fresh-role-run-obligations)
+- [`docs/agents/dispatcher.md#dispatcher-prompt`](../agents/dispatcher.md#dispatcher-prompt)
+- [`docs/agents/dispatcher.md#setup-notes`](../agents/dispatcher.md#setup-notes)
 - [`docs/agents/README.md#claim-terminal-markers`](../agents/README.md#claim-terminal-markers)
 
 Setup guidance that still matters for adoption:
@@ -163,7 +163,7 @@ Recommendation: keep claim mode off for recurring automation until the manual pr
 ## Queue exposure rationale
 
 The executable queue-selection order lives in
-[`docs/agents/dispatcher.md#phase-2--find-executable-issue`](../agents/dispatcher.md#phase-2--find-executable-issue).
+[`docs/agents/dispatcher.md#dispatcher-prompt`](../agents/dispatcher.md#dispatcher-prompt).
 The shared role/label contract lives in
 [`docs/agents/README.md#queue-selection-contract`](../agents/README.md#queue-selection-contract).
 
