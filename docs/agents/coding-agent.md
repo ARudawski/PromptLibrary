@@ -2,7 +2,7 @@
 
 Status: active workflow contract  
 Role: local Codex / Coding Agent  
-Last updated: 2026-06-21
+Last updated: 2026-06-23
 
 ## Purpose
 
@@ -10,14 +10,11 @@ The Coding Agent implements exactly one bounded task from Linear or one explicit
 
 ## Required reading
 
-Before editing, read:
-
-1. `AGENTS.md`
-2. `docs/agents/README.md`
-3. `docs/workflows/current-state-ledger.md`
-4. the target Linear issue, comments, blockers, predecessor reports, and attachments
-5. linked GitHub PRs/branches/docs
-6. architecture, roadmap, standards, QA, source, and test docs required by the issue
+Before editing, follow the common operating contract in
+[`docs/agents/README.md`](./README.md). For Coding Agent work, make sure the
+issue-specific pass includes predecessor reports, linked GitHub branches/docs,
+and the architecture, roadmap, standards, QA, source, and test docs required by
+the issue.
 
 ## Eligible work
 
@@ -107,24 +104,10 @@ Report exact pass/fail/skipped status for every check. Keep current caveats visi
 
 ## GitHub behavior
 
-PR body, role report, and GitHub/Linear comment issue references must be
-intentional. Use closing or implementation verbs only for the issue the PR is
-meant to advance. For non-goal or context issues, avoid negated closing phrases
-such as `does not close PL-60`, `does not implement PL-67`, or `not fixing
-PL-68`; integrations may still treat the issue ID as linked to the PR
-lifecycle. Prefer neutral wording such as:
-
-```text
-Context only: PL-60, PL-67, PL-68. No lifecycle action requested for these issues.
-```
-
-For completed work:
-
-1. commit to a `codex/<issue-id-or-short-task>` branch;
-2. push the branch;
-3. open a ready-for-review PR unless intentionally incomplete;
-4. fill the PR evidence template;
-5. link the PR to Linear.
+Follow the shared issue-reference safety and repository mutation rules in
+[`docs/agents/README.md`](./README.md). For completed Coding Agent work, fill
+the PR evidence template, link the PR to Linear, and open a ready-for-review PR
+unless the work is intentionally incomplete.
 
 Use draft PRs only for intentionally incomplete or early-review work.
 
@@ -139,20 +122,14 @@ For Coding Agent issues:
 
 If the implementation or handoff changes the allowed lane, completed slice,
 active slice, next slice, or queue exposure, include the required State
-Checkpoint in the Linear report or PR evidence. Use exactly one approved
-outcome: `ledger updated in this PR/issue`, `ledger already correct`, or
-`state-repair issue created/linked: PL-xxx`.
+Checkpoint in the Linear report or PR evidence using the shared
+[`State Checkpoint`](./README.md#state-checkpoint) rule.
 
 ## Final report
 
-Use the same neutral issue-reference rule in Linear comments and final reports:
-do not put non-goal issue IDs next to closing or implementation wording.
-
-If this run has a `claim_id` from an accepted dispatcher claim, append one
-canonical terminal marker from `docs/agents/README.md#claim-terminal-markers`
-after the report. Successful completion uses `AGENT COMPLETE`; do not use
-role-specific phrases as machine terminal markers. If there is no `claim_id`,
-do not invent claim lifecycle markers.
+Follow the shared issue-reference safety and
+[`Claim Terminal Markers`](./README.md#claim-terminal-markers) rules. Claim-free
+candidate-mode or manual runs must not invent claim lifecycle markers.
 
 Post a Linear comment with:
 

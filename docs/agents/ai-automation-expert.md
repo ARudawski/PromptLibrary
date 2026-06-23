@@ -13,8 +13,11 @@ This role is a workflow safety role. It does not implement product code, execute
 
 Canonical sources stay canonical:
 
+- `docs/agents/README.md` owns shared queue, issue-reference, repository
+  mutation closeout, live role claim, and terminal marker rules.
 - `docs/agents/dispatcher.md` owns dispatcher candidate, claim, handoff, and live-claim mechanics.
-- `docs/agents/coordinator-agent.md` owns gate decisions, State Checkpoint closeout, and repo-mutating workflow-doc PR rules.
+- `docs/agents/coordinator-agent.md` owns gate decisions, State Checkpoint
+  closeout, and Coordinator-specific workflow-doc authority.
 - `docs/workflows/current-state-ledger.md` owns current phase, lane, queue exposure, and active caveats.
 - `docs/workflows/dispatcher-and-learning-setup.md` describes the proposed dispatcher and role-learning setup.
 - `docs/agents/learning-log.md` records reviewed workflow-learning decisions only.
@@ -124,11 +127,9 @@ When evidence is unavailable, say which decision it blocks. Do not substitute me
 
 Post a Linear comment when the role reaches a decision:
 
-If this run has a `claim_id` from an accepted dispatcher claim, append one
-canonical terminal marker from `docs/agents/README.md#claim-terminal-markers`
-after the report. Successful completion uses `AGENT COMPLETE`; do not use
-role-specific phrases as machine terminal markers. If there is no `claim_id`,
-do not invent claim lifecycle markers.
+Follow the shared
+[`Claim Terminal Markers`](./README.md#claim-terminal-markers) rule. Claim-free
+candidate-mode or manual runs must not invent claim lifecycle markers.
 
 ```text
 AI Automation Expert Report
@@ -158,13 +159,11 @@ Use concrete issue IDs, PR numbers, branch names, SHAs, command names, and marke
 
 This role may edit workflow docs only when the target issue explicitly authorizes those docs changes.
 
-Repo-mutating AI Automation Expert work must follow the same durable path as Coordinator workflow-doc work:
-
-```text
-ticket -> branch -> commit -> PR -> Review Agent review -> merge/closeout before Done
-```
-
-After opening a PR, report `NEEDS REVIEW` and move the issue to `In Review` if that state exists. Do not mark the issue `Done` until review, merge, and closeout evidence exist.
+Repo-mutating AI Automation Expert work must follow the shared
+[`Repository Mutation and Closeout`](./README.md#repository-mutation-and-closeout)
+discipline. After opening a PR, report `NEEDS REVIEW` and move the issue to
+`In Review` if that state exists; do not mark the issue `Done` until review,
+merge, and closeout evidence exist.
 
 ## Compaction guidance
 

@@ -60,11 +60,14 @@ Every non-dispatcher role agent must read:
 1. `AGENTS.md`
 2. `docs/workflows/current-state-ledger.md`
 3. its role-specific file from this directory
-4. the target Linear issue and its comments/attachments
+4. the target Linear issue, including comments, blockers/dependencies, and attachments
 5. the linked PR/diff/commit when relevant
 6. the architecture, roadmap, standards, QA, and source docs required by the issue
 
 If these sources conflict, follow the source-of-truth rules in `AGENTS.md`. Stop and report the conflict instead of improvising.
+
+Role-specific specs may add required evidence or role-local reads, but they do
+not need to restate this baseline.
 
 ## Queue selection contract
 
@@ -126,17 +129,57 @@ Coding issue -> PR/review evidence on coding issue and PR -> QA issue -> coordin
 
 Separate Code Reviewer issues are optional. Use them only when review itself is large, risky, multi-PR, or explicitly required. A retired/canceled review issue must not block a coordinator gate if review evidence exists on the coding issue and PR.
 
-Coordinator-authored workflow-doc changes use the same durable repository path:
-
-```text
-Coordinator workflow/docs issue -> branch/commit/PR -> Review Agent review -> merge/closeout evidence -> Done
-```
+Coordinator-authored workflow-doc changes and other role-authorized repository
+mutations use the shared repository mutation and closeout discipline below.
 
 Decision-only coordinator work may close from recorded Linear/GitHub evidence
-without a PR when it does not mutate repository files. A Coordinator Agent issue
-with uncommitted, unpushed, unreviewed, or unmerged repository changes must
-report `BLOCKED`, `NEEDS PUBLISH`, or `NEEDS REVIEW` with the files/PR listed
-instead of moving to `Done`.
+without a PR when it does not mutate repository files.
+
+## Issue Reference Safety
+
+PR bodies, role reports, Linear comments, and GitHub comments must use issue
+references intentionally. Reserve closing or implementation words such as
+`close`, `fix`, `resolve`, `complete`, and `implement` for the target issue the
+work is meant to advance.
+
+For non-goal or context issues, avoid negated lifecycle phrases. Integrations
+may still treat the issue ID as linked to the PR lifecycle.
+
+Unsafe:
+
+```text
+This does not close PL-60 or implement PL-67.
+```
+
+Safer:
+
+```text
+Context only: PL-60, PL-67. No lifecycle action requested for these issues.
+```
+
+## Repository Mutation and Closeout
+
+Any role-authorized repository mutation must use a durable path:
+
+```text
+ticket -> branch -> commit -> PR -> Review Agent review -> merge/closeout evidence -> Done
+```
+
+Before editing, verify the repository, remote, base branch or pinned ref, and
+worktree state. Use a scoped branch, commit only the authorized files, push the
+branch, and open or update a PR with role evidence.
+
+After opening a PR, report `NEEDS REVIEW` and move the owning issue to
+`In Review` when that state exists. Do not move the issue to `Done` until
+review, merge, and closeout evidence exist.
+
+If repository work is unfinished, report the smallest truthful state:
+uncommitted changes are `BLOCKED`, committed but unpushed changes are
+`NEEDS PUBLISH`, and an open unreviewed or unmerged PR is `NEEDS REVIEW`. Include
+the dirty files, branch, commit, or PR in the report.
+
+Role-specific specs still decide whether that role may mutate files at all and
+which docs or closeout checks are in scope.
 
 ## Drift control
 

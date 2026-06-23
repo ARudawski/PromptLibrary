@@ -61,7 +61,7 @@ Active rules must live in exactly one canonical file.
 |---|---|
 | Dispatcher operating modes, cheap preflight, decision taxonomy, drift handling, selection order, handoff payloads, claim-mode mechanics, handoff-consumer obligations, failure recovery, and role-thread reasoning settings | [`docs/agents/dispatcher.md`](../agents/dispatcher.md) |
 | Current phase, active lane, queue exposure, and caveats | [`docs/workflows/current-state-ledger.md`](./current-state-ledger.md) |
-| Shared queue contract, live role claim marker, and terminal claim markers | [`docs/agents/README.md`](../agents/README.md) |
+| Shared common operating contract, queue contract, issue-reference safety, repository mutation closeout, live role claim marker, and terminal claim markers | [`docs/agents/README.md`](../agents/README.md) |
 | Role-specific execution and reporting obligations | The matching role spec in [`docs/agents/`](../agents/) |
 | Reviewed workflow-learning decisions | [`docs/agents/learning-log.md`](../agents/learning-log.md) |
 
@@ -273,23 +273,9 @@ Compact examples:
 
 ## PR and report issue-reference safety
 
-Reserve closing or implementation words for the issue a PR, role report, Linear
-comment, or GitHub fallback comment is meant to advance. Do not put non-goal
-issue IDs next to words such as `close`, `fix`, `resolve`, `complete`, or
-`implement`, even in negated phrases. Integrations may not understand the
-negation.
-
-Unsafe:
-
-```text
-This does not close PL-60 or implement PL-67.
-```
-
-Safer:
-
-```text
-Context only: PL-60, PL-67. No lifecycle action requested for these issues.
-```
+Use the shared rule in
+[`docs/agents/README.md#issue-reference-safety`](../agents/README.md#issue-reference-safety).
+This setup document keeps no independent issue-reference rule.
 
 ## Learning candidates section
 
@@ -331,7 +317,7 @@ Do not encode one-off confusion unless it caused real failure.
 | Learning type | Canonical target |
 |---|---|
 | Current phase/gate/caveat changed | `docs/workflows/current-state-ledger.md` |
-| Shared queue/review rule changed | `docs/agents/README.md` |
+| Shared queue, review, issue-reference, or repository mutation rule changed | `docs/agents/README.md` |
 | Coding behavior changed | `docs/agents/coding-agent.md` |
 | Review behavior changed | `docs/agents/review-agent.md` |
 | QA behavior changed | `docs/agents/qa-agent.md` |

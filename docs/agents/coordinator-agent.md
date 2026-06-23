@@ -21,15 +21,11 @@ mutations and must use the durable PR workflow below.
 
 ## Required reading
 
-Before deciding, read:
-
-1. `AGENTS.md`
-2. `docs/agents/README.md`
-3. `docs/workflows/current-state-ledger.md`
-4. the selected coordinator Linear issue and comments
-5. predecessor coding, review, QA, and process-correction evidence
-6. linked PR/commit/CI evidence
-7. roadmap, architecture, standards, QA strategy, and issue-specific docs
+Before deciding, follow the common operating contract in
+[`docs/agents/README.md`](./README.md). For Coordinator Agent work, make sure
+the issue-specific pass includes predecessor coding, review, QA, and
+process-correction evidence; linked PR/commit/CI evidence; and roadmap,
+architecture, standards, QA strategy, and issue-specific docs.
 
 ## Eligible work
 
@@ -64,17 +60,11 @@ authorizes workflow/docs edits. The invariant is:
 Coordinator Agent may write workflow docs only when explicitly authorized, but any repository mutation must follow a ticket -> branch -> PR -> review -> merge/closeout path before the issue is Done.
 ```
 
-For any Coordinator Agent repository mutation:
-
-1. verify the correct repository, base, branch, and initial git state before
-   editing;
-2. use a scoped branch for the target issue;
-3. commit only the authorized repository changes;
-4. push the branch;
-5. open or update a PR with role evidence;
-6. route the PR through Review Agent review or the approved same-account
-   fallback review process;
-7. merge and record closeout evidence before moving the issue to `Done`.
+For any Coordinator Agent repository mutation, follow the shared
+[`Repository Mutation and Closeout`](./README.md#repository-mutation-and-closeout)
+discipline. The Coordinator still owns the final decision about whether the
+issue authorized workflow/docs edits and whether closeout evidence is sufficient
+for `Done`.
 
 After opening a PR for coordinator-authored docs/workflow changes, report
 `NEEDS REVIEW` and move the issue to `In Review` if that state exists. Do not
@@ -125,13 +115,10 @@ Documentation/state evidence:
 
 ## Review evidence pattern
 
-Default:
-
-```text
-Coding issue -> PR/review evidence on coding issue and PR -> QA issue -> coordinator gate
-```
-
-Separate Code Reviewer Agent issues are optional. Do not let retired or canceled review issues block a coordinator gate when review evidence exists on the coding issue and PR.
+Use the shared review evidence pattern in
+[`docs/agents/README.md`](./README.md#review-evidence-pattern). Do not let
+retired or canceled review issues block a coordinator gate when review evidence
+exists on the coding issue and PR.
 
 Only require a separate reviewer issue if the current workflow explicitly marks it active and blocking.
 
@@ -253,11 +240,9 @@ STOP FOR ARCHITECTURE REVIEW
 
 Post the decision as a Linear comment:
 
-If this run has a `claim_id` from an accepted dispatcher claim, append one
-canonical terminal marker from `docs/agents/README.md#claim-terminal-markers`
-after the report. Successful completion uses `AGENT COMPLETE`; do not use
-role-specific phrases as machine terminal markers. If there is no `claim_id`,
-do not invent claim lifecycle markers.
+Follow the shared
+[`Claim Terminal Markers`](./README.md#claim-terminal-markers) rule. Claim-free
+candidate-mode or manual runs must not invent claim lifecycle markers.
 
 ```text
 Coordinator Report
