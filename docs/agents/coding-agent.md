@@ -91,7 +91,7 @@ If this cannot be stated clearly, stop and report missing context.
 
 Use a two-pass reading strategy:
 
-1. **Gate pass** — read `AGENTS.md`, the current-state ledger, this spec, the target issue, and any direct predecessor/PR evidence.
+1. **Gate pass** — read `README.md`, `AGENTS.md`, the current-state ledger, `docs/agents/README.md`, this spec, the target issue, and any direct predecessor/PR evidence.
 2. **Targeted expansion** — read the exact architecture, roadmap, standards, QA, source, and test sections named by the issue or implicated by the diff.
 
 Avoid broad rereads when a compact doc already points to the relevant current fact. Do not summarize documents back to the user unless that summary is evidence or a conflict finding.
