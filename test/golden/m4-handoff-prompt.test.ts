@@ -1,5 +1,7 @@
 import { readFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { copyFile, mkdir, mkdtemp, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { Client } from "@modelcontextprotocol/sdk/client/index.js";
 import { InMemoryTransport } from "@modelcontextprotocol/sdk/inMemory.js";
@@ -10,10 +12,9 @@ import { INVOKE_PROMPT_LIBRARY_COMMAND_TOOL_NAME } from "../../src/mcp/invokePro
 import { LIST_PROMPT_LIBRARY_COMMANDS_TOOL_NAME } from "../../src/mcp/listPromptLibraryCommandsTool.js";
 import { createLocalPromptLibraryServer } from "../../src/mcp/server.js";
 
-const goldenPath = resolve(
-  dirname(fileURLToPath(import.meta.url)),
-  "m4-handoff-prompt.golden.json",
-);
+const testDirectory = dirname(fileURLToPath(import.meta.url));
+const repositoryRoot = resolve(testDirectory, "../..");
+const goldenPath = resolve(testDirectory, "m4-handoff-prompt.golden.json");
 
 const FORBIDDEN_INVOCATION_KEYS = [
   "slug",
@@ -52,7 +53,7 @@ describe("M4.2 handoff prompt golden contract", () => {
 });
 
 async function buildHandoffGolden(): Promise<Record<string, unknown>> {
-  return withLocalPromptClient(async (client) => ({
+  return withHandoffOnlyPromptClient(async (client) => ({
     invoke_handoff_success: normalizeToolResult(
       await client.callTool({
         name: INVOKE_PROMPT_LIBRARY_COMMAND_TOOL_NAME,
@@ -74,8 +75,25 @@ async function buildHandoffGolden(): Promise<Record<string, unknown>> {
   }));
 }
 
-async function withLocalPromptClient<T>(run: (client: Client) => Promise<T>): Promise<T> {
-  return withClient(await createLocalPromptLibraryServer(), run);
+async function withHandoffOnlyPromptClient<T>(run: (client: Client) => Promise<T>): Promise<T> {
+  const repoRoot = await createHandoffOnlyRepoRoot();
+
+  try {
+    return await withClient(await createLocalPromptLibraryServer({ repoRoot }), run);
+  } finally {
+    await rm(repoRoot, { recursive: true, force: true });
+  }
+}
+
+async function createHandoffOnlyRepoRoot(): Promise<string> {
+  const repoRoot = await mkdtemp(join(tmpdir(), "ppl-m4-handoff-"));
+  const promptsDirectory = join(repoRoot, "prompts");
+  await mkdir(promptsDirectory, { recursive: true });
+  await copyFile(
+    resolve(repositoryRoot, "prompts", "handoff.md"),
+    join(promptsDirectory, "handoff.md"),
+  );
+  return repoRoot;
 }
 
 async function withClient<T>(server: McpServer, run: (client: Client) => Promise<T>): Promise<T> {
