@@ -46,7 +46,7 @@ These files are workflow contracts. They do not approve product scope or later-s
 
 ## Current project state
 
-The current phase is tracked in [`workflows/current-state-ledger.md`](workflows/current-state-ledger.md). At the time this index was updated, M3 / the read-only API is complete and the next allowed product lane is Slice 4.1 prompt authoring baseline only.
+The current phase is tracked in [`workflows/current-state-ledger.md`](workflows/current-state-ledger.md). At the time this index was updated, M4 / the local MVP is complete and the next allowed product lane is Slice 5.1 personal-use trial planning only.
 
 Current source/cache references:
 
@@ -54,4 +54,4 @@ Current source/cache references:
 - [`../src/cache/README.md`](../src/cache/README.md)
 - [`source-cache-behavior.md`](source-cache-behavior.md)
 
-Do not treat real prompt files, hosted behavior, private suites, auth, database behavior, broader Slice 4 work, or broader runtime behavior as implemented unless the current-state ledger and coordinator gate say so.
+Do not treat M5.2/M5.3/M5.4 work, hosted behavior, private suites, auth, database behavior, additional real prompt files beyond the approved three-prompt M4 MVP set, or broader runtime behavior as implemented unless the current-state ledger and coordinator gate say so.

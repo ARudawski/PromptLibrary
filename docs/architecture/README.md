@@ -20,6 +20,7 @@ The V1 product is retrieval-focused:
 - inspect use case/projection and MCP adapter behavior through M3 Slice 3.2;
 - list use case, summary projection, and MCP adapter behavior through M3 Slice 3.4;
 - inspect/list golden tests and tool-reference coverage through Slice 3.5.
+- prompt authoring baseline, local runtime source alignment, three active local MVP prompt files (`handoff`, `grill-me`, and `spec-prompt-creator`), real-prompt validation, local MVP golden/contract coverage, and local walkthrough through M4.
 
 ## Hard boundary
 
@@ -29,7 +30,7 @@ The connector retrieves prompt definitions. The prompt text defines behavior. Th
 
 Before implementing the real architecture, Slice 0 must validate that ChatGPT can route `@pl proof` into a local MCP tool and apply the returned hardcoded prompt.
 
-Slice 0 was accepted with caveats through recorded Linear gate evidence, Slice 1 fixture-backed invocation has been approved as the baseline, M2 has been approved through Slice 2.7, M3 inspect behavior has been approved through Slice 3.2, M3 list behavior has been approved through Slice 3.4, and Slice 3.5 inspect/list golden tests and tool-reference coverage has been approved through PL-78 / PR #45. Real prompt files, hosted deployment, private suites, auth, and DB behavior remain later-slice work until explicitly approved.
+Slice 0 was accepted with caveats through recorded Linear gate evidence, Slice 1 fixture-backed invocation has been approved as the baseline, M2 has been approved through Slice 2.7, M3 read-only API completion/readiness was accepted through PL-80 after PL-79 QA, and M4 local MVP completion/readiness was accepted through PL-111 after PL-110 QA. M5.1 personal-use trial planning is the next allowed lane. Hosted deployment, private suites, auth, DB behavior, additional real prompt files beyond the approved three-prompt M4 MVP set, and broader runtime behavior remain later-slice work until explicitly approved.
 
 ## Future full document
 
