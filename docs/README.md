@@ -18,6 +18,7 @@ This directory contains architecture, roadmap, standards, QA, workflow, and agen
 - [`agents/review-agent.md`](agents/review-agent.md)
 - [`agents/qa-agent.md`](agents/qa-agent.md)
 - [`agents/coordinator-agent.md`](agents/coordinator-agent.md)
+- [`agents/ai-automation-expert.md`](agents/ai-automation-expert.md) - manual-only automation safety audit role.
 - [`agents/dispatcher.md`](agents/dispatcher.md) — proposed dispatcher; not active until explicitly adopted.
 
 These files are workflow contracts. They do not approve product scope or later-slice behavior.
