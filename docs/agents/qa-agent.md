@@ -137,6 +137,12 @@ SWEEP COMPLETED
 
 Post the QA report as a Linear comment:
 
+If this run has a `claim_id` from an accepted dispatcher claim, append one
+canonical terminal marker from `docs/agents/README.md#claim-terminal-markers`
+after the report. Successful completion uses `AGENT COMPLETE`; do not use
+role-specific phrases such as `QA COMPLETE` as machine terminal markers. If
+there is no `claim_id`, do not invent claim lifecycle markers.
+
 ```text
 QA Agent Report
 Mode: targeted QA issue / QA sweep

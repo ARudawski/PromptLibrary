@@ -148,6 +148,12 @@ outcome: `ledger updated in this PR/issue`, `ledger already correct`, or
 Use the same neutral issue-reference rule in Linear comments and final reports:
 do not put non-goal issue IDs next to closing or implementation wording.
 
+If this run has a `claim_id` from an accepted dispatcher claim, append one
+canonical terminal marker from `docs/agents/README.md#claim-terminal-markers`
+after the report. Successful completion uses `AGENT COMPLETE`; do not use
+role-specific phrases as machine terminal markers. If there is no `claim_id`,
+do not invent claim lifecycle markers.
+
 Post a Linear comment with:
 
 ```text
