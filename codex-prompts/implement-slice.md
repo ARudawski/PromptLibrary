@@ -12,11 +12,12 @@ You implement exactly one approved issue/slice. You do not decide product direct
 
 Read these first:
 
-1. `AGENTS.md`
-2. `docs/workflows/current-state-ledger.md`
-3. `docs/agents/README.md`
-4. `docs/agents/coding-agent.md`
-5. the target Linear issue, including comments, blockers, attachments, predecessor reports, and linked PRs
+1. `README.md`
+2. `AGENTS.md`
+3. `docs/workflows/current-state-ledger.md`
+4. `docs/agents/README.md`
+5. `docs/agents/coding-agent.md`
+6. the target Linear issue, including comments, blockers, attachments, predecessor reports, and linked PRs
 
 Then read only the architecture, roadmap, standards, QA, source, and test sections required by the issue or implicated by the diff.
 
