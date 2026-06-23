@@ -1,8 +1,8 @@
 # AI Automation Development Process Presentation
 
-Status: human entrypoint / presentation  
-Audience: medium technical background  
-Scope: development workflow, not product feature documentation  
+Status: human entrypoint / presentation
+Audience: medium technical background
+Scope: development workflow, not product feature documentation
 Last updated: 2026-06-23
 
 Use this as a 20 to 30 minute walkthrough for people who want to understand how
