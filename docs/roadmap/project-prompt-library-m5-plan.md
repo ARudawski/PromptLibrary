@@ -1,9 +1,9 @@
 # Project Prompt Library — Milestone 5 Plan
 
-Status: M5 active plan after M5.2 trial evidence acceptance
+Status: M5 active plan after M5.3 trial evidence triage
 Date: 2026-06-24
-Previous gate: M5.2 trial evidence accepted through PL-123
-Next allowed product lane: PL-124 / Slice 5.3 - trial evidence review and issue triage after the PL-133 State Checkpoint is reviewed, merged, and closed out
+Previous gate: M5.3 trial evidence review and issue triage captured through PL-124
+Next allowed product lane: PL-127 / M5.QA real-use readiness audit after PL-124 review and closeout, unless review identifies a material evidence-backed M5.4 hardening need
 Audience: Codex Prompt Coordinator, Coding Agent, Review Agent, QA Agent, Coordinator/Architect
 
 ---
@@ -103,20 +103,23 @@ Every agent must either update docs or explicitly justify why no documentation c
 
 No “code complete, docs later.” That phrase is where maintainability goes to die in a hoodie.
 
-### F2 - M5.3 is the only immediate lane after PL-133
+### F2 - M5.3 triage found no immediate hardening lane
 
 M5.1 protocol/log work is complete through PL-121 / PR #67, M5.QA.1
 approved the protocol through PL-122, and M5.2 trial evidence was accepted
-through PL-123. The next allowed product lane is:
+through PL-123. PL-133 recorded the M5.2 State Checkpoint, and PL-124 captured
+M5.3 trial findings. The accepted PL-123 evidence does not currently justify
+M5.4 hardening work.
+
+The next allowed gate after PL-124 review and closeout is:
 
 ```text
-PL-124 / Slice 5.3 - trial evidence review and issue triage
+PL-127 / M5.QA - real-use readiness audit
 ```
 
-Do not treat PL-124 as durable next-lane exposure until the PL-133 State
-Checkpoint repair is reviewed, merged, and closed out. Do not create or execute
-M5.4/M5.5 work until M5.3 triage exists and the explicit predecessor gates
-authorize it.
+Do not create or execute M5.4/M5.5 work unless PL-124 review identifies a
+material evidence-backed hardening need and an explicit coordinator path
+authorizes it.
 
 ### F3 — Hosting is still blocked
 
@@ -301,8 +304,8 @@ M5 must not implement:
 Type: Coordinator / workflow planning  
 Priority: high  
 Status: historical setup task; M5.1 is complete through PL-121 / PR #67,
-M5.QA.1 is approved through PL-122, and M5.2 trial evidence was accepted
-through PL-123.
+M5.QA.1 is approved through PL-122, M5.2 trial evidence was accepted
+through PL-123, and M5.3 findings were captured through PL-124.
 
 ### Goal
 
@@ -312,10 +315,11 @@ Prepare the M5 lane without opening speculative implementation work.
 
 - Confirm current-state ledger says M5.1 is complete and PL-122 approved the
   protocol.
-- Confirm PL-123 accepted M5.2 trial evidence and PL-133 is the pending State
-  Checkpoint repair before PL-124 is treated as durable next-lane exposure.
-- Keep PL-124 / M5.3 as the only next executable product task after PL-133
-  closeout.
+- Confirm PL-123 accepted M5.2 trial evidence, PL-133 recorded the State
+  Checkpoint, and PL-124 captured M5.3 triage before any later M5 lane is
+  exposed.
+- Keep PL-127 / M5.QA as the next gate after PL-124 closeout unless review
+  identifies a material hardening need.
 - Keep later M5 tasks as blocked/backlog items until their predecessor gates pass.
 
 ### Documentation scope
@@ -350,7 +354,9 @@ npm run validate-prompts
 
 - M5 plan is stored in the repo.
 - Current M5 state agrees with the current-state ledger.
-- PL-124 / M5.3 is the only executable product task after PL-133 closeout.
+- PL-124 / M5.3 was the only executable product task after PL-133 closeout.
+- PL-127 / M5.QA is the next gate after PL-124 review and closeout if no
+  evidence-backed hardening issue is accepted.
 - Later M5 tasks are created only as blocked/backlog outlines.
 - Documentation change log is included.
 
@@ -622,11 +628,13 @@ For each use:
 
 ---
 
-## Task M5.3 — Trial evidence review and issue triage
+## Task M5.3 - Trial evidence review and issue triage
 
 Type: Coordinator / Review / QA  
 Priority: high  
 Depends on: M5.2
+Status: captured through PL-124; no evidence-backed M5.4 hardening issue
+currently justified
 
 ### Goal
 
@@ -679,12 +687,14 @@ Must update docs/indexes if new findings docs are added.
 
 ---
 
-## Task M5.4 — Evidence-based prompt/tool/docs hardening
+## Task M5.4 - Evidence-based prompt/tool/docs hardening
 
 Type: Coding Agent  
 Priority: conditional  
 Depends on: M5.3  
-Create only if trial evidence justifies changes.
+Create or execute only if trial evidence justifies changes. PL-124 found no
+current evidence-backed hardening need; keep this lane unexposed unless review
+changes that decision.
 
 ### Goal
 
@@ -763,6 +773,8 @@ Prompt wording changes must update golden hashes intentionally.
 Type: QA / Coding Agent  
 Priority: conditional  
 Depends on: M5.4 if M5.4 exists; otherwise can be skipped by coordinator decision.
+PL-124 found no current M5.4 hardening need, so M5.5 should be skipped or
+canceled unless review changes that decision.
 
 ### Goal
 
@@ -979,17 +991,17 @@ Current state:
 - M5.1 personal-use trial protocol and results log are complete through PL-121 / PR #67.
 - M5.QA.1 approved the protocol through PL-122.
 - PL-123 / M5.2 trial evidence was accepted with caveats carried forward.
-- PL-133 is the pending State Checkpoint repair; PL-124 / M5.3 may proceed only after PL-133 is reviewed, merged, and closed out.
+- PL-133 recorded the M5.2 State Checkpoint.
+- PL-124 / M5.3 captured trial findings and did not identify an evidence-backed M5.4 hardening need.
 - Do not start hosted deployment, private suites, auth/OAuth, DB, prompt editing, draft management, semantic routing, workflow/session state, extra prompts, or broader runtime changes.
 
-Create or expose this immediate task only after PL-133 closeout:
-1. M5.3 - Trial evidence review and issue triage.
+Create or expose this immediate task only after PL-124 review and closeout:
+1. M5.QA - Real-use readiness audit.
 
 Prepare but do not execute until dependencies are met:
-- M5.4 — Evidence-based prompt/tool/docs hardening, conditional only.
-- M5.5 — Local MVP retest after hardening, conditional only.
-- M5.QA — Real-use readiness audit.
-- M5.Gate — Coordinator M5 completion and M6 readiness decision.
+- M5.4 - Evidence-based prompt/tool/docs hardening, conditional only if PL-124 review accepts a material finding.
+- M5.5 - Local MVP retest after hardening, conditional only if M5.4 exists.
+- M5.Gate - Coordinator M5 completion and M6 readiness decision.
 
 Important M5 process rule:
 Every task must include Documentation scope, Documentation acceptance gate, and Documentation change log. Coding agents, Review agents, QA agents, and Coordinator agents must either update relevant docs or explicitly justify why docs did not change.

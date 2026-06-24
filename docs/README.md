@@ -53,10 +53,11 @@ These files are workflow contracts. They do not approve product scope or later-s
 - [`roadmap/project-prompt-library-m5-plan.md`](roadmap/project-prompt-library-m5-plan.md)
 - [`trials/m5-personal-use-trial-protocol.md`](trials/m5-personal-use-trial-protocol.md)
 - [`trials/m5-personal-use-trial-log.md`](trials/m5-personal-use-trial-log.md)
+- [`trials/m5-trial-findings.md`](trials/m5-trial-findings.md)
 
 ## Current project state
 
-The current phase is tracked in [`workflows/current-state-ledger.md`](workflows/current-state-ledger.md). At the time this index was updated, Slice 5.2 personal-use trial evidence was accepted through PL-123, and the current workflow lane is PL-133 State Checkpoint repair. After PL-133 is durable, the next allowed product action is PL-124 / Slice 5.3 trial evidence review and issue triage only.
+The current phase is tracked in [`workflows/current-state-ledger.md`](workflows/current-state-ledger.md). At the time this index was updated, Slice 5.3 trial evidence review and issue triage was captured through PL-124 with no evidence-backed M5.4 hardening issue currently justified. After PL-124 review and closeout, the next allowed gate is PL-127 / M5.QA real-use readiness audit.
 
 Current source/cache references:
 
@@ -64,4 +65,4 @@ Current source/cache references:
 - [`../src/cache/README.md`](../src/cache/README.md)
 - [`source-cache-behavior.md`](source-cache-behavior.md)
 
-Do not treat M5.4/M5.5/M5.QA/M5.Gate work, hosted behavior, private suites, auth, database behavior, additional real prompt files beyond the approved three-prompt M4 MVP set, or broader runtime behavior as implemented unless the current-state ledger and coordinator gate say so. PL-124 / M5.3 is triage only; it does not authorize prompt, alias, runtime, hosting, or hardening changes.
+Do not treat M5.4/M5.5/M5.QA/M5.Gate work, hosted behavior, private suites, auth, database behavior, additional real prompt files beyond the approved three-prompt M4 MVP set, or broader runtime behavior as implemented unless the current-state ledger and coordinator gate say so. PL-124 / M5.3 triage does not authorize prompt, alias, runtime, hosting, or hardening changes.
