@@ -49,9 +49,9 @@ Never use this efficiency rule to skip a source required by the issue or to avoi
 
 ## Current phase
 
-Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, M4 local MVP is complete via PL-111 after PL-110 QA approval. No product implementation is active. The next allowed product lane is M5.1 personal-use trial protocol and results-log planning only.
+Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, M5.1 personal-use trial protocol/log work is complete via PL-121 / PR #67, M5.QA.1 approved the protocol via PL-122, and PL-130 recorded the M5.QA.1 State Checkpoint. No implementation or hardening product work is active. The next allowed product action is PL-123 / M5.2 personal-use trial execution and evidence recording only, under the approved M5.1 protocol.
 
-Do not proceed to M5.2/M5.3/M5.4 work, hosted deployment, private-suite behavior, auth/OAuth, database work, broader runtime work, additional real prompt files, broader Slice 4 work, or later product lanes without an explicit issue and coordinator or architecture decision.
+Do not proceed to M5.3/M5.4/M5.5/M5.QA/M5.Gate work, M6 hosted deployment, private-suite behavior, auth/OAuth, database work, broader runtime work, prompt changes, alias changes, tool metadata changes, additional real prompt files, broader Slice 4 work, or later product lanes without an explicit issue and coordinator or architecture decision.
 
 ## Non-negotiable product boundary
 
@@ -117,13 +117,14 @@ Approved source/cache/validation behavior includes:
 - fake-source/fake-clock tests for source/cache behavior;
 - concise docs for implemented source/cache behavior.
 
-Still forbidden in the current M5.1 planning lane:
+Still forbidden in the current M5.2 trial-evidence lane:
 
 - ChatGPT-facing cache refresh, diagnostics, or admin tools;
 - additional real prompt files beyond the approved `handoff`, `grill-me`, and `spec-prompt-creator` MVP set;
+- prompt changes, alias changes, tool metadata changes, and runtime changes outside an explicit approved issue;
 - private GitHub source, token/OAuth/auth, DB, or private-suite behavior;
 - hosted deployment;
-- runtime changes outside an explicit approved issue.
+- later M5/M6 product work outside an explicit approved coordinator path.
 
 ## Architecture standards
 
