@@ -1,13 +1,15 @@
 # M5 Personal-Use Trial Protocol
 
-Status: approved by M5.QA.1 through PL-122; usable for PL-123 only after PL-130 closeout
-Owner: M5 trial runner after PL-130 State Checkpoint closeout
+Status: approved by M5.QA.1 through PL-122; used for PL-123 / M5.2 trial evidence accepted on 2026-06-24
+Owner: historical M5 trial runner for PL-123; PL-124 owns trial evidence review and issue triage after PL-133 closeout
 Scope: personal-use evidence for the three approved M4 MVP prompts
 
-This protocol defines how to run the M5 personal-use trial. It does not start
-the trial, approve hosting, change prompts, change aliases, or authorize any
-runtime implementation work. PL-123 / M5.2 may run this protocol only after the
-PL-130 State Checkpoint repair is reviewed, merged, and closed out.
+This protocol defined how to run the M5 personal-use trial. It does not approve
+hosting, change prompts, change aliases, or authorize any runtime
+implementation work. PL-123 / M5.2 used this protocol and recorded evidence in
+Linear comments; PL-124 / M5.3 owns evidence review, triage, and any
+trial-log/findings documentation decision after the PL-133 State Checkpoint is
+durable.
 
 ## Goal
 
@@ -23,7 +25,9 @@ real work to continue toward M5 follow-up work and an eventual M6 decision?
 
 ## Trial Window
 
-Run the trial only after M5.QA.1 approval and PL-130 State Checkpoint closeout.
+PL-123 ran the trial after M5.QA.1 approval, PL-130 closeout, and the PL-132
+ChatGPT app/schema blocker resolution. Do not run more M5.2 trial entries unless
+a coordinator explicitly reopens the trial window.
 
 Minimum trial requirement:
 
