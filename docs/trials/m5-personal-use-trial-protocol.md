@@ -1,12 +1,13 @@
 # M5 Personal-Use Trial Protocol
 
-Status: draft for M5.1 review
-Owner: M5 trial runner after M5.QA.1 approval
+Status: approved by M5.QA.1 through PL-122; usable for PL-123 only after PL-130 closeout
+Owner: M5 trial runner after PL-130 State Checkpoint closeout
 Scope: personal-use evidence for the three approved M4 MVP prompts
 
 This protocol defines how to run the M5 personal-use trial. It does not start
 the trial, approve hosting, change prompts, change aliases, or authorize any
-runtime implementation work.
+runtime implementation work. PL-123 / M5.2 may run this protocol only after the
+PL-130 State Checkpoint repair is reviewed, merged, and closed out.
 
 ## Goal
 
@@ -22,7 +23,7 @@ real work to continue toward M5 follow-up work and an eventual M6 decision?
 
 ## Trial Window
 
-Run the trial only after M5.QA.1 approves this protocol.
+Run the trial only after M5.QA.1 approval and PL-130 State Checkpoint closeout.
 
 Minimum trial requirement:
 
