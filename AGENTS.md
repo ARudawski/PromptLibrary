@@ -39,11 +39,19 @@ Before changing code or deciding a gate, read:
 
 For product-code work, also read the relevant full architecture, roadmap, standards, source, and test docs named by the issue.
 
+## Reading efficiency rule
+
+Start every role run with the compact current-state and role contract reads above. Expand into full architecture, roadmap, standards, QA, source, and test documents only when the target issue, diff, or suspected conflict makes them relevant.
+
+Do not reread broad historical documents just to look diligent. Token burn is not evidence. When a compact README or ledger explicitly points to the current section, use that pointer first and then read the named full document section only as needed.
+
+Never use this efficiency rule to skip a source required by the issue or to avoid checking a real architecture conflict.
+
 ## Current phase
 
-Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, M2 source/cache/validation is complete through Slice 2.7, M3 read-only API implementation is complete through Slice 3.5, PL-79 QA passed, and PL-80 accepted M3 completion/readiness. No product implementation is active. The next allowed product lane is Slice 4.1 prompt authoring baseline only.
+Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, M5.1 personal-use trial protocol/log work is complete via PL-121 / PR #67, M5.QA.1 approved the protocol via PL-122, and PL-130 recorded the M5.QA.1 State Checkpoint. No implementation or hardening product work is active. The next allowed product action is PL-123 / M5.2 personal-use trial execution and evidence recording only, under the approved M5.1 protocol.
 
-Do not proceed to real prompt files outside the approved Slice 4.1 authoring-baseline path, hosted deployment, private-suite behavior, auth/OAuth, database work, broader Slice 4 work, or broader runtime work without an explicit issue and coordinator or architecture decision.
+Do not proceed to M5.3/M5.4/M5.5/M5.QA/M5.Gate work, M6 hosted deployment, private-suite behavior, auth/OAuth, database work, broader runtime work, prompt changes, alias changes, tool metadata changes, additional real prompt files, broader Slice 4 work, or later product lanes without an explicit issue and coordinator or architecture decision.
 
 ## Non-negotiable product boundary
 
@@ -93,11 +101,11 @@ admin/debug/cache tools
 
 ## Current source/cache boundary
 
-The public GitHub source adapter and cache are approved M2 infrastructure. Later slices still decide broader runtime and user-facing behavior.
+The public GitHub source adapter and cache are approved M2 infrastructure. The three-command local MVP prompt set is approved M4 behavior. Later slices still decide broader hosted, trial, and private-suite behavior.
 
 Current allowed behavior is limited by the active Linear issue and current-state ledger.
 
-Approved M2 source/cache/validation behavior includes:
+Approved source/cache/validation behavior includes:
 
 - stale-while-revalidate behavior or the approved synchronous equivalent;
 - last-known-good cache preservation;
@@ -109,13 +117,14 @@ Approved M2 source/cache/validation behavior includes:
 - fake-source/fake-clock tests for source/cache behavior;
 - concise docs for implemented source/cache behavior.
 
-Still forbidden in the current Slice 4.1 authoring-baseline readiness phase:
+Still forbidden in the current M5.2 trial-evidence lane:
 
 - ChatGPT-facing cache refresh, diagnostics, or admin tools;
-- real prompt files under `prompts/` outside the approved Slice 4.1 authoring-baseline path;
-- new inspect/list scope outside the completed PL-74 through PL-78 boundaries;
+- additional real prompt files beyond the approved `handoff`, `grill-me`, and `spec-prompt-creator` MVP set;
+- prompt changes, alias changes, tool metadata changes, and runtime changes outside an explicit approved issue;
 - private GitHub source, token/OAuth/auth, DB, or private-suite behavior;
-- hosted deployment.
+- hosted deployment;
+- later M5/M6 product work outside an explicit approved coordinator path.
 
 ## Architecture standards
 
@@ -191,8 +200,8 @@ Core tests must not hit GitHub, ChatGPT, a tunnel, or a hosted MCP endpoint unle
 
 Known caveats must remain visible until resolved:
 
-- `test:golden` now includes Slice 2.7 source/cache golden coverage and Slice 3.5 read-only API golden coverage, but later slices still need their own meaningful golden coverage when applicable;
-- `validate-prompts` is a real local validator, but it may pass with zero local prompt files until real prompt slices add approved prompt definitions;
+- `test:golden` includes Slice 2.7 source/cache golden coverage, Slice 3.5 read-only API golden coverage, Slice 4.2 handoff golden coverage, Slice 4.3 grill-me golden coverage, Slice 4.4 spec-prompt-creator golden coverage, and Slice 4.5 coherent local MVP catalog coverage; later slices still need meaningful golden coverage when applicable.
+- `validate-prompts` is a real local validator and now validates the three approved active local MVP prompts: `handoff`, `grill-me`, and `spec-prompt-creator`.
 - npm audit findings must be reported when observed.
 
 ## Agent report checklist
