@@ -30,7 +30,7 @@ The connector retrieves prompt definitions. The prompt text defines behavior. Th
 
 Before implementing the real architecture, Slice 0 must validate that ChatGPT can route `@pl proof` into a local MCP tool and apply the returned hardcoded prompt.
 
-Slice 0 was accepted with caveats through recorded Linear gate evidence, Slice 1 fixture-backed invocation has been approved as the baseline, M2 has been approved through Slice 2.7, M3 read-only API completion/readiness was accepted through PL-80 after PL-79 QA, and M4 local MVP completion/readiness was accepted through PL-111 after PL-110 QA. M5.1 personal-use trial planning is the next allowed lane. Hosted deployment, private suites, auth, DB behavior, additional real prompt files beyond the approved three-prompt M4 MVP set, and broader runtime behavior remain later-slice work until explicitly approved.
+Slice 0 was accepted with caveats through recorded Linear gate evidence, Slice 1 fixture-backed invocation has been approved as the baseline, M2 has been approved through Slice 2.7, M3 read-only API completion/readiness was accepted through PL-80 after PL-79 QA, and M4 local MVP completion/readiness was accepted through PL-111 after PL-110 QA. M5.1 personal-use trial planning is complete through PL-121 / PR #67, and M5.QA.1 approved the protocol through PL-122. PL-123 / M5.2 personal-use trial evidence recording is the next allowed lane after the PL-130 State Checkpoint is durable. Hosted deployment, private suites, auth, DB behavior, additional real prompt files beyond the approved three-prompt M4 MVP set, and broader runtime behavior remain later-slice work until explicitly approved.
 
 ## Future full document
 

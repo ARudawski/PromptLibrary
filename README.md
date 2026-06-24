@@ -2,7 +2,7 @@
 
 Project Prompt Library is a small ChatGPT Apps / MCP connector for invoking exact, externally maintained prompt workflows from normal ChatGPT conversations using command-style requests such as `@pl grill-me`.
 
-This repository has passed the Slice 0 proof gate, Slice 1 invocation gate, M2 source/cache/validation gates through Slice 2.7, M3 read-only API completion/readiness through PL-80 after PL-79 QA, and M4 local MVP completion/readiness through PL-111 after PL-110 QA. The next allowed product lane is Slice 5.1 personal-use trial planning only.
+This repository has passed the Slice 0 proof gate, Slice 1 invocation gate, M2 source/cache/validation gates through Slice 2.7, M3 read-only API completion/readiness through PL-80 after PL-79 QA, M4 local MVP completion/readiness through PL-111 after PL-110 QA, Slice 5.1 protocol/log work through PL-121 / PR #67, and M5.QA.1 protocol review through PL-122. The next allowed product action is PL-123 / Slice 5.2 personal-use trial execution and evidence recording only after the PL-130 State Checkpoint is durable.
 
 The Slice 0 premise was:
 
@@ -34,10 +34,12 @@ The Slice 0 premise was:
 - Slice 4.4: active `spec-prompt-creator` MVP prompt, approved.
 - Slice 4.5: real-prompt validation, golden tests, and local MVP walkthrough, approved.
 - M4: local MVP, complete through PL-111 after PL-110 QA.
+- Slice 5.1: personal-use trial protocol and results log, complete through PL-121 / PR #67.
+- M5.QA.1: personal-use trial protocol review, approved through PL-122.
 
 The compact current-state pointer for agents is [`docs/workflows/current-state-ledger.md`](./docs/workflows/current-state-ledger.md). If this README and the ledger disagree, use the ledger and raise a documentation drift finding.
 
-The current local MCP server registers `invoke_prompt_library_command`, `inspect_prompt_library_command`, and `list_prompt_library_commands` against local `prompts/*.md` files through the PromptSource boundary. M2 added the public GitHub source adapter, runtime prompt cache TTL behavior, stale refresh and last-known-good preservation, partial-valid/cold-failure behavior, a real local `validate-prompts` script, and source/cache contract and golden coverage. M3 added active prompt inspection, command listing, inspect/list golden coverage, and tool-reference coverage. M4 added the three approved active local MVP prompts: `handoff`, `grill-me`, and `spec-prompt-creator`, plus coherent local MVP contract/golden coverage and the local walkthrough. M5.1 personal-use trial planning is the next allowed lane; hosted deployment, private suites, auth/OAuth, DB behavior, and broader runtime work are not implemented yet.
+The current local MCP server registers `invoke_prompt_library_command`, `inspect_prompt_library_command`, and `list_prompt_library_commands` against local `prompts/*.md` files through the PromptSource boundary. M2 added the public GitHub source adapter, runtime prompt cache TTL behavior, stale refresh and last-known-good preservation, partial-valid/cold-failure behavior, a real local `validate-prompts` script, and source/cache contract and golden coverage. M3 added active prompt inspection, command listing, inspect/list golden coverage, and tool-reference coverage. M4 added the three approved active local MVP prompts: `handoff`, `grill-me`, and `spec-prompt-creator`, plus coherent local MVP contract/golden coverage and the local walkthrough. M5.1 personal-use trial planning is complete and M5.QA.1 approved the protocol; PL-123 / M5.2 personal-use trial evidence recording is the next allowed lane after the PL-130 State Checkpoint is durable. Hosted deployment, private suites, auth/OAuth, DB behavior, and broader runtime work are not implemented yet.
 
 ## Core V1 boundaries
 
@@ -84,7 +86,7 @@ This is the deterministic default gate only. Live GitHub prompt-source checks, C
 
 ## Non-goals for the current phase
 
-Do not add outside the current Slice 5.1 personal-use trial planning lane:
+Do not add outside the current PL-123 / Slice 5.2 personal-use trial evidence lane:
 
 - ChatGPT-facing cache refresh, cache diagnostics, or admin tools;
 - real prompt files beyond the approved three-prompt M4 MVP set;
