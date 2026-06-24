@@ -14,6 +14,12 @@ The tools are read-only. They do not edit prompts, manage drafts, refresh caches
 return cache diagnostics, perform semantic routing, expose private suites, or
 execute workflows outside ChatGPT.
 
+For ChatGPT development app/action setup, use
+[`chatgpt-app-schema.md`](./chatgpt-app-schema.md). That document contains the
+current copy-paste tool descriptions, input schemas, output schemas, and manual
+verification checklist. The old Slice 0 `Project Prompt Library Local Proof`
+schema is not the current local MVP surface.
+
 ## Shared Runtime Rules
 
 - Only active, invokable prompt definitions are exposed through ChatGPT-facing

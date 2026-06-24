@@ -42,6 +42,7 @@ These files are workflow contracts. They do not approve product scope or later-s
 ## Read-only API reference
 
 - [`tool-reference.md`](tool-reference.md)
+- [`chatgpt-app-schema.md`](chatgpt-app-schema.md)
 
 ## M4 local MVP planning
 

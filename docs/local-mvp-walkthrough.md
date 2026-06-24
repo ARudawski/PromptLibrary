@@ -14,6 +14,12 @@ spec-prompt-creator
 It uses the local `prompts/*.md` runtime source. It does not require GitHub,
 ChatGPT, a tunnel, hosted deployment, private suites, auth, or a database.
 
+If a ChatGPT development app or connector is used as an extra platform smoke
+surface, first verify it against
+[`chatgpt-app-schema.md`](./chatgpt-app-schema.md). Do not use the historical
+`Project Prompt Library Local Proof` proof-only app as evidence for the current
+local MVP.
+
 ## Setup
 
 Install dependencies from the repository root:
@@ -365,3 +371,7 @@ body hashes, and guards that the tests do not call network fetch.
   prompts, manage drafts, or expose cache/admin/debug controls through ChatGPT.
 - Live ChatGPT routing and tunnel smoke checks are outside this deterministic
   local walkthrough unless a later issue explicitly asks for them.
+- ChatGPT app/action settings for the current MVP must match
+  [`chatgpt-app-schema.md`](./chatgpt-app-schema.md); proof-only settings that
+  support only `proof` are historical Slice 0 evidence, not the M5 trial
+  surface.
