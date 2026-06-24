@@ -1,9 +1,9 @@
 # Project Prompt Library — Milestone 5 Plan
 
-Status: M5 planning draft  
+Status: M5 active plan after M5.QA.1 approval
 Date: 2026-06-23  
-Previous gate: M4 / local MVP approved  
-Next allowed product lane: Slice 5.1 — personal-use trial protocol and results log  
+Previous gate: M5.QA.1 protocol review approved through PL-122
+Next allowed product lane: PL-123 / Slice 5.2 — personal-use trial execution and evidence recording after the PL-130 State Checkpoint is reviewed, merged, and closed out
 Audience: Codex Prompt Coordinator, Coding Agent, Review Agent, QA Agent, Coordinator/Architect
 
 ---
@@ -103,15 +103,19 @@ Every agent must either update docs or explicitly justify why no documentation c
 
 No “code complete, docs later.” That phrase is where maintainability goes to die in a hoodie.
 
-### F2 — M5.1 is the only immediate lane
+### F2 — M5.2 is the only immediate lane after PL-130
 
-The next allowed product lane is:
+M5.1 protocol/log work is complete through PL-121 / PR #67, and M5.QA.1
+approved the protocol through PL-122. The next allowed product lane is:
 
 ```text
-Slice 5.1 — personal-use trial protocol and results log
+PL-123 / Slice 5.2 — personal-use trial execution and evidence recording
 ```
 
-Do not create executable M5.2/M5.3/M5.4/M5.5 work until M5.1 defines the trial protocol and review gates.
+Do not treat PL-123 as durable next-lane exposure until the PL-130 State
+Checkpoint repair is reviewed, merged, and closed out. Do not create or execute
+M5.3/M5.4/M5.5 work until M5.2 trial evidence exists and the explicit
+predecessor gates authorize it.
 
 ### F3 — Hosting is still blocked
 
@@ -295,7 +299,8 @@ M5 must not implement:
 
 Type: Coordinator / workflow planning  
 Priority: high  
-Should be created only if the board does not already expose M5.1 cleanly.
+Status: historical setup task; M5.1 is complete through PL-121 / PR #67, and
+M5.QA.1 is approved through PL-122.
 
 ### Goal
 
@@ -303,11 +308,13 @@ Prepare the M5 lane without opening speculative implementation work.
 
 ### Scope
 
-- Confirm current-state ledger says M4 is complete.
-- Confirm next allowed product lane is M5.1 only.
-- Add this M5 plan to GitHub if not already present.
-- Create or expose only M5.1 as executable work.
-- Prepare later M5 tasks as planned/backlog items only.
+- Confirm current-state ledger says M5.1 is complete and PL-122 approved the
+  protocol.
+- Confirm PL-130 is the pending State Checkpoint repair before PL-123 is treated
+  as durable next-lane exposure.
+- Keep PL-123 / M5.2 as the only next executable product task after PL-130
+  closeout.
+- Keep later M5 tasks as blocked/backlog items until their predecessor gates pass.
 
 ### Documentation scope
 
@@ -340,7 +347,8 @@ npm run validate-prompts
 ### Acceptance criteria
 
 - M5 plan is stored in the repo.
-- M5.1 is the only executable product task.
+- Current M5 state agrees with the current-state ledger.
+- PL-123 / M5.2 is the only executable product task after PL-130 closeout.
 - Later M5 tasks are created only as blocked/backlog outlines.
 - Documentation change log is included.
 
@@ -962,19 +970,19 @@ Reason: explicitly outside the ChatGPT-facing runtime boundary.
 # 10. Coordinator prompt for next issue batch
 
 ```text
-Create the Milestone 5 issue batch for Project Prompt Library.
+Refresh the Milestone 5 issue batch for Project Prompt Library.
 
 Current state:
 - M4 / local MVP is approved.
-- The next allowed product lane is M5.1 personal-use trial protocol and results log.
+- M5.1 personal-use trial protocol and results log are complete through PL-121 / PR #67.
+- M5.QA.1 approved the protocol through PL-122.
+- PL-130 is the pending State Checkpoint repair; PL-123 / M5.2 may proceed only after PL-130 is reviewed, merged, and closed out.
 - Do not start hosted deployment, private suites, auth/OAuth, DB, prompt editing, draft management, semantic routing, workflow/session state, extra prompts, or broader runtime changes.
 
-Create or expose these immediate tasks:
-1. M5.1 — Personal-use trial protocol and results log.
-2. M5.QA.1 — Review personal-use trial protocol before trial begins.
+Create or expose this immediate task only after PL-130 closeout:
+1. M5.2 — Run personal-use trial and record evidence under the approved protocol.
 
 Prepare but do not execute until dependencies are met:
-- M5.2 — Run personal-use trial and record evidence.
 - M5.3 — Trial evidence review and issue triage.
 - M5.4 — Evidence-based prompt/tool/docs hardening, conditional only.
 - M5.5 — Local MVP retest after hardening, conditional only.
