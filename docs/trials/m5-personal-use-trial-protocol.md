@@ -126,6 +126,12 @@ Live ChatGPT, tunnel, hosted, or platform-mediated evidence does not count for
 this protocol unless a separate approved spike records explicit scope, setup
 evidence, and safety boundaries first.
 
+If a separate approved ChatGPT app or connector smoke check is performed, verify
+the app/action settings against
+[`../chatgpt-app-schema.md`](../chatgpt-app-schema.md) before recording a
+successful ChatGPT-surface use. The historical `Project Prompt Library Local
+Proof` proof-only schema is not the current M5 trial surface.
+
 For each use:
 
 1. Pick one required scenario from the table above.
@@ -273,6 +279,9 @@ Before M5.2 can be considered ready for M5.3 triage:
 - repository branch and commit are recorded from the explicit setup commands;
 - trial surface is recorded, with separate approval/setup evidence for any
   ChatGPT, tunnel, hosted, or platform-mediated surface;
+- any ChatGPT app/action smoke surface has been verified against
+  [`../chatgpt-app-schema.md`](../chatgpt-app-schema.md) and is not using the
+  old Slice 0 proof-only schema;
 - at least three separate work-session ids are recorded, unless the trial is
   held or failed with a reason;
 - required usage count is met or skipped uses have reasons;
