@@ -244,8 +244,19 @@ Look for exactly one executable issue in this order:
    Automation Expert work from ordinary recurring Todo/Backlog selection, do not
    require or add `agent:auto`, and treat generic recurring exposure as blocking
    queue drift when no other safe candidate remains.
-4. Matching Todo: a Project Prompt Library issue in state `Todo` matching the current allowed lane and expected role label/title marker. Prefer `agent:auto` when present.
-5. Backlog fallback: if no matching executable Todo exists, use the current queue rule to select the top unblocked matching Backlog issue for the current allowed slice/lane only.
+4. State-repair Coordinator handoff: when the current-state ledger, an explicit
+   human/coordinator instruction, or dispatcher state drift exposes
+   `lane:state-repair`, select exactly one unblocked Coordinator Agent
+   state-repair issue before ordinary product Todo/Backlog selection. Prefer a
+   `Todo` issue with `lane:state-repair`, `agent:coordinator`, the required
+   Coordinator Agent marker, and any required `agent:auto` exposure; if no such
+   `Todo` exists, select the top unblocked matching Backlog repair issue under
+   the same checks. Use `state-repair Todo` or
+   `state-repair Backlog fallback` as the claim rule, and treat ambiguous,
+   policy-changing, broad, or unproven lane-exposure repairs as
+   `STATE_DRIFT_DETECTED` instead of normal product work.
+5. Matching Todo: a Project Prompt Library issue in state `Todo` matching the current allowed lane and expected role label/title marker. Prefer `agent:auto` when present.
+6. Backlog fallback: if no matching executable Todo exists, use the current queue rule to select the top unblocked matching Backlog issue for the current allowed slice/lane only.
 
 A candidate must satisfy all relevant checks:
 
@@ -280,6 +291,35 @@ A candidate must satisfy all relevant checks:
   can still carry that exact docs-only amendment safely. Otherwise return
   `STATE_DRIFT_DETECTED` with a repair-path gap instead of handing off the
   finding itself.
+
+Recurring documentation state-repair guardrails:
+
+- Purpose: keep current-state routing docs legible, repair mechanical
+  pointer/ledger drift, and avoid broad docs churn. It must never make product,
+  architecture, roadmap, prompt, runtime, or later-lane exposure decisions.
+- Triggers: merged state-changing PR, coordinator gate closeout, dispatcher
+  state drift finding, or explicit human request.
+- Preflight inputs stay cheap: current-state ledger; Linear queue/state
+  metadata and recent issue comments needed for lane, blocker, label, and
+  live-claim comparison, including `AGENT RUNNING` and matching terminal
+  markers; and recent/open PR metadata only when needed to explain state drift.
+  Do not read PR diffs, source files, prompt files, broad docs, CI logs, PR
+  comments, review threads, or long histories before selecting a repair
+  handoff.
+- Outputs: return `DONT_NOTIFY` when no repair is needed, return
+  `STATE_DRIFT_DETECTED` when routing is unsafe or evidence is ambiguous, or
+  hand off one executable Coordinator Agent docs-repair issue only for
+  mechanical pointer/ledger drift within the shared hard limits, using
+  `state-repair Todo` or `state-repair Backlog fallback` as the claim rule.
+- Mechanical recurring repairs may normally touch only
+  `docs/workflows/current-state-ledger.md`, `README.md`, `AGENTS.md`, and
+  `docs/README.md`, with at most three changed files. If the fix needs broader
+  files, policy judgment, product or architecture decisions, CI/diff inspection,
+  or lane exposure without approved checkpoint evidence, return
+  `STATE_DRIFT_DETECTED` or route a Coordinator/human repair decision instead.
+- This does not make AI Automation Expert recurring-pickable, does not add
+  `agent:auto` to AI Automation Expert issues, does not activate claim mode, and
+  does not create a new automation loop.
 
 Role labels:
 
@@ -392,7 +432,7 @@ If operating in candidate mode, do not mutate Linear. Emit:
   <decision>ROLE_HANDOFF_CANDIDATE</decision>
   <issue>ISSUE_ID — TITLE</issue>
   <role>coding | review | qa | coordinator | ai-automation-expert</role>
-  <claim_rule>review-ready handoff | fix-ready handoff | explicit AI Automation Expert handoff | matching Todo | Backlog fallback</claim_rule>
+  <claim_rule>review-ready handoff | fix-ready handoff | explicit AI Automation Expert handoff | state-repair Todo | state-repair Backlog fallback | matching Todo | Backlog fallback</claim_rule>
   <required_role_spec>docs/agents/ROLE-agent.md</required_role_spec>
   <current_state_ledger>docs/workflows/current-state-ledger.md</current_state_ledger>
   <linked_pr>PR URL or none</linked_pr>
@@ -461,7 +501,7 @@ If this run owns the claim, emit:
   <role>coding | review | qa | coordinator | ai-automation-expert</role>
   <claim_id>CLAIM_ID</claim_id>
   <claim_expires_at>TIMESTAMP</claim_expires_at>
-  <claim_rule>review-ready handoff | fix-ready handoff | explicit AI Automation Expert handoff | matching Todo | Backlog fallback</claim_rule>
+  <claim_rule>review-ready handoff | fix-ready handoff | explicit AI Automation Expert handoff | state-repair Todo | state-repair Backlog fallback | matching Todo | Backlog fallback</claim_rule>
   <required_role_spec>docs/agents/ROLE-agent.md</required_role_spec>
   <current_state_ledger>docs/workflows/current-state-ledger.md</current_state_ledger>
   <linked_pr>PR URL or none</linked_pr>

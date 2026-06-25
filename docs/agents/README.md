@@ -56,7 +56,8 @@ The Dispatcher is not a normal role agent and does not follow the full common op
 
 Dispatcher preflight may read only:
 
-1. Linear queue/state metadata needed to select work.
+1. Linear queue/state metadata and recent issue comments needed to select work
+   and detect live claim markers.
 2. `docs/workflows/current-state-ledger.md`.
 3. Cheap recent/open GitHub PR metadata needed to detect state drift, limited to PR number, title, state, draft state, base/head branch, timestamps, and visible Linear issue links.
 
@@ -209,6 +210,53 @@ Historical milestone and gate records may stay in durable docs when useful, but
 they must not read as the current routing source. Ordinary phase movement should
 not require broad entry-doc updates unless a pointer is stale, a required-reading
 doc would misroute agents, or routing-critical facts are ambiguous.
+
+## Recurring Documentation State Repair
+
+Recurring documentation state repair keeps current-state routing docs legible
+without turning ordinary phase movement into broad documentation churn. It is
+operating-state repair only; it must not decide product scope, architecture
+policy, roadmap order, runtime behavior, prompt behavior, or later-lane
+exposure.
+
+Recurring preflight may use only:
+
+- `docs/workflows/current-state-ledger.md`;
+- Linear queue/state metadata and recent issue comments needed to compare the
+  current lane, blockers, labels, and live claims, including `AGENT RUNNING`
+  and matching terminal markers;
+- recent/open GitHub PR metadata needed to explain state drift, limited to PR
+  number, title, state, draft state, base/head branch, timestamps, merge state,
+  and visible Linear issue links.
+
+Do not read PR diffs, CI logs, PR comments, review threads, source files,
+prompt files, broad docs, or long histories before selecting a repair handoff.
+Those inputs are allowed only after an explicitly selected repair issue requires
+them.
+
+Allowed recurring outcomes are:
+
+```text
+DONT_NOTIFY
+STATE_DRIFT_DETECTED
+docs-repair handoff for mechanical pointer/ledger drift
+Coordinator repair issue needed
+```
+
+A mechanical docs repair may normally change only these files:
+
+```text
+docs/workflows/current-state-ledger.md
+README.md
+AGENTS.md
+docs/README.md
+```
+
+The hard limit for one mechanical recurring repair is three changed files. If
+the repair needs more files, changes outside that surface, PR diffs or CI logs
+to understand the fix, policy judgment, product/architecture decisions, or
+unproven lane exposure, stop and create or report a Coordinator Agent
+docs/workflow issue instead.
 
 ## State Checkpoint
 
