@@ -76,6 +76,7 @@ Updated:
 - `docs/qa/test-strategy.md`
 - `docs/roadmap/project-prompt-library-m5-plan.md`
 - `docs/trials/m5-personal-use-trial-protocol.md`
+- `AGENTS.md`
 
 Verified unchanged:
 
