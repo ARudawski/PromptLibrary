@@ -136,6 +136,9 @@ Post the QA report as a Linear comment:
 Follow the shared
 [`Claim Terminal Markers`](./README.md#claim-terminal-markers) rule. Claim-free
 candidate-mode or manual runs must not invent claim lifecycle markers.
+Include the shared
+[`agent_evidence version="1"`](./README.md#terminal-agent-evidence) block near
+the end of the report.
 
 ```text
 QA Agent Report

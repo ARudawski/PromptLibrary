@@ -203,6 +203,9 @@ Checkpoint in the Linear report or PR evidence using the shared
 Follow the shared issue-reference safety and
 [`Claim Terminal Markers`](./README.md#claim-terminal-markers) rules. Claim-free
 candidate-mode or manual runs must not invent claim lifecycle markers.
+Include the shared
+[`agent_evidence version="1"`](./README.md#terminal-agent-evidence) block near
+the end of the report.
 
 Post a Linear comment with:
 
