@@ -56,7 +56,8 @@ The Dispatcher is not a normal role agent and does not follow the full common op
 
 Dispatcher preflight may read only:
 
-1. Linear queue/state metadata needed to select work.
+1. Linear queue/state metadata and recent issue comments needed to select work
+   and detect live claim markers.
 2. `docs/workflows/current-state-ledger.md`.
 3. Cheap recent/open GitHub PR metadata needed to detect state drift, limited to PR number, title, state, draft state, base/head branch, timestamps, and visible Linear issue links.
 
@@ -221,8 +222,9 @@ exposure.
 Recurring preflight may use only:
 
 - `docs/workflows/current-state-ledger.md`;
-- Linear queue/state metadata needed to compare current lane, blockers, labels,
-  and live claims;
+- Linear queue/state metadata and recent issue comments needed to compare the
+  current lane, blockers, labels, and live claims, including `AGENT RUNNING`
+  and matching terminal markers;
 - recent/open GitHub PR metadata needed to explain state drift, limited to PR
   number, title, state, draft state, base/head branch, timestamps, merge state,
   and visible Linear issue links.

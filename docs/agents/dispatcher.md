@@ -244,8 +244,19 @@ Look for exactly one executable issue in this order:
    Automation Expert work from ordinary recurring Todo/Backlog selection, do not
    require or add `agent:auto`, and treat generic recurring exposure as blocking
    queue drift when no other safe candidate remains.
-4. Matching Todo: a Project Prompt Library issue in state `Todo` matching the current allowed lane and expected role label/title marker. Prefer `agent:auto` when present.
-5. Backlog fallback: if no matching executable Todo exists, use the current queue rule to select the top unblocked matching Backlog issue for the current allowed slice/lane only.
+4. State-repair Coordinator handoff: when the current-state ledger, an explicit
+   human/coordinator instruction, or dispatcher state drift exposes
+   `lane:state-repair`, select exactly one unblocked Coordinator Agent
+   state-repair issue before ordinary product Todo/Backlog selection. Prefer a
+   `Todo` issue with `lane:state-repair`, `agent:coordinator`, the required
+   Coordinator Agent marker, and any required `agent:auto` exposure; if no such
+   `Todo` exists, select the top unblocked matching Backlog repair issue under
+   the same checks. Use `state-repair Todo` or
+   `state-repair Backlog fallback` as the claim rule, and treat ambiguous,
+   policy-changing, broad, or unproven lane-exposure repairs as
+   `STATE_DRIFT_DETECTED` instead of normal product work.
+5. Matching Todo: a Project Prompt Library issue in state `Todo` matching the current allowed lane and expected role label/title marker. Prefer `agent:auto` when present.
+6. Backlog fallback: if no matching executable Todo exists, use the current queue rule to select the top unblocked matching Backlog issue for the current allowed slice/lane only.
 
 A candidate must satisfy all relevant checks:
 
@@ -289,10 +300,12 @@ Recurring documentation state-repair guardrails:
 - Triggers: merged state-changing PR, coordinator gate closeout, dispatcher
   state drift finding, or explicit human request.
 - Preflight inputs stay cheap: current-state ledger; Linear queue/state
-  metadata needed for lane, blocker, label, and live-claim comparison; and
-  recent/open PR metadata only when needed to explain state drift. Do not read
-  PR diffs, source files, prompt files, broad docs, CI logs, PR comments, review
-  threads, or long histories before selecting a repair handoff.
+  metadata and recent issue comments needed for lane, blocker, label, and
+  live-claim comparison, including `AGENT RUNNING` and matching terminal
+  markers; and recent/open PR metadata only when needed to explain state drift.
+  Do not read PR diffs, source files, prompt files, broad docs, CI logs, PR
+  comments, review threads, or long histories before selecting a repair
+  handoff.
 - Outputs: return `DONT_NOTIFY` when no repair is needed, return
   `STATE_DRIFT_DETECTED` when routing is unsafe or evidence is ambiguous, or
   hand off one executable Coordinator Agent docs-repair issue only for
