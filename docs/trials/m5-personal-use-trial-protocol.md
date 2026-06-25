@@ -1,15 +1,15 @@
 # M5 Personal-Use Trial Protocol
 
 Status: approved by M5.QA.1 through PL-122; used for PL-123 / M5.2 trial evidence accepted on 2026-06-24
-Owner: historical M5 trial runner for PL-123; PL-124 owns trial evidence review and issue triage after PL-133 closeout
+Owner: historical M5 trial runner for PL-123; PL-124 owns the M5.3 findings summary
 Scope: personal-use evidence for the three approved M4 MVP prompts
 
 This protocol defined how to run the M5 personal-use trial. It does not approve
 hosting, change prompts, change aliases, or authorize any runtime
 implementation work. PL-123 / M5.2 used this protocol and recorded evidence in
-Linear comments; PL-124 / M5.3 owns evidence review, triage, and any
-trial-log/findings documentation decision after the PL-133 State Checkpoint is
-durable.
+Linear comments. PL-124 / M5.3 summarized the accepted evidence in
+[`m5-trial-findings.md`](m5-trial-findings.md) and updated the trial log with a
+pointer to the Linear evidence record.
 
 ## Goal
 

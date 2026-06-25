@@ -2,7 +2,7 @@
 
 Project Prompt Library is a small ChatGPT Apps / MCP connector for invoking exact, externally maintained prompt workflows from normal ChatGPT conversations using command-style requests such as `@pl grill-me`.
 
-This repository has passed the Slice 0 proof gate, Slice 1 invocation gate, M2 source/cache/validation gates through Slice 2.7, M3 read-only API completion/readiness through PL-80 after PL-79 QA, M4 local MVP completion/readiness through PL-111 after PL-110 QA, Slice 5.1 protocol/log work through PL-121 / PR #67, M5.QA.1 protocol review through PL-122, and Slice 5.2 personal-use trial evidence acceptance through PL-123. The current workflow lane is PL-133 State Checkpoint repair; after that repair is durable, the next allowed product action is PL-124 / Slice 5.3 trial evidence review and issue triage only.
+This repository has passed the Slice 0 proof gate, Slice 1 invocation gate, M2 source/cache/validation gates through Slice 2.7, M3 read-only API completion/readiness through PL-80 after PL-79 QA, M4 local MVP completion/readiness through PL-111 after PL-110 QA, Slice 5.1 protocol/log work through PL-121 / PR #67, M5.QA.1 protocol review through PL-122, and Slice 5.2 personal-use trial evidence acceptance through PL-123. PL-124 / Slice 5.3 trial evidence review and issue triage found no evidence-backed M5.4 hardening issue; after PL-124 review and closeout, the next allowed gate is PL-127 / M5.QA real-use readiness audit.
 
 The Slice 0 premise was:
 
@@ -37,10 +37,11 @@ The Slice 0 premise was:
 - Slice 5.1: personal-use trial protocol and results log, complete through PL-121 / PR #67.
 - M5.QA.1: personal-use trial protocol review, approved through PL-122.
 - Slice 5.2: personal-use trial execution and evidence recording, accepted through PL-123 with caveats carried forward to PL-124.
+- Slice 5.3: trial evidence review and issue triage, captured through PL-124 with no evidence-backed M5.4 hardening follow-up currently justified.
 
 The compact current-state pointer for agents is [`docs/workflows/current-state-ledger.md`](./docs/workflows/current-state-ledger.md). If this README and the ledger disagree, use the ledger and raise a documentation drift finding.
 
-The current local MCP server registers `invoke_prompt_library_command`, `inspect_prompt_library_command`, and `list_prompt_library_commands` against local `prompts/*.md` files through the PromptSource boundary. M2 added the public GitHub source adapter, runtime prompt cache TTL behavior, stale refresh and last-known-good preservation, partial-valid/cold-failure behavior, a real local `validate-prompts` script, and source/cache contract and golden coverage. M3 added active prompt inspection, command listing, inspect/list golden coverage, and tool-reference coverage. M4 added the three approved active local MVP prompts: `handoff`, `grill-me`, and `spec-prompt-creator`, plus coherent local MVP contract/golden coverage and the local walkthrough. M5.1 personal-use trial planning is complete, M5.QA.1 approved the protocol, and PL-123 accepted M5.2 trial evidence. PL-124 / M5.3 trial evidence review and issue triage is next only after the PL-133 State Checkpoint repair is durable. Hosted deployment, private suites, auth/OAuth, DB behavior, and broader runtime work are not implemented yet.
+The current local MCP server registers `invoke_prompt_library_command`, `inspect_prompt_library_command`, and `list_prompt_library_commands` against local `prompts/*.md` files through the PromptSource boundary. M2 added the public GitHub source adapter, runtime prompt cache TTL behavior, stale refresh and last-known-good preservation, partial-valid/cold-failure behavior, a real local `validate-prompts` script, and source/cache contract and golden coverage. M3 added active prompt inspection, command listing, inspect/list golden coverage, and tool-reference coverage. M4 added the three approved active local MVP prompts: `handoff`, `grill-me`, and `spec-prompt-creator`, plus coherent local MVP contract/golden coverage and the local walkthrough. M5.1 personal-use trial planning is complete, M5.QA.1 approved the protocol, PL-123 accepted M5.2 trial evidence, and PL-124 triaged that evidence without creating M5.4 hardening work. Hosted deployment, private suites, auth/OAuth, DB behavior, and broader runtime work are not implemented yet.
 
 ## Core V1 boundaries
 
@@ -74,6 +75,7 @@ Start here:
 - [`docs/local-mvp-walkthrough.md`](./docs/local-mvp-walkthrough.md) — local walkthrough for validating the three-prompt M4 MVP.
 - [`docs/trials/m5-personal-use-trial-protocol.md`](./docs/trials/m5-personal-use-trial-protocol.md) - M5 personal-use trial protocol.
 - [`docs/trials/m5-personal-use-trial-log.md`](./docs/trials/m5-personal-use-trial-log.md) - M5 personal-use trial evidence log template.
+- [`docs/trials/m5-trial-findings.md`](./docs/trials/m5-trial-findings.md) - M5.3 trial evidence findings and follow-up triage.
 
 ## Local development status
 
@@ -87,7 +89,7 @@ This is the deterministic default gate only. Live GitHub prompt-source checks, C
 
 ## Non-goals for the current phase
 
-Do not add outside the current PL-133 State Checkpoint repair and the later PL-124 / Slice 5.3 trial evidence triage lane:
+Do not add outside PL-124 closeout and the later PL-127 / M5.QA readiness-review path:
 
 - ChatGPT-facing cache refresh, cache diagnostics, or admin tools;
 - real prompt files beyond the approved three-prompt M4 MVP set;

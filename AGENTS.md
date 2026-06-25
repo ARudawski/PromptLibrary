@@ -49,9 +49,9 @@ Never use this efficiency rule to skip a source required by the issue or to avoi
 
 ## Current phase
 
-Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, M5.1 personal-use trial protocol/log work is complete via PL-121 / PR #67, M5.QA.1 approved the protocol via PL-122, and PL-130 recorded the M5.QA.1 State Checkpoint. No implementation or hardening product work is active. The next allowed product action is PL-123 / M5.2 personal-use trial execution and evidence recording only, under the approved M5.1 protocol.
+Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, M5.1 personal-use trial protocol/log work is complete via PL-121 / PR #67, M5.QA.1 approved the protocol via PL-122, PL-123 accepted M5.2 personal-use trial evidence, PL-133 recorded the M5.2 State Checkpoint, and PL-124 captured M5.3 trial evidence triage with no evidence-backed M5.4 hardening issue currently justified. No implementation or hardening product work is active. After PL-124 review and closeout, the next allowed gate is PL-127 / M5.QA real-use readiness audit unless review identifies a material evidence-backed hardening need.
 
-Do not proceed to M5.3/M5.4/M5.5/M5.QA/M5.Gate work, M6 hosted deployment, private-suite behavior, auth/OAuth, database work, broader runtime work, prompt changes, alias changes, tool metadata changes, additional real prompt files, broader Slice 4 work, or later product lanes without an explicit issue and coordinator or architecture decision.
+Do not proceed to M5.4/M5.5/M5.QA/M5.Gate work, M6 hosted deployment, private-suite behavior, auth/OAuth, database work, broader runtime work, prompt changes, alias changes, tool metadata changes, additional real prompt files, broader Slice 4 work, or later product lanes without an explicit issue and coordinator or architecture decision. PL-127 / M5.QA remains blocked until PL-124 is reviewed and closed out, and PL-125/PL-126 remain unexposed unless an evidence-backed hardening need is accepted.
 
 ## Non-negotiable product boundary
 
@@ -117,7 +117,7 @@ Approved source/cache/validation behavior includes:
 - fake-source/fake-clock tests for source/cache behavior;
 - concise docs for implemented source/cache behavior.
 
-Still forbidden in the current M5.2 trial-evidence lane:
+Still forbidden before PL-124 closeout and outside an explicit approved coordinator path:
 
 - ChatGPT-facing cache refresh, diagnostics, or admin tools;
 - additional real prompt files beyond the approved `handoff`, `grill-me`, and `spec-prompt-creator` MVP set;
