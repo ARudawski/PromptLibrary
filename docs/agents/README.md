@@ -147,6 +147,89 @@ mutations use the shared repository mutation and closeout discipline below.
 Decision-only coordinator work may close from recorded Linear/GitHub evidence
 without a PR when it does not mutate repository files.
 
+## Role Run Packet
+
+A Role Run Packet is a compact handoff or intake summary for a fresh role run.
+It is derived context only. It does not replace the current-state ledger, target
+Linear issue, live issue comments, blockers, attachments, linked PR, branch,
+commit, or role spec as sources of truth.
+
+Agents may use a packet to start with less repeated prose, but they must verify
+the live ledger, issue, and PR/branch/head state before mutating Linear,
+changing files, reviewing, merging, or deciding a gate. If no packet is supplied,
+the role agent may build the same summary during intake.
+
+```text
+Role Run Packet
+target_issue:
+target_pr:
+target_branch:
+target_commit:
+role:
+current_lane:
+allowed_action:
+required_reads:
+optional_reads_on_trigger:
+stop_conditions:
+expected_output:
+```
+
+Use `none` for PR, branch, or commit fields that do not apply. `current_lane`
+must name the ledger-derived lane or explain why the issue is an explicit
+manual exception. `allowed_action` must be the smallest role-safe action, such
+as implement docs, review PR, run QA audit, synthesize gate, or audit workflow
+safety. `required_reads` must include the common operating contract and the
+target issue sources. `optional_reads_on_trigger` should name expensive reads
+that happen only when needed, such as PR diffs, CI logs, long issue histories,
+runtime docs, source/test files, or broader architecture docs.
+
+Expand beyond the packet when any trigger applies:
+
+- live issue state, comments, blockers, labels, attachments, PR head, or ledger
+  state differs from the packet;
+- the run will change files, move Linear state, review or merge a PR, decide a
+  gate, or expose a lane;
+- the packet points to a linked PR, check result, dependency, or predecessor
+  decision whose current state matters;
+- the change could affect product/runtime behavior, architecture, roadmap,
+  State Checkpoint evidence, queue exposure, claim mode, or role boundaries;
+- required evidence is missing, ambiguous, stale, or contradicted by live
+  Linear, GitHub, or repository state.
+
+## Terminal Agent Evidence
+
+Every terminal role report must include the human-readable role report fields
+from the relevant spec and a compact evidence block in this shared format.
+Include it near the end of the report. If the run has a `claim_id`, the
+canonical claim terminal marker still comes after this block and remains the
+final machine-facing marker.
+
+```text
+<agent_evidence version="1">
+role:
+target_issue:
+target_pr:
+target_branch:
+target_head_sha:
+merge_sha:
+changed_files:
+checks:
+docs:
+state_checkpoint:
+result:
+recommended_next_action:
+</agent_evidence>
+```
+
+Use concise values, not transcripts or large diffs. `target_pr`,
+`target_branch`, `target_head_sha`, and `merge_sha` may be `none` when not
+relevant. `checks` must name exact commands, CI runs, or skipped checks with the
+reason. `docs` must say what changed or why docs were not needed.
+`state_checkpoint` must use the shared State Checkpoint vocabulary when a
+checkpoint is required, or `not required: REASON` when no slice/lane state
+changes. `result` should match the role verdict, such as `NEEDS REVIEW`,
+`APPROVE`, `PASS`, `COMPLETE`, or `BLOCKED`.
+
 ## Issue Reference Safety
 
 PR bodies, role reports, Linear comments, and GitHub comments must use issue

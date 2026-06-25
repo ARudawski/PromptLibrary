@@ -130,6 +130,9 @@ Post a Linear comment when the role reaches a decision:
 Follow the shared
 [`Claim Terminal Markers`](./README.md#claim-terminal-markers) rule. Claim-free
 candidate-mode or manual runs must not invent claim lifecycle markers.
+Include the shared
+[`agent_evidence version="1"`](./README.md#terminal-agent-evidence) block near
+the end of the report.
 
 ```text
 AI Automation Expert Report
