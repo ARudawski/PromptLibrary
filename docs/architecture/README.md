@@ -30,7 +30,17 @@ The connector retrieves prompt definitions. The prompt text defines behavior. Th
 
 Before implementing the real architecture, Slice 0 must validate that ChatGPT can route `@pl proof` into a local MCP tool and apply the returned hardcoded prompt.
 
-Slice 0 was accepted with caveats through recorded Linear gate evidence, Slice 1 fixture-backed invocation has been approved as the baseline, M2 has been approved through Slice 2.7, M3 read-only API completion/readiness was accepted through PL-80 after PL-79 QA, and M4 local MVP completion/readiness was accepted through PL-111 after PL-110 QA. M5.1 personal-use trial planning is complete through PL-121 / PR #67, M5.QA.1 approved the protocol through PL-122, PL-123 accepted M5.2 personal-use trial evidence, and PL-124 captured M5.3 trial findings without justifying M5.4 hardening work. PL-127 / M5.QA readiness audit is the next allowed gate after PL-124 review and closeout unless review identifies a material evidence-backed hardening need. Hosted deployment, private suites, auth, DB behavior, additional real prompt files beyond the approved three-prompt M4 MVP set, prompt or alias changes, tool metadata changes, and broader runtime behavior remain later-slice work until explicitly approved.
+Slice 0 was accepted with caveats through recorded Linear gate evidence, Slice 1
+fixture-backed invocation has been approved as the baseline, M2 has been
+approved through Slice 2.7, M3 read-only API completion/readiness was accepted
+through PL-80 after PL-79 QA, and M4 local MVP completion/readiness was accepted
+through PL-111 after PL-110 QA. Current phase, active lane, next lane, queue
+exposure, and caveats live in
+[`../workflows/current-state-ledger.md`](../workflows/current-state-ledger.md).
+Hosted deployment, private suites, auth, DB behavior, additional real prompt
+files beyond the approved three-prompt M4 MVP set, prompt or alias changes,
+tool metadata changes, and broader runtime behavior remain later-slice work
+until explicitly approved.
 
 ## Future full document
 

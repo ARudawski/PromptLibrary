@@ -359,7 +359,12 @@ Treat State Checkpoint evidence separately from ordinary historical drift:
   handoff:
   - `ledger updated in this PR/issue`
   - `ledger already correct`
+  - `checkpoint recorded in issue/PR/Linear evidence`
   - `state-repair issue created/linked: PL-xxx`
+- Use `checkpoint recorded in issue/PR/Linear evidence` only when the ledger and
+  routing-critical docs are already correct and unambiguous, no repository docs
+  mutation is needed, and the selected issue, PR, or Linear report records the
+  state-changing evidence and downstream exposure decision.
 - If the selected state-changing handoff lacks an approved State Checkpoint
   outcome, do not continue with only a `<state_caveat>`. Return
   `STATE_DRIFT_DETECTED` and route to state repair before role execution. When
@@ -392,7 +397,7 @@ If operating in candidate mode, do not mutate Linear. Emit:
   <current_state_ledger>docs/workflows/current-state-ledger.md</current_state_ledger>
   <linked_pr>PR URL or none</linked_pr>
   <state_caveat>Known non-blocking drift, or none.</state_caveat>
-  <state_checkpoint>ledger updated in this PR/issue | ledger already correct | state-repair issue created/linked: PL-xxx | not required: REASON</state_checkpoint>
+  <state_checkpoint>ledger updated in this PR/issue | ledger already correct | checkpoint recorded in issue/PR/Linear evidence | state-repair issue created/linked: PL-xxx | not required: REASON</state_checkpoint>
   <message>Start a fresh ROLE Agent run manually or through an approved handoff consumer. Candidate mode supplies no claim_id.</message>
 </dispatcher_result>
 
@@ -461,7 +466,7 @@ If this run owns the claim, emit:
   <current_state_ledger>docs/workflows/current-state-ledger.md</current_state_ledger>
   <linked_pr>PR URL or none</linked_pr>
   <state_caveat>Known non-blocking drift, or none.</state_caveat>
-  <state_checkpoint>ledger updated in this PR/issue | ledger already correct | state-repair issue created/linked: PL-xxx | not required: REASON</state_checkpoint>
+  <state_checkpoint>ledger updated in this PR/issue | ledger already correct | checkpoint recorded in issue/PR/Linear evidence | state-repair issue created/linked: PL-xxx | not required: REASON</state_checkpoint>
   <message>Handoff consumer must start a fresh ROLE Agent run and post DISPATCHER HANDOFF ACCEPTED plus AGENT RUNNING.</message>
 </dispatcher_result>
 

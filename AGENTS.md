@@ -47,11 +47,17 @@ Do not reread broad historical documents just to look diligent. Token burn is no
 
 Never use this efficiency rule to skip a source required by the issue or to avoid checking a real architecture conflict.
 
-## Current phase
+## Current Phase And Live State
 
-Use `docs/workflows/current-state-ledger.md` as the compact current-state pointer. At the time this file was updated, M5.1 personal-use trial protocol/log work is complete via PL-121 / PR #67, M5.QA.1 approved the protocol via PL-122, PL-123 accepted M5.2 personal-use trial evidence, PL-133 recorded the M5.2 State Checkpoint, and PL-124 captured M5.3 trial evidence triage with no evidence-backed M5.4 hardening issue currently justified. No implementation or hardening product work is active. After PL-124 review and closeout, the next allowed gate is PL-127 / M5.QA real-use readiness audit unless review identifies a material evidence-backed hardening need.
+Detailed current phase, active lane, next lane, queue exposure, and current
+caveats live only in `docs/workflows/current-state-ledger.md`. This file may
+summarize durable product and architecture boundaries, but it must not repeat
+moving current-lane facts except as a pointer to the ledger.
 
-Do not proceed to M5.4/M5.5/M5.QA/M5.Gate work, M6 hosted deployment, private-suite behavior, auth/OAuth, database work, broader runtime work, prompt changes, alias changes, tool metadata changes, additional real prompt files, broader Slice 4 work, or later product lanes without an explicit issue and coordinator or architecture decision. PL-127 / M5.QA remains blocked until PL-124 is reviewed and closed out, and PL-125/PL-126 remain unexposed unless an evidence-backed hardening need is accepted.
+At role start, read the ledger before deciding whether a product lane,
+workflow lane, or gate is executable. If this file, README, docs indexes,
+architecture/roadmap/standards/QA entry docs, or older roadmap text disagree
+with the ledger about current state, use the ledger and report the drift.
 
 ## Non-negotiable product boundary
 
@@ -117,14 +123,15 @@ Approved source/cache/validation behavior includes:
 - fake-source/fake-clock tests for source/cache behavior;
 - concise docs for implemented source/cache behavior.
 
-Still forbidden before PL-124 closeout and outside an explicit approved coordinator path:
+Still forbidden unless the current-state ledger and an explicit approved issue
+or coordinator path allow it:
 
 - ChatGPT-facing cache refresh, diagnostics, or admin tools;
 - additional real prompt files beyond the approved `handoff`, `grill-me`, and `spec-prompt-creator` MVP set;
 - prompt changes, alias changes, tool metadata changes, and runtime changes outside an explicit approved issue;
 - private GitHub source, token/OAuth/auth, DB, or private-suite behavior;
 - hosted deployment;
-- later M5/M6 product work outside an explicit approved coordinator path.
+- later product work outside an explicit approved coordinator path.
 
 ## Architecture standards
 

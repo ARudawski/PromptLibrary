@@ -1,9 +1,8 @@
 # Project Prompt Library — Milestone 5 Plan
 
-Status: M5 active plan after M5.3 trial evidence triage
+Status: M5 plan; current routing lives in the current-state ledger
 Date: 2026-06-24
-Previous gate: M5.3 trial evidence review and issue triage captured through PL-124
-Next allowed product lane: PL-127 / M5.QA real-use readiness audit after PL-124 review and closeout, unless review identifies a material evidence-backed M5.4 hardening need
+Current routing source: `../workflows/current-state-ledger.md`
 Audience: Codex Prompt Coordinator, Coding Agent, Review Agent, QA Agent, Coordinator/Architect
 
 ---
@@ -103,23 +102,17 @@ Every agent must either update docs or explicitly justify why no documentation c
 
 No “code complete, docs later.” That phrase is where maintainability goes to die in a hoodie.
 
-### F2 - M5.3 triage found no immediate hardening lane
+### F2 - Current M5 routing lives in the ledger
 
 M5.1 protocol/log work is complete through PL-121 / PR #67, M5.QA.1
 approved the protocol through PL-122, and M5.2 trial evidence was accepted
 through PL-123. PL-133 recorded the M5.2 State Checkpoint, and PL-124 captured
-M5.3 trial findings. The accepted PL-123 evidence does not currently justify
-M5.4 hardening work.
+M5.3 trial findings.
 
-The next allowed gate after PL-124 review and closeout is:
-
-```text
-PL-127 / M5.QA - real-use readiness audit
-```
-
-Do not create or execute M5.4/M5.5 work unless PL-124 review identifies a
-material evidence-backed hardening need and an explicit coordinator path
-authorizes it.
+Use `../workflows/current-state-ledger.md` to decide the current M5 lane, next
+gate, queue exposure, and whether conditional M5.4/M5.5 work is skipped,
+canceled, or exposed. Do not create or execute M5.4/M5.5 work unless the ledger
+and an explicit coordinator path authorize it.
 
 ### F3 — Hosting is still blocked
 
@@ -315,11 +308,8 @@ Prepare the M5 lane without opening speculative implementation work.
 
 - Confirm current-state ledger says M5.1 is complete and PL-122 approved the
   protocol.
-- Confirm PL-123 accepted M5.2 trial evidence, PL-133 recorded the State
-  Checkpoint, and PL-124 captured M5.3 triage before any later M5 lane is
-  exposed.
-- Keep PL-127 / M5.QA as the next gate after PL-124 closeout unless review
-  identifies a material hardening need.
+- Confirm the current-state ledger records the latest accepted M5 gate,
+  checkpoint, next lane, and blocked-lane state before exposing later M5 work.
 - Keep later M5 tasks as blocked/backlog items until their predecessor gates pass.
 
 ### Documentation scope
@@ -354,9 +344,8 @@ npm run validate-prompts
 
 - M5 plan is stored in the repo.
 - Current M5 state agrees with the current-state ledger.
-- PL-124 / M5.3 was the only executable product task after PL-133 closeout.
-- PL-127 / M5.QA is the next gate after PL-124 review and closeout if no
-  evidence-backed hardening issue is accepted.
+- The current-state ledger, not this roadmap plan, identifies the executable M5
+  lane and conditional hardening/readiness routing.
 - Later M5 tasks are created only as blocked/backlog outlines.
 - Documentation change log is included.
 
@@ -692,9 +681,8 @@ Must update docs/indexes if new findings docs are added.
 Type: Coding Agent  
 Priority: conditional  
 Depends on: M5.3  
-Create or execute only if trial evidence justifies changes. PL-124 found no
-current evidence-backed hardening need; keep this lane unexposed unless review
-changes that decision.
+Create or execute only if trial evidence justifies changes and the
+current-state ledger plus an explicit coordinator path expose this lane.
 
 ### Goal
 
@@ -773,8 +761,8 @@ Prompt wording changes must update golden hashes intentionally.
 Type: QA / Coding Agent  
 Priority: conditional  
 Depends on: M5.4 if M5.4 exists; otherwise can be skipped by coordinator decision.
-PL-124 found no current M5.4 hardening need, so M5.5 should be skipped or
-canceled unless review changes that decision.
+Skip or cancel this lane unless M5.4 exists and the current-state ledger plus an
+explicit coordinator path expose retest work.
 
 ### Goal
 
@@ -987,19 +975,14 @@ Reason: explicitly outside the ChatGPT-facing runtime boundary.
 Refresh the Milestone 5 issue batch for Project Prompt Library.
 
 Current state:
-- M4 / local MVP is approved.
-- M5.1 personal-use trial protocol and results log are complete through PL-121 / PR #67.
-- M5.QA.1 approved the protocol through PL-122.
-- PL-123 / M5.2 trial evidence was accepted with caveats carried forward.
-- PL-133 recorded the M5.2 State Checkpoint.
-- PL-124 / M5.3 captured trial findings and did not identify an evidence-backed M5.4 hardening need.
-- Do not start hosted deployment, private suites, auth/OAuth, DB, prompt editing, draft management, semantic routing, workflow/session state, extra prompts, or broader runtime changes.
+- Read `docs/workflows/current-state-ledger.md` for detailed phase, active lane,
+  next lane, queue exposure, caveats, and blocked work.
+- Do not start hosted deployment, private suites, auth/OAuth, DB, prompt editing, draft management, semantic routing, workflow/session state, extra prompts, or broader runtime changes unless the ledger and an explicit coordinator path authorize it.
 
-Create or expose this immediate task only after PL-124 review and closeout:
-1. M5.QA - Real-use readiness audit.
+Create or expose only the immediate task named by the current-state ledger.
 
 Prepare but do not execute until dependencies are met:
-- M5.4 - Evidence-based prompt/tool/docs hardening, conditional only if PL-124 review accepts a material finding.
+- M5.4 - Evidence-based prompt/tool/docs hardening, conditional only if the current-state ledger and coordinator path expose it.
 - M5.5 - Local MVP retest after hardening, conditional only if M5.4 exists.
 - M5.Gate - Coordinator M5 completion and M6 readiness decision.
 
