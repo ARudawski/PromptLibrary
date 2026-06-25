@@ -2,7 +2,13 @@
 
 Project Prompt Library is a small ChatGPT Apps / MCP connector for invoking exact, externally maintained prompt workflows from normal ChatGPT conversations using command-style requests such as `@pl grill-me`.
 
-This repository has passed the Slice 0 proof gate, Slice 1 invocation gate, M2 source/cache/validation gates through Slice 2.7, M3 read-only API completion/readiness through PL-80 after PL-79 QA, M4 local MVP completion/readiness through PL-111 after PL-110 QA, Slice 5.1 protocol/log work through PL-121 / PR #67, M5.QA.1 protocol review through PL-122, and Slice 5.2 personal-use trial evidence acceptance through PL-123. PL-124 / Slice 5.3 trial evidence review and issue triage found no evidence-backed M5.4 hardening issue; after PL-124 review and closeout, the next allowed gate is PL-127 / M5.QA real-use readiness audit.
+This repository has passed the Slice 0 proof gate, Slice 1 invocation gate,
+M2 source/cache/validation gates through Slice 2.7, M3 read-only API
+completion/readiness through PL-80 after PL-79 QA, M4 local MVP
+completion/readiness through PL-111 after PL-110 QA, and M5 personal-use trial
+work through the recorded Slice 5.3 trial findings. Detailed current phase,
+active lane, next lane, and caveats live in
+[`docs/workflows/current-state-ledger.md`](./docs/workflows/current-state-ledger.md).
 
 The Slice 0 premise was:
 
@@ -39,9 +45,9 @@ The Slice 0 premise was:
 - Slice 5.2: personal-use trial execution and evidence recording, accepted through PL-123 with caveats carried forward to PL-124.
 - Slice 5.3: trial evidence review and issue triage, captured through PL-124 with no evidence-backed M5.4 hardening follow-up currently justified.
 
-The compact current-state pointer for agents is [`docs/workflows/current-state-ledger.md`](./docs/workflows/current-state-ledger.md). If this README and the ledger disagree, use the ledger and raise a documentation drift finding.
+The compact current-state pointer for agents is [`docs/workflows/current-state-ledger.md`](./docs/workflows/current-state-ledger.md). If this README and the ledger disagree about current routing, use the ledger and raise a documentation drift finding.
 
-The current local MCP server registers `invoke_prompt_library_command`, `inspect_prompt_library_command`, and `list_prompt_library_commands` against local `prompts/*.md` files through the PromptSource boundary. M2 added the public GitHub source adapter, runtime prompt cache TTL behavior, stale refresh and last-known-good preservation, partial-valid/cold-failure behavior, a real local `validate-prompts` script, and source/cache contract and golden coverage. M3 added active prompt inspection, command listing, inspect/list golden coverage, and tool-reference coverage. M4 added the three approved active local MVP prompts: `handoff`, `grill-me`, and `spec-prompt-creator`, plus coherent local MVP contract/golden coverage and the local walkthrough. M5.1 personal-use trial planning is complete, M5.QA.1 approved the protocol, PL-123 accepted M5.2 trial evidence, and PL-124 triaged that evidence without creating M5.4 hardening work. Hosted deployment, private suites, auth/OAuth, DB behavior, and broader runtime work are not implemented yet.
+The current local MCP server registers `invoke_prompt_library_command`, `inspect_prompt_library_command`, and `list_prompt_library_commands` against local `prompts/*.md` files through the PromptSource boundary. M2 added the public GitHub source adapter, runtime prompt cache TTL behavior, stale refresh and last-known-good preservation, partial-valid/cold-failure behavior, a real local `validate-prompts` script, and source/cache contract and golden coverage. M3 added active prompt inspection, command listing, inspect/list golden coverage, and tool-reference coverage. M4 added the three approved active local MVP prompts: `handoff`, `grill-me`, and `spec-prompt-creator`, plus coherent local MVP contract/golden coverage and the local walkthrough. Hosted deployment, private suites, auth/OAuth, DB behavior, and broader runtime work are not implemented yet.
 
 ## Core V1 boundaries
 
@@ -87,9 +93,12 @@ Pull requests and pushes to `main` run `.github/workflows/ci.yml` on Node 22 usi
 
 This is the deterministic default gate only. Live GitHub prompt-source checks, ChatGPT/tunnel checks, hosted endpoint checks, and deployment readiness smoke tests remain outside default CI.
 
-## Non-goals for the current phase
+## Current-phase Non-goals
 
-Do not add outside PL-124 closeout and the later PL-127 / M5.QA readiness-review path:
+For the current lane and blocked work, use
+[`docs/workflows/current-state-ledger.md`](./docs/workflows/current-state-ledger.md).
+Unless an explicit issue and coordinator or architecture path allows it, do not
+add:
 
 - ChatGPT-facing cache refresh, cache diagnostics, or admin tools;
 - real prompt files beyond the approved three-prompt M4 MVP set;

@@ -245,8 +245,12 @@ When a slice or lane changes, the closing evidence must record exactly one of:
 ```text
 ledger updated in this PR/issue
 ledger already correct
+checkpoint recorded in issue/PR/Linear evidence
 state-repair issue created/linked: PL-xxx
 ```
+
+Repo mutation or a state-repair PR is required only when the current-state
+ledger or another routing-critical doc is stale or ambiguous.
 
 Why:
 

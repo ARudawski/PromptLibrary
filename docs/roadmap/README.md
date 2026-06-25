@@ -19,7 +19,10 @@ Slice 6: Hosted deployment, only after local MVP proves useful
 
 ## Current focus
 
-M4 / the local MVP is complete after PL-111 accepted the gate following PL-110 QA. Slice 5.1 protocol/log work is complete through PL-121 / PR #67, M5.QA.1 protocol review passed through PL-122, Slice 5.2 personal-use trial evidence was accepted through PL-123, and Slice 5.3 trial evidence review is captured through PL-124. PL-124 found no evidence-backed M5.4 hardening issue; after PL-124 review and closeout, the next allowed gate is **PL-127 / M5.QA - real-use readiness audit**.
+M4 / the local MVP is complete after PL-111 accepted the gate following PL-110
+QA. Detailed current phase, active lane, next lane, queue exposure, and caveats
+live in [`../workflows/current-state-ledger.md`](../workflows/current-state-ledger.md).
+Use the ledger, not this index, to decide which M5 issue or gate is executable.
 
 Use the M5 plan before creating or executing trial work:
 
@@ -35,7 +38,10 @@ M5.1 trial documents:
 ../trials/m5-trial-findings.md
 ```
 
-Do not start M5.4, M5.5, M5.QA, M5.Gate, hosted deployment, private suites, auth/OAuth, DB behavior, additional real prompt files, prompt or alias changes, tool metadata changes, or broader runtime work without an explicit issue and coordinator path. PL-124 / M5.3 is trial evidence review and issue triage only.
+Do not start later M5 work, hosted deployment, private suites, auth/OAuth, DB
+behavior, additional real prompt files, prompt or alias changes, tool metadata
+changes, or broader runtime work without an explicit issue and coordinator
+path.
 
 ## Roadmap documents
 
@@ -54,7 +60,9 @@ Before M4 real prompt files:
 Before M5 implementation beyond planning:
 - M5.1 personal-use trial planning defined the protocol and results log through PL-121 / PR #67.
 - M5.QA.1 approved the protocol through PL-122 before trial execution.
-- M5.2 trial execution and evidence recording followed the approved protocol and was accepted through PL-123. M5.3 evidence triage is captured through PL-124; M5.4 hardening and M5.5 retesting should remain unexposed unless review identifies an evidence-backed hardening need. M5.QA and M5.Gate must stay blocked until their predecessor gates pass.
+- M5.2 trial execution and evidence recording followed the approved protocol.
+  Use the current-state ledger for current M5 lane exposure and conditional
+  M5.4/M5.5/M5.QA/M5.Gate routing.
 - All M5 agents must include documentation scope, documentation acceptance, and a documentation change log in their reports.
 
 Before hosted deployment:

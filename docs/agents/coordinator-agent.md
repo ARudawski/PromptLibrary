@@ -173,19 +173,23 @@ Use exactly one State Checkpoint outcome:
 ```text
 ledger updated in this PR/issue
 ledger already correct
+checkpoint recorded in issue/PR/Linear evidence
 state-repair issue created/linked: PL-xxx
 ```
 
-If the checkpoint is required, is not already correct, and cannot be updated in
-the same PR or issue, first check whether the Review Agent recorded a valid
-narrow checkpoint-doc amendment with `ledger updated in this PR/issue`. If not,
-create or link an executable state-repair issue before closing the
-state-changing issue. The repair issue must be routeable to the Coordinator
-Agent, normally with `lane:state-repair`, `agent:coordinator`, and `agent:auto`
-when recurring automation should pick it. If the repair requires a ledger or
-workflow-doc repository update, the repair issue must explicitly authorize that
-workflow/docs mutation and PR workflow. A non-automated monitor finding is
-evidence only; it cannot stand in for the executable repair issue.
+If the checkpoint is required, first decide whether the ledger and
+routing-critical docs are already correct. If they are, record the checkpoint in
+the issue, PR, or Linear report and no repository mutation or state-repair issue
+is needed. If the checkpoint needs a repo-doc update, first check whether the
+Review Agent recorded a valid narrow checkpoint-doc amendment with
+`ledger updated in this PR/issue`. If not, create or link an executable
+state-repair issue before closing the state-changing issue. The repair issue
+must be routeable to the Coordinator Agent, normally with `lane:state-repair`,
+`agent:coordinator`, and `agent:auto` when recurring automation should pick it.
+If the repair requires a ledger or workflow-doc repository update, the repair
+issue must explicitly authorize that workflow/docs mutation and PR workflow. A
+non-automated monitor finding is evidence only; it cannot stand in for the
+executable repair issue.
 If no executable repair path can be created or linked, report `BLOCKED PENDING
 EVIDENCE` or `NEEDS DOCS` instead of moving the issue to `Done`.
 

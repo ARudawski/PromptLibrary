@@ -198,6 +198,18 @@ Update `docs/workflows/current-state-ledger.md` only from coordinator gates or e
 
 Coordinator gates and workflow closeouts must follow the documentation/state closeout rule in [`coordinator-agent.md`](./coordinator-agent.md) before exposing the next lane or closing the issue.
 
+## Live-State Compression
+
+Detailed current phase, current lane, next lane, queue exposure, and active
+caveat facts live in `docs/workflows/current-state-ledger.md` only. README,
+AGENTS, docs indexes, and architecture/roadmap/standards/QA entry docs should
+point to the ledger instead of repeating detailed live state.
+
+Historical milestone and gate records may stay in durable docs when useful, but
+they must not read as the current routing source. Ordinary phase movement should
+not require broad entry-doc updates unless a pointer is stale, a required-reading
+doc would misroute agents, or routing-critical facts are ambiguous.
+
 ## State Checkpoint
 
 A State Checkpoint is the explicit evidence recorded when a slice handoff
@@ -215,6 +227,7 @@ When a State Checkpoint is required, record exactly one of:
 ```text
 ledger updated in this PR/issue
 ledger already correct
+checkpoint recorded in issue/PR/Linear evidence
 state-repair issue created/linked: PL-xxx
 ```
 
@@ -223,13 +236,19 @@ when their work completes, merges, exposes, or selects a state-changing handoff.
 If no slice/lane state changes, the report may say no State Checkpoint was
 required; do not invent a checkpoint outcome for non-handoffs.
 
+Use `checkpoint recorded in issue/PR/Linear evidence` only when the ledger and
+other routing-critical docs are already correct and unambiguous, no repository
+docs mutation is needed, and the issue, PR body/comment, or Linear report
+durably records the state-changing evidence and downstream exposure decision.
+
 If a required State Checkpoint is missing and the closing agent cannot update
-the ledger or prove it is already correct, the agent must create or link an
-executable Coordinator Agent state-repair issue before moving the original
-issue to `Done`. An executable state-repair issue must carry the Coordinator
-Agent marker, `lane:state-repair`, `agent:coordinator`, and the automation
-label required by the current workflow when recurring automation should pick it.
-When the repair requires repository mutation, such as a current-state ledger or
+the ledger, prove it is already correct, or record a durable issue/PR/Linear
+checkpoint while routing remains unambiguous, the agent must create or link an
+executable Coordinator Agent state-repair issue before moving the original issue
+to `Done`. An executable state-repair issue must carry the Coordinator Agent
+marker, `lane:state-repair`, `agent:coordinator`, and the automation label
+required by the current workflow when recurring automation should pick it. When
+the repair requires repository mutation, such as a current-state ledger or
 workflow-doc update, the issue must explicitly authorize the required
 workflow/docs edits and durable PR workflow before it counts as executable.
 Non-automated monitor findings are evidence only; they do not satisfy

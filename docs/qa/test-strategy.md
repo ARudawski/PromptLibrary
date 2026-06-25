@@ -3,7 +3,8 @@
 Status: QA strategy v2.0  
 Last updated: 2026-06-23
 Owner: QA Agent for verification; Coordinator Agent for QA-originated process findings
-Current phase: M5.3 trial evidence review captured via PL-124; next allowed gate is PL-127 / M5.QA real-use readiness audit after PL-124 review and closeout, unless review identifies a material evidence-backed M5.4 hardening need
+Current phase: see `../workflows/current-state-ledger.md` for the detailed
+active lane, next lane, queue exposure, and caveats
 
 ## 1. QA goal
 
@@ -41,11 +42,14 @@ Slice 3.4: list MCP adapter — approved
 Current QA focus:
 
 ```text
-M5.QA readiness-review preparation and M4 local MVP regression protection
-Current slice: see docs/workflows/current-state-ledger.md
+Current QA lane: see docs/workflows/current-state-ledger.md
+Regression focus: M4 local MVP and approved V1 behavior
 ```
 
-Slice 0 and the M2/M3/M4 gates are now historical, not the immediate next action. Keep their evidence because they remain product premises and regression surfaces, but do not block PL-127 / M5.QA readiness review by treating earlier gates as unattempted.
+Slice 0 and the M2/M3/M4 gates are historical, not the immediate next action.
+Keep their evidence because they remain product premises and regression
+surfaces, but do not block the current ledger-selected lane by treating earlier
+gates as unattempted.
 
 ## 3. Current system under test
 
