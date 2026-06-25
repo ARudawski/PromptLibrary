@@ -210,6 +210,52 @@ they must not read as the current routing source. Ordinary phase movement should
 not require broad entry-doc updates unless a pointer is stale, a required-reading
 doc would misroute agents, or routing-critical facts are ambiguous.
 
+## Recurring Documentation State Repair
+
+Recurring documentation state repair keeps current-state routing docs legible
+without turning ordinary phase movement into broad documentation churn. It is
+operating-state repair only; it must not decide product scope, architecture
+policy, roadmap order, runtime behavior, prompt behavior, or later-lane
+exposure.
+
+Recurring preflight may use only:
+
+- `docs/workflows/current-state-ledger.md`;
+- Linear queue/state metadata needed to compare current lane, blockers, labels,
+  and live claims;
+- recent/open GitHub PR metadata needed to explain state drift, limited to PR
+  number, title, state, draft state, base/head branch, timestamps, merge state,
+  and visible Linear issue links.
+
+Do not read PR diffs, CI logs, PR comments, review threads, source files,
+prompt files, broad docs, or long histories before selecting a repair handoff.
+Those inputs are allowed only after an explicitly selected repair issue requires
+them.
+
+Allowed recurring outcomes are:
+
+```text
+DONT_NOTIFY
+STATE_DRIFT_DETECTED
+docs-repair handoff for mechanical pointer/ledger drift
+Coordinator repair issue needed
+```
+
+A mechanical docs repair may normally change only these files:
+
+```text
+docs/workflows/current-state-ledger.md
+README.md
+AGENTS.md
+docs/README.md
+```
+
+The hard limit for one mechanical recurring repair is three changed files. If
+the repair needs more files, changes outside that surface, PR diffs or CI logs
+to understand the fix, policy judgment, product/architecture decisions, or
+unproven lane exposure, stop and create or report a Coordinator Agent
+docs/workflow issue instead.
+
 ## State Checkpoint
 
 A State Checkpoint is the explicit evidence recorded when a slice handoff

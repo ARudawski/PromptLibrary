@@ -193,6 +193,35 @@ executable repair issue.
 If no executable repair path can be created or linked, report `BLOCKED PENDING
 EVIDENCE` or `NEEDS DOCS` instead of moving the issue to `Done`.
 
+For recurring documentation state-repair issues, keep the repair mechanical and
+small. The purpose is to keep current-state routing docs legible, not to make
+product, architecture, roadmap, prompt, runtime, or later-lane exposure
+decisions.
+
+Allowed triggers are:
+
+```text
+merged state-changing PR
+coordinator gate closeout
+dispatcher state drift finding
+explicit human request
+```
+
+Allowed repair outputs are `DONT_NOTIFY` when no repair is needed,
+`STATE_DRIFT_DETECTED` when routing is unsafe or evidence is ambiguous, a
+docs-repair handoff for mechanical pointer/ledger drift, or a Coordinator/human
+repair decision when the fix is broader than the safe edit surface.
+
+Mechanical recurring repairs may normally change only
+`docs/workflows/current-state-ledger.md`, `README.md` pointer text, `AGENTS.md`
+pointer text, and `docs/README.md` navigation or pointer text. A single
+mechanical repair may change at most three files. If more files are needed, the
+fix reaches architecture/roadmap/standards/QA policy docs, the evidence requires
+PR diffs, CI logs, source files, prompt files, or long histories to interpret,
+or the repair would change product scope, architecture policy, queue exposure,
+or claim-mode/automation adoption, stop and create or report a smaller
+Coordinator Agent docs/workflow issue instead of doing the broad rewrite.
+
 Check at minimum:
 
 - `docs/workflows/current-state-ledger.md` for phase, gate, next-lane, queue, and caveat facts;
