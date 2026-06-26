@@ -6,7 +6,7 @@ This repository has passed the Slice 0 proof gate, Slice 1 invocation gate,
 M2 source/cache/validation gates through Slice 2.7, M3 read-only API
 completion/readiness through PL-80 after PL-79 QA, M4 local MVP
 completion/readiness through PL-111 after PL-110 QA, and M5 personal-use trial
-work through the recorded Slice 5.3 trial findings. Detailed current phase,
+completion/readiness through PL-128 after PL-127 QA. Detailed current phase,
 active lane, next lane, and caveats live in
 [`docs/workflows/current-state-ledger.md`](./docs/workflows/current-state-ledger.md).
 
@@ -44,10 +44,12 @@ The Slice 0 premise was:
 - M5.QA.1: personal-use trial protocol review, approved through PL-122.
 - Slice 5.2: personal-use trial execution and evidence recording, accepted through PL-123 with caveats carried forward to PL-124.
 - Slice 5.3: trial evidence review and issue triage, captured through PL-124 with no evidence-backed M5.4 hardening follow-up currently justified.
+- M5.QA: real-use readiness audit, approved through PL-127 after PL-125 and PL-126 were canceled as conditional no-op work.
+- M5.Gate: personal-use trial completion and M6 readiness, accepted through PL-128; M6 hosted deployment planning may begin through an explicit issue and coordinator path.
 
 The compact current-state pointer for agents is [`docs/workflows/current-state-ledger.md`](./docs/workflows/current-state-ledger.md). If this README and the ledger disagree about current routing, use the ledger and raise a documentation drift finding.
 
-The current local MCP server registers `invoke_prompt_library_command`, `inspect_prompt_library_command`, and `list_prompt_library_commands` against local `prompts/*.md` files through the PromptSource boundary. M2 added the public GitHub source adapter, runtime prompt cache TTL behavior, stale refresh and last-known-good preservation, partial-valid/cold-failure behavior, a real local `validate-prompts` script, and source/cache contract and golden coverage. M3 added active prompt inspection, command listing, inspect/list golden coverage, and tool-reference coverage. M4 added the three approved active local MVP prompts: `handoff`, `grill-me`, and `spec-prompt-creator`, plus coherent local MVP contract/golden coverage and the local walkthrough. Hosted deployment, private suites, auth/OAuth, DB behavior, and broader runtime work are not implemented yet.
+The current local MCP server registers `invoke_prompt_library_command`, `inspect_prompt_library_command`, and `list_prompt_library_commands` against local `prompts/*.md` files through the PromptSource boundary. M2 added the public GitHub source adapter, runtime prompt cache TTL behavior, stale refresh and last-known-good preservation, partial-valid/cold-failure behavior, a real local `validate-prompts` script, and source/cache contract and golden coverage. M3 added active prompt inspection, command listing, inspect/list golden coverage, and tool-reference coverage. M4 added the three approved active local MVP prompts: `handoff`, `grill-me`, and `spec-prompt-creator`, plus coherent local MVP contract/golden coverage and the local walkthrough. M5 accepted the personal-use trial evidence and readiness for M6 hosted deployment planning. Hosted deployment, private suites, auth/OAuth, DB behavior, and broader runtime work are not implemented yet.
 
 ## Core V1 boundaries
 

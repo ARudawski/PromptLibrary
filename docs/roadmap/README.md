@@ -19,12 +19,14 @@ Slice 6: Hosted deployment, only after local MVP proves useful
 
 ## Current focus
 
-M4 / the local MVP is complete after PL-111 accepted the gate following PL-110
-QA. Detailed current phase, active lane, next lane, queue exposure, and caveats
-live in [`../workflows/current-state-ledger.md`](../workflows/current-state-ledger.md).
-Use the ledger, not this index, to decide which M5 issue or gate is executable.
+M5 / the personal-use trial is complete after PL-128 accepted M6 readiness
+following PL-127 QA. Detailed current phase, active lane, next lane, queue
+exposure, and caveats live in
+[`../workflows/current-state-ledger.md`](../workflows/current-state-ledger.md).
+Use the ledger, not this index, to decide which M6 planning issue or gate is
+executable.
 
-Use the M5 plan before creating or executing trial work:
+Use the M5 plan for historical M5 closeout context:
 
 ```text
 project-prompt-library-m5-plan.md
@@ -38,10 +40,11 @@ M5.1 trial documents:
 ../trials/m5-trial-findings.md
 ```
 
-Do not start later M5 work, hosted deployment, private suites, auth/OAuth, DB
-behavior, additional real prompt files, prompt or alias changes, tool metadata
-changes, or broader runtime work without an explicit issue and coordinator
-path.
+Use the full roadmap's M6 section before creating or executing hosted
+deployment planning work. Do not start hosted deployment implementation,
+private suites, auth/OAuth, DB behavior, additional real prompt files, prompt
+or alias changes, tool metadata changes, or broader runtime work without an
+explicit issue and coordinator path.
 
 ## Roadmap documents
 
@@ -67,4 +70,7 @@ Before M5 implementation beyond planning:
 
 Before hosted deployment:
 - M4 local MVP must be accepted.
-- M5 personal-use trial must justify hosting.
+- M5 personal-use trial must justify hosting; PL-128 accepted M6 hosted
+  deployment planning readiness.
+- Hosted implementation still requires explicit M6 issues, review, QA, and
+  release/readiness evidence in roadmap order.
