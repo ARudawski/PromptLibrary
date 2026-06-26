@@ -81,6 +81,62 @@ If these sources conflict, follow the source-of-truth rules in `AGENTS.md`. Stop
 Role-specific specs may add required evidence or role-local reads, but they do
 not need to restate this baseline.
 
+## Default Read Budgets
+
+Read budgets define the default evidence surface before a role expands. They
+are not permission to skip required live verification, issue-specific required
+reading, or conflict checks. When a Role Run Packet is present, use it to orient
+quickly, then verify the live sources named below before changing files,
+mutating Linear, reviewing, merging, deciding a gate, or exposing a lane.
+
+| Role | Default read budget |
+|---|---|
+| Dispatcher | Use only the dispatcher cheap preflight: current-state ledger, Linear queue/state metadata, recent issue comments needed for candidate selection, dependency or blocker checks, requested-changes or fix-needed evidence, and live claim checks, and cheap recent/open GitHub PR metadata limited to PR number, title, state, draft state, base/head branch, timestamps, and visible Linear issue links. The Dispatcher does not expand into PR diffs, CI logs, PR comments, review threads, source files, prompt files, role specs, `AGENTS.md`, broad docs, or long histories before handoff; when cheap evidence is insufficient, return the appropriate dispatcher drift or ambiguity result. |
+| Coding Agent | Read `README.md`, `AGENTS.md`, current-state ledger, this shared spec, `docs/agents/coding-agent.md`, the target issue with comments, blockers, attachments, linked predecessor or PR evidence, and the directly implicated docs/source/test files. Expand into full architecture, roadmap, standards, QA, source, and test docs only when the issue, diff, or suspected conflict makes them relevant. |
+| Review Agent | Read the compact repo/role contract, target issue, implementation report, PR body, changed files/diff, PR comments, review threads, check evidence, and directly implicated docs/source/test files. Expand when the PR touches boundaries, evidence is missing or contradictory, or the review could approve, reject, merge, amend checkpoint docs, or change state. |
+| QA Agent | Read the compact repo/role contract, QA issue, implementation and review evidence, PR/commit/diff/check evidence, `docs/qa/test-strategy.md`, CI evidence guidance, and files needed to verify the claim. Expand into runtime/project-state, source, test, architecture, roadmap, and standards evidence when behavior, runnability, release readiness, or boundary safety is claimed. |
+| Coordinator Agent | Read the compact repo/role contract, target gate or workflow issue, predecessor Coding/Review/QA evidence, linked PR/check evidence, current-state ledger, roadmap order, and docs directly implicated by the decision. Expand when deciding lane exposure, State Checkpoint sufficiency, queue repair, docs state, architecture scope, or contradictory evidence. |
+| AI Automation Expert | Read the compact repo/role contract, target issue, live labels/state/comments/blockers/attachments, current-state ledger, dispatcher/shared role docs, relevant claim/monitor/thread evidence, and repo/worktree state when mutation is possible. Expand into dispatcher setup, learning log, architecture, roadmap, standards, QA, GitHub, or broader docs only when the automation decision could affect product scope, checks, gates, queue exposure, claim behavior, worktree safety, adoption, rollback, or compaction. |
+
+Universal expansion triggers:
+
+- ledger, issue, PR, branch, comments, blockers, labels, or role marker disagree;
+- PR body, linked issue scope, changed files, review comments, or local diff disagree;
+- checks, CI, review threads, State Checkpoint evidence, or required reports are
+  missing, failed, stale, ambiguous, or contradicted;
+- docs repeat current state differently from the current-state ledger;
+- the change touches architecture, roadmap, standards, QA policy, CI, prompt
+  files, prompt bodies, aliases, tool metadata, tool schemas, golden fixtures,
+  runtime boundaries, hosted/release readiness, claim mode, queue exposure,
+  State Checkpoint rules, or role responsibilities;
+- the role would mutate repository files, Linear state, labels, claims,
+  comments, PR state, review verdicts, merge state, or downstream exposure;
+- the run observes wrong worktree, dirty worktree, unpushed commits, unrelated
+  local changes, duplicate claims, expired claims, or active-thread ambiguity.
+
+Expansion should be targeted: read the missing or implicated evidence, not every
+historical document. For the Dispatcher, these triggers do not authorize
+expensive pre-handoff reads; they require a safe dispatcher result such as
+`STATE_DRIFT_DETECTED`, `AMBIGUOUS_QUEUE`, or a handoff that carries a clear
+state caveat when the cheap evidence remains sufficient.
+
+## QA Trigger Matrix
+
+Use this matrix to decide whether independent QA is required after repository
+changes. It does not replace Review Agent review, Coordinator gates, or
+issue-specific QA instructions.
+
+| Change type | QA expectation |
+|---|---|
+| Product/runtime behavior | Mandatory QA before gate acceptance or downstream exposure. Use deterministic tests and runtime/project-state viability evidence when behavior or runnability is claimed. |
+| Prompt body, alias, or tool metadata | Mandatory QA. Run prompt validation and the relevant unit, contract, golden, or walkthrough checks for the changed behavior. |
+| Tool schema, MCP contract, or golden-test behavior | Mandatory QA when the model-visible contract, input/output schema, fixtures, or exact payload behavior changes. Contract/golden evidence must be explicit. |
+| Hosted, release, tunnel, deployment, auth, database, or readiness behavior | Mandatory QA with CI/check evidence and the closest practical smoke or readiness verification allowed by the issue. |
+| Workflow routing, claim mode, queue exposure, State Checkpoint semantics, or role responsibility changes | QA is required when the issue or gate asks for it, when automated execution behavior changes, or when the change can alter lane exposure, live ownership, terminal markers, or closeout decisions. At minimum, Review Agent and Coordinator evidence must cover the workflow-safety impact. |
+| Docs-only workflow pointer repair | QA is not needed by default when the repair only updates stale pointers, navigation, or wording and does not change routing/state semantics. QA becomes required when the issue explicitly requires QA or the repair changes executable workflow behavior. |
+| Ledger-only mechanical state repair | QA is not needed by default when proven evidence is copied into the ledger without changing policy, routing semantics, or downstream exposure beyond the approved checkpoint. QA becomes required when the evidence is disputed, incomplete, or the repair changes executable state semantics. |
+| PR template, report-format, or evidence-format tweak | QA is optional by default. QA is required when the tweak changes machine-parsed markers, terminal evidence semantics, issue-reference safety, required checks, gate responsibilities, or automation behavior. |
+
 ## Queue selection contract
 
 Automation must prefer explicit `Todo` work, but it may promote the top

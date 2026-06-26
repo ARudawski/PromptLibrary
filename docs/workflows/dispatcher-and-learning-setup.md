@@ -61,7 +61,7 @@ Active rules must live in exactly one canonical file.
 |---|---|
 | Dispatcher operating modes, cheap preflight, decision taxonomy, drift handling, selection order, handoff payloads, claim-mode mechanics, handoff-consumer obligations, failure recovery, and role-thread reasoning settings | [`docs/agents/dispatcher.md`](../agents/dispatcher.md) |
 | Current phase, active lane, queue exposure, and caveats | [`docs/workflows/current-state-ledger.md`](./current-state-ledger.md) |
-| Shared common operating contract, queue contract, issue-reference safety, repository mutation closeout, live role claim marker, and terminal claim markers | [`docs/agents/README.md`](../agents/README.md) |
+| Shared common operating contract, role read budgets, QA trigger matrix, queue contract, issue-reference safety, repository mutation closeout, live role claim marker, and terminal claim markers | [`docs/agents/README.md`](../agents/README.md) |
 | Role-specific execution and reporting obligations | The matching role spec in [`docs/agents/`](../agents/) |
 | Reviewed workflow-learning decisions | [`docs/agents/learning-log.md`](../agents/learning-log.md) |
 
