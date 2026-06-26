@@ -113,6 +113,34 @@ export function resolvePromptCommand(index: PromptIndex, command: string): Promp
   };
 }
 
+export function isPromptIndexStructurallyValid(index: PromptIndex): boolean {
+  const activeCommandSet = new Set(index.activeCommands);
+
+  if (activeCommandSet.size !== index.activeCommands.length) {
+    return false;
+  }
+
+  if (activeCommandSet.size !== index.activeByCommand.size) {
+    return false;
+  }
+
+  for (const command of activeCommandSet) {
+    const prompt = index.activeByCommand.get(command);
+
+    if (prompt === undefined || prompt.metadata.status !== "active") {
+      return false;
+    }
+  }
+
+  for (const [command, prompt] of index.activeByCommand) {
+    if (!activeCommandSet.has(command) || prompt.metadata.status !== "active") {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 function promptCommands(prompt: PromptDefinition): readonly string[] {
   return [...new Set([prompt.metadata.slug, ...prompt.metadata.aliases])];
 }

@@ -11,6 +11,7 @@ export {
 } from "./PromptCache.js";
 export {
   buildPromptIndex,
+  isPromptIndexStructurallyValid,
   type PromptCommandResolution,
   type PromptIndex,
   resolvePromptCommand,
