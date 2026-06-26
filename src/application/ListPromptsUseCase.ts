@@ -1,4 +1,8 @@
-import { buildPromptIndex, type PromptIndex } from "../cache/index.js";
+import {
+  buildPromptIndex,
+  isPromptIndexStructurallyValid,
+  type PromptIndex,
+} from "../cache/index.js";
 import type { PromptDefinition, PromptListResult } from "../domain/index.js";
 import { toPromptSummary } from "../projection/index.js";
 
@@ -50,32 +54,4 @@ function compareByCommand(
   }
 
   return 0;
-}
-
-function isPromptIndexStructurallyValid(index: PromptIndex): boolean {
-  const activeCommandSet = new Set(index.activeCommands);
-
-  if (activeCommandSet.size !== index.activeCommands.length) {
-    return false;
-  }
-
-  if (activeCommandSet.size !== index.activeByCommand.size) {
-    return false;
-  }
-
-  for (const command of activeCommandSet) {
-    const prompt = index.activeByCommand.get(command);
-
-    if (prompt === undefined || prompt.metadata.status !== "active") {
-      return false;
-    }
-  }
-
-  for (const [command, prompt] of index.activeByCommand) {
-    if (!activeCommandSet.has(command) || prompt.metadata.status !== "active") {
-      return false;
-    }
-  }
-
-  return true;
 }

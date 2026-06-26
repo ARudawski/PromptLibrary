@@ -1,4 +1,9 @@
-import { buildPromptIndex, type PromptIndex, resolvePromptCommand } from "../cache/index.js";
+import {
+  buildPromptIndex,
+  isPromptIndexStructurallyValid,
+  type PromptIndex,
+  resolvePromptCommand,
+} from "../cache/index.js";
 import type { PromptDefinition, PromptInspectionResult } from "../domain/index.js";
 import { toPromptInspection } from "../projection/index.js";
 import { suggestCommands } from "../suggestions/index.js";
@@ -73,32 +78,4 @@ export function createInspectPromptUseCase(
   prompts: readonly PromptDefinition[],
 ): InspectPromptUseCase {
   return new InspectPromptUseCase(buildPromptIndex(prompts));
-}
-
-function isPromptIndexStructurallyValid(index: PromptIndex): boolean {
-  const activeCommandSet = new Set(index.activeCommands);
-
-  if (activeCommandSet.size !== index.activeCommands.length) {
-    return false;
-  }
-
-  if (activeCommandSet.size !== index.activeByCommand.size) {
-    return false;
-  }
-
-  for (const command of activeCommandSet) {
-    const prompt = index.activeByCommand.get(command);
-
-    if (prompt === undefined || prompt.metadata.status !== "active") {
-      return false;
-    }
-  }
-
-  for (const [command, prompt] of index.activeByCommand) {
-    if (!activeCommandSet.has(command) || prompt.metadata.status !== "active") {
-      return false;
-    }
-  }
-
-  return true;
 }
