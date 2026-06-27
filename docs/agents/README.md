@@ -2,7 +2,7 @@
 
 Status: active workflow contract  
 Scope: Project Prompt Library agent behavior  
-Last updated: 2026-06-23
+Last updated: 2026-06-27
 
 This directory contains the durable operating specs for the agents used in Project Prompt Library. These files are not product architecture and do not authorize new runtime behavior. They define how agents select work, gather evidence, update Linear/GitHub, and stop when scope is unclear.
 
@@ -285,6 +285,131 @@ reason. `docs` must say what changed or why docs were not needed.
 checkpoint is required, or `not required: REASON` when no slice/lane state
 changes. `result` should match the role verdict, such as `NEEDS REVIEW`,
 `APPROVE`, `PASS`, `COMPLETE`, or `BLOCKED`.
+
+## Failure Diagnosis And Requirement Evidence
+
+Use this section when a role run sees a failed, missing, ambiguous, or
+contradictory observation before retrying, escalating, creating follow-up work,
+or issuing a terminal verdict. This is a role-run diagnosis rule. It does not
+replace the Dispatcher decision taxonomy in [`dispatcher.md`](./dispatcher.md)
+or the automation incident / learning-candidate format in
+[`../workflows/dispatcher-and-learning-setup.md`](../workflows/dispatcher-and-learning-setup.md).
+The Dispatcher still emits decisions such as `DONT_NOTIFY`,
+`CLAIM_BLOCKED`, `STATE_DRIFT_DETECTED`, `AMBIGUOUS_QUEUE`,
+`ROLE_HANDOFF_CANDIDATE`, or `ROLE_HANDOFF`. Automation mistakes or
+near-misses that may change future workflow rules still use the PL-66
+incident/learning path.
+
+Failure taxonomy:
+
+- `context failure` - the run has the wrong, missing, stale, or incomplete
+  target context, such as issue, branch, PR, predecessor evidence, or worktree.
+- `tool failure` - a CLI, MCP tool, network call, auth flow, filesystem access,
+  sandbox, or service endpoint fails before proving project behavior.
+- `instruction ambiguity` - current user instruction, issue scope, role spec,
+  or repo guidance is unclear enough that a safe action cannot be selected.
+- `source-of-truth conflict` - ledger, issue, PR, docs, branch, or live
+  evidence disagree in a way that could change scope, state, or verdict.
+- `verification failure` - a local check, CI check, smoke, audit step, or
+  evidence review fails or cannot prove the claim it was meant to prove.
+- `implementation failure` - changed files do not satisfy the issue, tests,
+  architecture boundary, or non-goals.
+- `review failure` - review cannot proceed, approve, or merge because of
+  unresolved threads, stale head, missing review evidence, or actionable
+  defects.
+- `QA evidence failure` - QA cannot verify the target, pinned state, runtime
+  viability, coverage claim, or gate evidence.
+- `state/checkpoint failure` - live claims, issue state, labels, blockers,
+  State Checkpoint evidence, or closeout state are missing, stale, or unsafe.
+- `model reasoning failure` - an agent selected the wrong target, missed a
+  non-goal, invented evidence, skipped a required read, or made an unsupported
+  inference.
+- `permission/scope failure` - the next action needs authority, credentials,
+  escalation, mutation rights, or role scope the run does not have.
+- `entropy/maintenance failure` - duplicated rules, stale pointers, conflicting
+  examples, or accumulated caveats make the workflow harder to execute safely.
+- `unknown` - the failure is real, but current evidence is insufficient to
+  classify it more precisely.
+
+Before retrying a failed or ambiguous operation that affects files, Linear,
+GitHub, checks, gates, claims, or lane exposure, diagnose it:
+
+1. Classify the failed observation with one primary taxonomy value and, when
+   useful, one secondary value.
+2. Cite the concrete evidence, such as command output, tool error, issue
+   comment, PR head SHA, changed file, check result, or source document.
+3. Decide `retry allowed`, `no retry`, or `escalate`.
+4. Name the smallest safe retry scope, such as one command, one tool call, one
+   re-fetch, one file read, one focused check, or one narrow docs edit.
+
+Retry is allowed only when the evidence points to a transient or local tool
+problem and retrying cannot hide a real implementation, review, QA, state, or
+scope failure. Use `no retry` when the failed observation proves a real defect,
+missing evidence, or boundary violation. Use `escalate` for source-of-truth
+conflicts, permission/scope gaps, claim ambiguity, missing State Checkpoint
+evidence, destructive-risk uncertainty, or repeated same-class failure.
+
+Role reports may include this compact block when a failure or ambiguity shaped
+the result:
+
+```text
+Failure diagnosis:
+failed_observation:
+failure_class:
+evidence:
+retry_decision: retry allowed | no retry | escalate
+smallest_safe_retry_scope:
+result_after_retry:
+```
+
+For non-trivial implementation, review, QA, Coordinator, or AI Automation
+Expert work, terminal reports should also map material acceptance criteria to
+the evidence that proves them. Keep this lightweight for trivial typo fixes,
+mechanical pointer-only docs repairs, and ledger-only evidence copies that do
+not change routing or state semantics; in those cases one sentence explaining
+why the map is not needed is enough.
+
+Use this compact shape:
+
+```text
+Requirement-evidence map:
+- requirement:
+  evidence:
+  status: proven | missing | not applicable
+```
+
+Material requirements include issue acceptance criteria, explicitly named
+non-goals, behavior or workflow-safety risks, required checks, and required
+repository or Linear/GitHub state transitions. If evidence is missing, say
+which requirement remains unproven and whether the result is `BLOCKED`,
+`NEEDS FIXES`, `NEEDS REVIEW`, `NEEDS QA`, or a non-blocking follow-up.
+
+Example failure classification:
+
+```text
+Failure diagnosis:
+failed_observation: npm run format:check failed after a docs-only edit.
+failure_class: verification failure
+evidence: format:check output named docs/agents/README.md.
+retry_decision: retry allowed
+smallest_safe_retry_scope: format the touched markdown file, then rerun npm run format:check once.
+result_after_retry: passed
+```
+
+Example requirement-evidence map:
+
+```text
+Requirement-evidence map:
+- requirement: Cross-role failure taxonomy is documented in a canonical place.
+  evidence: docs/agents/README.md includes Failure Diagnosis And Requirement Evidence.
+  status: proven
+- requirement: Dispatcher decision taxonomy and incident/learning reporting are referenced rather than duplicated.
+  evidence: The shared section links dispatcher.md and dispatcher-and-learning-setup.md as the canonical PL-63 and PL-66 surfaces.
+  status: proven
+- requirement: Product/runtime behavior remains unchanged.
+  evidence: Changed files are limited to workflow docs; no source, prompt, schema, fixture, CI, or runtime files changed.
+  status: proven
+```
 
 ## Issue Reference Safety
 
