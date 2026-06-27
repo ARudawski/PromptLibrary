@@ -25,16 +25,36 @@ Preferred long-term shape:
 - The runtime wrapper owns only deployment facts: automation id/name, cadence,
   status, target thread or project, workspace, model/reasoning defaults, and
   available tools/connectors.
+- For local scheduled dispatcher runs, prefer a dedicated dispatcher policy
+  checkout/worktree, separate from the normal development/product worktree,
+  that tracks reviewed `main` or an explicitly approved dispatcher-runtime ref.
+  The normal development worktree may be on feature branches without blocking
+  dispatcher selection when this separate policy source is present and valid.
 - Before selecting work, the wrapper should load or be handed the reviewed
-  `docs/agents/dispatcher.md` dispatcher prompt from a stable source, and must
-  read `docs/workflows/current-state-ledger.md` from current reviewed mainline
-  or an explicitly current coordinator/human-approved state for each run, then
-  follow those repository rules.
+  `docs/agents/dispatcher.md` dispatcher prompt from the policy source, and
+  must read `docs/workflows/current-state-ledger.md` from current reviewed
+  mainline or an explicitly current coordinator/human-approved state for each
+  run, then follow those repository rules.
 - For dispatcher policy, the stable source must be a reviewed mainline ref, a
-  deliberately selected commit, or another coordinator/human-approved source.
-  Do not use an old pinned ledger commit or snapshot as current state unless a
+  deliberately selected commit, another coordinator/human-approved source, or a
+  dedicated clean policy checkout/worktree pinned to one of those refs. Do not
+  use an old pinned ledger commit or snapshot as current state unless a
   coordinator/human explicitly approved that state as current for the run. Do
-  not load dispatcher policy from an arbitrary dirty or feature-branch worktree.
+  not load dispatcher policy from an arbitrary dirty or feature-branch
+  worktree.
+- Validate the policy source before selecting work: the configured path/ref or
+  GitHub ref exists; `docs/agents/dispatcher.md` and
+  `docs/workflows/current-state-ledger.md` are present; the HEAD/ref is
+  reviewed and approved, or clearly supersedes the previous approved runtime
+  snapshot; and the policy source is clean for the dispatcher/ledger docs when
+  a local checkout/worktree is used. Dirty or feature-branch work in a separate
+  development worktree is not a dispatcher blocker by itself.
+- If the configured policy source is unavailable, dirty for the relevant docs,
+  stale, unapproved, or ambiguous, fail closed with `STATE_DRIFT_DETECTED`.
+  If the only configured source is the normal mutable development worktree, a
+  clean unrelated feature branch is still not sufficient policy authority; use
+  a dedicated policy source, a GitHub approved ref, or a pinned snapshot with a
+  recorded follow-up.
 - If the wrapper dynamically loads this file, that bootstrap read is the
   deployment mechanism. Once dispatcher selection begins, the cheap preflight
   limits in the dispatcher prompt still apply.
@@ -43,8 +63,11 @@ Acceptable fallback when dynamic loading from a stable source is not proven:
 
 - Use a pinned runtime snapshot copied from this file.
 - Include visible snapshot metadata in the runtime artifact or run evidence:
-  source file, source commit or reviewed version, snapshot timestamp,
-  automation id, cadence/status, and update owner.
+  source file, source commit or reviewed version, policy source path/ref,
+  snapshot timestamp, automation id, cadence/status, and update owner.
+- A pinned snapshot may preserve a known-good policy while a dedicated policy
+  source is being prepared, but it must not make the active development
+  worktree the de facto policy source.
 - After any repository PR changes dispatcher selection, cheap preflight,
   decision taxonomy, drift handling, claim/handoff mechanics, role-thread
   reasoning, State Checkpoint handling, AI Automation Expert routing, runtime
