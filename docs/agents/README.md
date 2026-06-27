@@ -419,6 +419,186 @@ Requirement-evidence map:
   status: proven
 ```
 
+## Intervention Logging, Tool Permissions, And Entropy Audit
+
+Use this section for harness-maintenance work that makes human steering,
+permission boundaries, and workflow bloat visible without creating a dashboard,
+database, scheduler, generic monitor queue, or private memory system.
+
+### Human Intervention Logging
+
+Log only material human or Coordinator interventions that unblock, correct, or
+materially steer an agent/workflow. Do not log ordinary wording preferences,
+normal review nits, one-off taste calls, or harmless chat back-and-forth unless
+they reveal repeated missing harness support.
+
+Intervention entries live on the affected Linear issue as a run comment, or in
+a deliberately scoped Linear issue/document named by a human or Coordinator.
+Do not add routine intervention entries to `docs/agents/learning-log.md`, repo
+memory, or a new global log. If an intervention exposes an automation mistake,
+near-miss, bad handoff, stale-state decision, duplicate claim, wrong-worktree
+attempt, unsafe selection, or similar workflow-learning candidate, use the
+automation incident / learning-candidate format in
+[`../workflows/dispatcher-and-learning-setup.md`](../workflows/dispatcher-and-learning-setup.md).
+Reviewed durable learning still requires coordinator/human adoption before it
+moves into `docs/agents/learning-log.md` or an active role/spec file.
+
+Canceled PL-70 remains context for a non-automated monitor findings idea; this
+intervention rule does not make monitor findings executable, create a generic
+monitor queue, or authorize `agent:auto` on manual-only role work.
+
+When an intervention is material, classify it before proposing any durable
+change:
+
+```text
+Human intervention log entry
+intervention_at:
+source:
+affected_run:
+trigger:
+classification: issue template change | role spec change | script/check | permission rule | no action | future audit input
+one_off_or_harness_gap:
+evidence:
+action_taken:
+durability:
+```
+
+Use `one_off_or_harness_gap` to separate personal preference from missing
+support. A one-off preference usually needs `no action`; a repeated blocker,
+wrong target, missing evidence field, unclear permission, or recurring manual
+scaffolding can become an issue template change, role spec change, script/check,
+permission rule, or future audit input.
+
+### Tool And Permission Registry
+
+This registry summarizes role permissions. Role-specific files remain
+authoritative for execution details, but conflicting or missing permission
+guidance should be repaired here or in the owning role spec before an agent
+mutates files, Linear, GitHub, claims, or queue exposure.
+
+Dispatcher:
+
+- Allowed reads: current-state ledger, Linear queue/state metadata, recent
+  issue comments needed for live-claim checks, and cheap recent/open GitHub PR
+  metadata allowed by `docs/agents/dispatcher.md`.
+- Allowed mutations: none in candidate mode. Claim mode may mutate only the
+  adopted claim fields, issue state/labels named by the adoption decision, and
+  dispatcher claim comments.
+- Forbidden operations: repository/source reads beyond cheap preflight, PR
+  diffs, CI logs, product code changes, role execution, merge/review decisions,
+  and AI Automation Expert recurring exposure.
+- Approval requirements: claim mode requires explicit coordinator/human adoption
+  plus a proven handoff consumer; candidate mode remains the default fallback.
+
+Coding Agent:
+
+- Allowed reads: compact repo/role contract, target issue/comments/blockers,
+  predecessor evidence, and directly implicated source/docs/tests.
+- Allowed mutations: scoped branch, product/docs/tests explicitly authorized by
+  the issue, Linear work-state/report updates, and a reviewable PR.
+- Forbidden operations: QA/review/coordinator gate decisions, self-merge,
+  later-slice work, forbidden V1 runtime behavior, and unapproved workflow
+  policy changes.
+- Approval requirements: requires an executable Coding Agent issue or direct
+  docs-only user request; repository mutation must end in `In Review`.
+
+Review Agent:
+
+- Allowed reads: target issue, PR body/diff/head, review threads, comments,
+  check evidence, and directly implicated repo docs/source/tests.
+- Allowed mutations: GitHub review or fallback PR comment, resolved review
+  threads when actually addressed, Linear review report/state updates, merge
+  after approval and final refresh, and the narrow State Checkpoint docs
+  amendment path.
+- Forbidden operations: implementing requested fixes by default, approving from
+  summary alone, merging with stale head/unresolved blockers, or broad docs
+  rewrites under checkpoint authority.
+- Approval requirements: must have a concrete review target and sufficient
+  current Linear/GitHub/check evidence; same-account review failures use the
+  documented fallback comment path.
+
+QA Agent:
+
+- Allowed reads: QA target, predecessor reports, PR/commit/diff/check evidence,
+  QA strategy/CI evidence, and files needed to verify the claim.
+- Allowed mutations: QA Linear report, QA issue state when verdict allows,
+  untracked Linear findings, and local ignored artifacts needed for verification.
+- Forbidden operations: product-code fixes, test rewrites to make an
+  implementation pass, architecture weakening, broad refactors, and product
+  scope changes.
+- Approval requirements: requires a QA Agent issue or explicit QA sweep request;
+  findings must avoid duplicates and route implementation fixes to Coding Agent
+  work or process findings to Coordinator Agent work.
+
+Coordinator Agent:
+
+- Allowed reads: gate/workflow issue, predecessor coding/review/QA evidence,
+  linked PR/check evidence, current-state ledger, roadmap order, and docs
+  implicated by the decision.
+- Allowed mutations: Linear gate/report/state updates, issue annotations,
+  follow-up issue creation/linking, and explicitly authorized workflow-doc
+  repository changes through branch, PR, review, and merge/closeout.
+- Forbidden operations: product implementation, unscoped later-lane exposure,
+  closing state-changing work without a State Checkpoint outcome, and broad
+  mechanical state repair outside the safe edit surface.
+- Approval requirements: repository workflow-doc mutation requires explicit
+  issue authority; `Done` requires review/merge/closeout evidence when a PR is
+  involved.
+
+AI Automation Expert:
+
+- Allowed reads: compact repo/role contract, target issue, live labels/state,
+  comments, blockers, attachments, current-state ledger, dispatcher/shared role
+  docs, relevant claim/monitor/thread evidence, and repo/worktree state when
+  mutation is possible.
+- Allowed mutations: Linear live-claim and terminal reports, scoped workflow-doc
+  changes only when explicitly authorized by the issue, branch/PR publication,
+  and issue movement to `In Review` after repo mutation.
+- Forbidden operations: product/runtime changes, claim-mode activation,
+  scheduler or automation-loop creation, `agent:auto` exposure, recurring
+  pickup, generic monitor queues, self-merge, and private learning outside
+  reviewed artifacts.
+- Approval requirements: manual-only route with exact human/coordinator target,
+  AI Automation Expert title/body marker, `gate:manual`, resolved blockers, and
+  no active role-agent thread; repo mutation needs normal Review Agent review.
+
+### Harness Entropy Audit Checklist
+
+Use this repeatable checklist when a human/coordinator explicitly asks for a
+harness audit, at milestone/workflow closeout, or when repeated interventions
+or state repairs point to the same workflow area. This is a lightweight audit,
+not a recurring automation scheduler, dashboard, analytics system, or monitor
+queue.
+
+Check for:
+
+- duplicated live-state prose outside `docs/workflows/current-state-ledger.md`;
+- stale docs that conflict with Linear, GitHub, PR, branch, or ledger evidence;
+- role specs that are too long to execute safely or duplicate shared rules;
+- repeated report fields that could live in the shared `agent_evidence` block;
+- repeated State Checkpoint or state-repair work for the same missing rule;
+- unused labels, role paths, or issue states that invite unsafe queue exposure;
+- checks that pass but do not prove the requirement they are cited for;
+- prompts or docs longer than their current value;
+- repeated material human interventions against the same workflow step.
+
+For each finding, choose the smallest route:
+
+```text
+Harness entropy audit finding
+finding:
+evidence:
+failure_class: entropy/maintenance failure | source-of-truth conflict | verification failure | permission/scope failure | other
+smallest_action:
+route: no action | docs compaction PR | role spec change | issue template change | script/check | future audit input
+owner:
+```
+
+Prefer deleting, linking, or moving active rules to the canonical file over
+copying the same rule into more role specs. If a finding would change product
+scope, queue exposure, claim-mode adoption, labels, checks, or role authority,
+route it through an explicit Coordinator/human workflow issue before acting.
+
 ## Issue Reference Safety
 
 PR bodies, role reports, Linear comments, and GitHub comments must use issue
