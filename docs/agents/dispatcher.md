@@ -26,12 +26,15 @@ Preferred long-term shape:
   status, target thread or project, workspace, model/reasoning defaults, and
   available tools/connectors.
 - Before selecting work, the wrapper should load or be handed the reviewed
-  `docs/agents/dispatcher.md` dispatcher prompt and
-  `docs/workflows/current-state-ledger.md` from a stable source, then follow
-  those repository rules.
-- The stable source must be a reviewed mainline ref, a deliberately selected
-  commit, or another coordinator/human-approved source. Do not load dispatcher
-  policy from an arbitrary dirty or feature-branch worktree.
+  `docs/agents/dispatcher.md` dispatcher prompt from a stable source, and must
+  read `docs/workflows/current-state-ledger.md` from current reviewed mainline
+  or an explicitly current coordinator/human-approved state for each run, then
+  follow those repository rules.
+- For dispatcher policy, the stable source must be a reviewed mainline ref, a
+  deliberately selected commit, or another coordinator/human-approved source.
+  Do not use an old pinned ledger commit or snapshot as current state unless a
+  coordinator/human explicitly approved that state as current for the run. Do
+  not load dispatcher policy from an arbitrary dirty or feature-branch worktree.
 - If the wrapper dynamically loads this file, that bootstrap read is the
   deployment mechanism. Once dispatcher selection begins, the cheap preflight
   limits in the dispatcher prompt still apply.
@@ -44,9 +47,10 @@ Acceptable fallback when dynamic loading from a stable source is not proven:
   automation id, cadence/status, and update owner.
 - After any repository PR changes dispatcher selection, cheap preflight,
   decision taxonomy, drift handling, claim/handoff mechanics, role-thread
-  reasoning, State Checkpoint handling, AI Automation Expert routing, or
-  terminal markers, record one of: runtime snapshot updated, runtime already
-  aligned, or follow-up issue created/linked.
+  reasoning, State Checkpoint handling, AI Automation Expert routing, runtime
+  deployment contract, wrapper/snapshot policy, or terminal markers, record one
+  of: runtime snapshot updated, runtime already aligned, or follow-up issue
+  created/linked.
 - Audit drift by comparing the runtime prompt, schedule/status, operating mode,
   and tool permissions with this file and the current-state ledger.
 
