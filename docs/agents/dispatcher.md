@@ -14,6 +14,48 @@ handoff, and stops.
 
 Adoption note: do not treat this dispatcher as active automation until a coordinator/human adoption gate confirms that the current-state ledger, Linear queue, and handoff consumer are ready for it.
 
+## Runtime deployment contract
+
+The repository copy of this file is the canonical dispatcher policy. A
+scheduled Codex automation, heartbeat, wrapper, copied prompt, or local
+automation TOML file is a deployment artifact, not a second source of truth.
+
+Preferred long-term shape:
+
+- The runtime wrapper owns only deployment facts: automation id/name, cadence,
+  status, target thread or project, workspace, model/reasoning defaults, and
+  available tools/connectors.
+- Before selecting work, the wrapper should load or be handed the reviewed
+  `docs/agents/dispatcher.md` dispatcher prompt and
+  `docs/workflows/current-state-ledger.md` from a stable source, then follow
+  those repository rules.
+- The stable source must be a reviewed mainline ref, a deliberately selected
+  commit, or another coordinator/human-approved source. Do not load dispatcher
+  policy from an arbitrary dirty or feature-branch worktree.
+- If the wrapper dynamically loads this file, that bootstrap read is the
+  deployment mechanism. Once dispatcher selection begins, the cheap preflight
+  limits in the dispatcher prompt still apply.
+
+Acceptable fallback when dynamic loading from a stable source is not proven:
+
+- Use a pinned runtime snapshot copied from this file.
+- Include visible snapshot metadata in the runtime artifact or run evidence:
+  source file, source commit or reviewed version, snapshot timestamp,
+  automation id, cadence/status, and update owner.
+- After any repository PR changes dispatcher selection, cheap preflight,
+  decision taxonomy, drift handling, claim/handoff mechanics, role-thread
+  reasoning, State Checkpoint handling, AI Automation Expert routing, or
+  terminal markers, record one of: runtime snapshot updated, runtime already
+  aligned, or follow-up issue created/linked.
+- Audit drift by comparing the runtime prompt, schedule/status, operating mode,
+  and tool permissions with this file and the current-state ledger.
+
+Do not silently patch a scheduled dispatcher artifact. Any runtime update must
+record the before/after runtime state and the source-of-truth decision in
+Linear, PR, or other role-run evidence. This contract does not activate claim
+mode, create a scheduler or new automation loop, make AI Automation Expert
+recurring-pickable, add `agent:auto`, or authorize product/runtime behavior.
+
 ## Design goals
 
 - Minimize idle token use.

@@ -30,6 +30,10 @@ Repository:
 - `AGENTS.md` defines repository-wide guardrails.
 - `docs/workflows/current-state-ledger.md` is the compact phase/gate/queue/caveat pointer.
 - `docs/agents/README.md` defines the shared queue contract.
+- Runtime dispatcher automations are deployment artifacts. They should be thin
+  wrappers around the reviewed dispatcher spec when that can be done from a
+  stable source, or pinned snapshots with visible source/version metadata when
+  it cannot.
 - Role specs live in `docs/agents/`.
 - CI evidence rules live in `docs/qa/ci-evidence.md`.
 
@@ -59,7 +63,7 @@ Active rules must live in exactly one canonical file.
 
 | Rule family | Canonical destination |
 |---|---|
-| Dispatcher operating modes, cheap preflight, decision taxonomy, drift handling, selection order, handoff payloads, claim-mode mechanics, handoff-consumer obligations, failure recovery, and role-thread reasoning settings | [`docs/agents/dispatcher.md`](../agents/dispatcher.md) |
+| Dispatcher operating modes, cheap preflight, decision taxonomy, drift handling, selection order, handoff payloads, claim-mode mechanics, handoff-consumer obligations, failure recovery, role-thread reasoning settings, and runtime deployment contract | [`docs/agents/dispatcher.md`](../agents/dispatcher.md) |
 | Current phase, active lane, queue exposure, and caveats | [`docs/workflows/current-state-ledger.md`](./current-state-ledger.md) |
 | Shared common operating contract, role read budgets, QA trigger matrix, queue contract, issue-reference safety, repository mutation closeout, live role claim marker, and terminal claim markers | [`docs/agents/README.md`](../agents/README.md) |
 | Role-specific execution and reporting obligations | The matching role spec in [`docs/agents/`](../agents/) |
