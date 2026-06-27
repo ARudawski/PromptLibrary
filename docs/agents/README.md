@@ -342,15 +342,23 @@ GitHub, checks, gates, claims, or lane exposure, diagnose it:
 4. Name the smallest safe retry scope, such as one command, one tool call, one
    re-fetch, one file read, one focused check, or one narrow docs edit.
 
-Retry is allowed only when the evidence points to a transient or local tool
-problem and retrying cannot hide a real implementation, review, QA, state, or
-scope failure. Use `no retry` when the failed observation proves a real defect,
-missing evidence, or boundary violation. Use `escalate` for source-of-truth
+Retry is allowed when the evidence points to a transient or local tool problem
+and retrying cannot hide a real implementation, review, QA, state, or scope
+failure. Retry is also allowed after the agent makes the smallest safe fix
+within role authority for a deterministic format, lint, test, or docs failure;
+the retry scope must be the same failing check or the smallest focused
+verification that proves the fix. Use `no retry` when the failed observation
+proves a real defect, missing evidence, or boundary violation that cannot be
+fixed within the current role and scope. Use `escalate` for source-of-truth
 conflicts, permission/scope gaps, claim ambiguity, missing State Checkpoint
-evidence, destructive-risk uncertainty, or repeated same-class failure.
+evidence, destructive-risk uncertainty, fixes that need broader authority, or
+repeated same-class failure.
 
-Role reports may include this compact block when a failure or ambiguity shaped
-the result:
+Role reports must include this compact block when a failed, missing,
+ambiguous, or contradictory observation materially shapes a terminal result,
+such as `BLOCKED`, `REQUEST CHANGES`, `NEEDS FIXES`, escalation, no-retry,
+follow-up creation, or a similar terminal verdict. Reports may omit it only
+when no such observation shaped the result:
 
 ```text
 Failure diagnosis:
