@@ -24,6 +24,8 @@ import { registerInspectPromptLibraryCommandTool } from "./inspectPromptLibraryC
 import { registerInvokePromptLibraryCommandTool } from "./invokePromptLibraryCommandTool.js";
 import { registerListPromptLibraryCommandsTool } from "./listPromptLibraryCommandsTool.js";
 
+export { createPromptLibraryServerFromSource } from "./createPromptLibraryServerFromSource.js";
+
 export interface PromptLibraryServerOptions extends FixtureBackedPromptDefinitionOptions {
   readonly invokeUseCase?: InvokePromptUseCase;
   readonly inspectUseCase?: InspectPromptUseCase;
@@ -74,6 +76,11 @@ async function loadLocalPromptIndex(
   options: LocalPromptLibraryServerOptions,
 ): Promise<PromptIndex> {
   const promptSource = new LocalPromptFileSource(options);
+
+  return loadPromptIndexFromSource(promptSource);
+}
+
+async function loadPromptIndexFromSource(promptSource: PromptSource): Promise<PromptIndex> {
   const loadedPromptFiles = await promptSource.loadAllPrompts();
 
   if (loadedPromptFiles.length === 0) {
