@@ -26,3 +26,4 @@ export {
   type PublicGitHubPromptSourceErrorOptions,
   type PublicGitHubPromptSourceOptions,
 } from "./PublicGitHubPromptSource.js";
+export { StaticPromptSource } from "./StaticPromptSource.js";
