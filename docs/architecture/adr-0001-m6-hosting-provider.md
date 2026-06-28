@@ -94,10 +94,12 @@ Negative:
   require a different HTTP entrypoint shape than the old Render plan.
 - The current local prompt-file source may need a no-paid-safe packaging path for
   the three approved prompts.
-- Remote security policy remains explicit follow-up work; PL-142 does not
+- Origin validation is required before any externally reachable proof deploy.
+  Broader remote authentication remains explicit later M6 work; PL-142 does not
   authorize auth/OAuth.
-- The current state ledger and PL-143 exposure text need reviewed
-  reconciliation before PL-143 executes from ledger authority.
+- The current state ledger is updated by this PR/issue through the narrow Review
+  Agent State Checkpoint amendment path so PL-143 does not route from stale
+  Render-paid evidence.
 
 ## M6.2 Boundary
 
@@ -106,6 +108,8 @@ M6.2 may:
 - add a Cloudflare Worker-compatible HTTP MCP entrypoint or configuration proof;
 - use the MCP SDK web-standard Streamable HTTP transport or Cloudflare's
   documented remote MCP server path when evidence supports it;
+- implement or verify an Origin-validation policy before any externally
+  reachable proof deploy, or stop with a documented blocker;
 - add minimal local tests or smoke scripts;
 - add no-paid Cloudflare deployment/configuration notes;
 - prove prompt catalog packaging for the existing three approved prompts;

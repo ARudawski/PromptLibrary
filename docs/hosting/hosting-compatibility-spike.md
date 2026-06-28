@@ -136,6 +136,10 @@ M6.2 should be a Coding Agent issue with this exact scope:
   if direct implementation evidence proves it is safer.
 - Expose exactly one `/mcp` endpoint supporting the MCP Streamable HTTP
   requirements needed by ChatGPT.
+- Before any externally reachable no-paid proof deploy, implement or verify an
+  `Origin` validation policy consistent with the MCP Streamable HTTP security
+  requirement; if that cannot be proven in scope, keep the proof local/config-only
+  and report the blocker.
 - Keep `src/mcp/server.ts` and `npm run dev` as the local stdio path unless the
   issue explicitly renames scripts.
 - Preserve the three approved tools and all existing model-visible payload
@@ -182,14 +186,13 @@ M6.2 handoff evidence should include:
   Workers are not a normal always-on Node process, so M6.2 must prove the
   Worker-compatible adapter and prompt-file packaging path before PL-143 can be
   treated as straightforward deployment configuration.
-- Remote Streamable HTTP security needs an explicit Origin policy and an
-  authentication decision before public/broader access. PL-142 does not
-  authorize auth/OAuth implementation; for developer-mode personal use, this is
-  a documented M6.2/M6.3 decision point rather than a hidden feature.
-- `docs/workflows/current-state-ledger.md` currently still says PL-142 selected
-  Render paid web service and that PL-143 is the next lane after that decision.
-  This rework changes the provider decision, so a Coordinator/reviewed state
-  repair is needed before PL-143 executes from ledger authority.
+- Remote Streamable HTTP security requires an explicit Origin policy before any
+  externally reachable proof deploy. PL-142 does not authorize auth/OAuth
+  implementation; broader remote authentication remains a documented later M6
+  decision point rather than a hidden feature.
+- `docs/workflows/current-state-ledger.md` is updated by this PR/issue through
+  the narrow Review Agent State Checkpoint amendment path so the superseding
+  no-paid provider decision can be operative after review/merge/closeout.
 - PL-143's issue text still says it should follow the provider/path selected by
   M6.1. After this rework is reviewed, PL-143 should be interpreted as
   Cloudflare Workers Free first, with defer-hosting as the fallback if the
@@ -213,6 +216,7 @@ Updated:
 
 - `docs/hosting/hosting-compatibility-spike.md`
 - `docs/architecture/adr-0001-m6-hosting-provider.md`
+- `docs/workflows/current-state-ledger.md`
 
 Verified unchanged:
 
@@ -222,15 +226,9 @@ Verified unchanged:
 - Local MVP walkthrough.
 - Tool reference.
 
-Intentionally not updated:
-
-- `docs/workflows/current-state-ledger.md`; this Coding Agent rework reports
-  that it is stale after the provider decision changes, but ledger mutation
-  should be reviewed/coordinated before PL-143 execution.
-
 Follow-up docs needed:
 
 - M6.2 should add a short Cloudflare Worker hosted-entrypoint/deployment-plan
   note after a no-paid path is proven or blocked.
-- A Coordinator/reviewed state repair should update the ledger and PL-143
-  exposure text after this PL-142 rework is reviewed.
+- PL-143 should record the exact Worker proof result or defer-hosting fallback
+  after implementation evidence exists.
