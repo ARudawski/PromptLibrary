@@ -1,8 +1,9 @@
-# ADR 0001: Select Render Paid Web Service For M6 Hosting Path
+# ADR 0001: Select Cloudflare Workers Free As The No-Paid M6 Hosting Path To Prove
 
 Status: accepted for review
-Date: 2026-06-27
+Date: 2026-06-28
 Issue: PL-142
+Supersedes: 2026-06-27 Render paid web service recommendation from PR #82
 
 ## Context
 
@@ -11,6 +12,15 @@ planning. The current Project Prompt Library runtime is a local Node stdio MCP
 server. ChatGPT connector setup needs a stable public HTTPS `/mcp` endpoint,
 and current MCP transport guidance points to Streamable HTTP for remote
 client-server communication.
+
+PL-142 previously selected a Render paid web service. That provider research
+may remain historical evidence, but the cost-bearing recommendation is not
+accepted as the project decision. The current human constraint is explicit:
+
+- no paid hosting service is authorized;
+- do not recommend or implement a paid hosting path as the selected M6 provider;
+- if no acceptable no-paid path is viable, defer hosted deployment instead of
+  escalating to paid hosting.
 
 The project still must preserve the V1 boundary:
 
@@ -21,62 +31,90 @@ The project still must preserve the V1 boundary:
 
 ## Decision
 
-Use a Render paid web service as the first hosted M6 provider path.
+Use Cloudflare Workers Free as the first no-paid hosted M6 provider path to
+prove.
 
-M6.2 should add a minimal hosted HTTP MCP entrypoint that reuses the existing
-tool registration and local prompt loading core, exposes `/mcp` with
-`StreamableHTTPServerTransport`, and binds to `process.env.PORT` on `0.0.0.0`.
+M6.2 should add or document the smallest Cloudflare Worker-compatible hosted MCP
+entrypoint/configuration path that reuses the existing tool registration and
+approved prompt catalog behavior, exposes `/mcp` with Streamable HTTP semantics,
+and preserves the local stdio server.
 
-Keep the existing stdio entrypoint for local development and deterministic
-walkthroughs.
+If Cloudflare Workers Free cannot support the approved connector behavior within
+its no-paid limits, hosted deployment should be deferred. A Coding Agent must
+not select a paid fallback provider.
 
 ## Alternatives Considered
 
-Render free web service:
+Render paid web service:
 
-- rejected for the actual connector endpoint because idle spin-down creates
-  avoidable cold-start risk for ChatGPT connector creation, metadata refresh,
-  and streaming calls;
-- still acceptable only for throwaway provider familiarization.
+- superseded by this ADR because it violates the no-paid-hosting constraint;
+- remains useful historical evidence for the shape of an always-on Node web
+  service, but is not the selected M6 provider.
 
-Vercel Node.js server/function:
+Render Free web service:
 
-- viable and specifically named by OpenAI as a strong ChatGPT Apps hosting fit;
-- deferred because function-duration and framework-entrypoint choices are a
-  sharper first-adapter risk than a plain long-running Node web service.
+- no-paid and close to the current Node process shape;
+- rejected for the actual connector endpoint because idle spin-down and
+  inactivity/suspension behavior create avoidable reliability risk for ChatGPT
+  connector creation, metadata refresh, and streaming calls.
 
-Fly.io Machines:
+Vercel Hobby:
 
-- technically strong for persistent Node services and streaming;
-- deferred because it introduces Docker/Machines/region operations before this
-  small personal-use connector needs that control.
+- viable no-paid candidate with public HTTPS deployment, TypeScript/Node
+  support, and good platform ergonomics;
+- deferred because function duration/runtime constraints and MCP streaming
+  behavior need more proof for this first hosted connector path.
+
+Cloudflare Workers Free:
+
+- selected as the first path to prove because Cloudflare documents remote MCP
+  servers on Workers, provides managed HTTPS, and has a no-paid Free plan;
+- requires a Worker/fetch-shaped adapter and prompt-file packaging proof because
+  the current runtime is Node stdio plus local filesystem loading.
+
+Defer hosted deployment:
+
+- selected as the fallback if Cloudflare Workers Free cannot preserve the
+  approved connector behavior without paid hosting;
+- keeps the local stdio MVP as the usable baseline.
 
 ## Consequences
 
 Positive:
 
-- Smallest provider path for one Node HTTP process.
-- Managed TLS, public URL, logs, deploys, and rollback are provider-native.
-- Keeps M6.2 focused on transport adaptation rather than deployment operations.
+- Respects the human no-paid-hosting constraint.
+- Avoids treating cost approval as an agent decision.
+- Gives M6.2 a precise compatibility proof: Worker-compatible Streamable HTTP
+  `/mcp`, prompt catalog availability, and unchanged tool contracts.
+- Keeps the local stdio MVP as the stable baseline.
 
 Negative:
 
-- Requires a paid instance for the recommended path.
-- Still requires an HTTP transport implementation before any hosted smoke.
+- Cloudflare Workers are not a normal long-running Node process, so M6.2 may
+  require a different HTTP entrypoint shape than the old Render plan.
+- The current local prompt-file source may need a no-paid-safe packaging path for
+  the three approved prompts.
 - Remote security policy remains explicit follow-up work; PL-142 does not
   authorize auth/OAuth.
+- The current state ledger and PL-143 exposure text need reviewed
+  reconciliation before PL-143 executes from ledger authority.
 
 ## M6.2 Boundary
 
 M6.2 may:
 
-- add the HTTP MCP entrypoint and minimal local tests or smoke scripts;
-- add Render deployment notes or a config plan;
+- add a Cloudflare Worker-compatible HTTP MCP entrypoint or configuration proof;
+- use the MCP SDK web-standard Streamable HTTP transport or Cloudflare's
+  documented remote MCP server path when evidence supports it;
+- add minimal local tests or smoke scripts;
+- add no-paid Cloudflare deployment/configuration notes;
+- prove prompt catalog packaging for the existing three approved prompts;
 - preserve the local stdio server.
 
 M6.2 must not:
 
-- deploy anything;
+- use or recommend paid hosting as the selected path;
+- deploy a production endpoint without explicit authorization;
 - add auth/OAuth, DB, private prompts, provider abstraction, production
   observability, prompt/tool schema changes, cache/admin/debug tools, semantic
   routing, prompt editing, or workflow/session behavior.
