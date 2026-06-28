@@ -187,6 +187,49 @@ routing, and Linear labels.
 
 Backlog pickup must use roadmap/current-state order and must not skip gates or jump to later slices. Keep exactly one next executable Coding Agent issue at a time unless the user explicitly opens a parallel lane.
 
+## Human Consultation Gates
+
+When a Linear issue, role packet, comment, or explicit user instruction says the
+work requires `human discussion`, `ask the user`, `consult the user`, an
+`explicit human decision`, or equivalent wording, that wording is a hard
+consultation gate.
+
+The agent may gather evidence, summarize tradeoffs, and present options. It must
+then stop until the human answer is recorded in the issue or active thread.
+Before that answer exists, the agent must not execute the decision by moving
+issues, changing labels, blockers, dependencies, or lane exposure, mutating the
+repository, creating state repair, merging PRs, or closing the issue.
+
+The only exception is an explicit no-consult default path in the issue or
+current user instruction. The default must name the action the agent may take
+without a human answer and the evidence required before taking it.
+
+Terminal reports for unresolved consultation gates use
+`WAITING_FOR_HUMAN` or `BLOCKED PENDING HUMAN DECISION`. If a run discovers that
+a prior consultation gate was bypassed, report it as a state/checkpoint or
+permission/scope failure and recommend the smallest safe repair without
+rewriting historical evidence.
+
+## Same-Issue State Maintenance
+
+When the current Coordinator, gate, or Review closeout changes the completed
+slice, active lane, next lane, queue exposure, or routing-critical docs, narrow
+ledger/current-state maintenance is in scope by default for that same issue and,
+when a PR exists, that same PR.
+
+Use `ledger updated in this PR/issue` when the update is made in the active
+issue/PR. Use `ledger already correct` or
+`checkpoint recorded in issue/PR/Linear evidence` only when no repository docs
+mutation is needed and routing remains unambiguous.
+
+Create or link a separate state-repair issue only when the same-issue/same-PR
+path is unavailable or unsafe: the current issue forbids repo mutation, no
+active PR exists and a repo-doc update is required, the repair is out-of-band or
+discovered after closeout, the required fix is broader than the safe
+ledger/pointer surface, evidence conflicts require human or Coordinator
+decision, or already-merged work cannot be amended safely. When using separate
+state repair, the report must say why the same-issue/same-PR path was not used.
+
 ## Review evidence pattern
 
 Default:
@@ -741,11 +784,14 @@ other routing-critical docs are already correct and unambiguous, no repository
 docs mutation is needed, and the issue, PR body/comment, or Linear report
 durably records the state-changing evidence and downstream exposure decision.
 
-If a required State Checkpoint is missing and the closing agent cannot update
-the ledger, prove it is already correct, or record a durable issue/PR/Linear
-checkpoint while routing remains unambiguous, the agent must create or link an
-executable Coordinator Agent state-repair issue before moving the original issue
-to `Done`. An executable state-repair issue must carry the Coordinator Agent
+If a required State Checkpoint is missing, first apply the shared
+same-issue/same-PR state maintenance rule above. The closing agent should update
+the ledger in the current issue/PR whenever the update is narrow, expected, and
+not forbidden; otherwise prove the ledger is already correct or record a durable
+issue/PR/Linear checkpoint while routing remains unambiguous. The agent must
+create or link an executable Coordinator Agent state-repair issue before moving
+the original issue to `Done` only when that same-issue path is unavailable or
+unsafe. An executable state-repair issue must carry the Coordinator Agent
 marker, `lane:state-repair`, `agent:coordinator`, and the automation label
 required by the current workflow when recurring automation should pick it. When
 the repair requires repository mutation, such as a current-state ledger or

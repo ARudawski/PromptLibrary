@@ -161,6 +161,14 @@ not require a separate QA Coordinator pass.
 
 Before exposing the next lane or closing a coordinator/workflow issue, deliberately decide whether documentation or workflow state must change.
 
+If the issue or current instruction asks for human discussion, user
+consultation, or an explicit human decision, follow the shared
+[`Human Consultation Gates`](./README.md#human-consultation-gates) rule before
+making the decision. The Coordinator may summarize evidence and options, but it
+must not move issues, change labels or blockers, expose lanes, create state
+repair, mutate the repository, or close the issue until the human answer is
+recorded, unless the issue explicitly authorizes a no-consult default path.
+
 For any state-changing slice handoff, record a State Checkpoint before exposing
 the next lane or closing the issue:
 
@@ -177,14 +185,18 @@ checkpoint recorded in issue/PR/Linear evidence
 state-repair issue created/linked: PL-xxx
 ```
 
-If the checkpoint is required, first decide whether the ledger and
-routing-critical docs are already correct. If they are, record the checkpoint in
-the issue, PR, or Linear report and no repository mutation or state-repair issue
-is needed. If the checkpoint needs a repo-doc update, first check whether the
-Review Agent recorded a valid narrow checkpoint-doc amendment with
-`ledger updated in this PR/issue`. If not, create or link an executable
-state-repair issue before closing the state-changing issue. The repair issue
-must be routeable to the Coordinator Agent, normally with `lane:state-repair`,
+If the checkpoint is required, follow the shared
+[`Same-Issue State Maintenance`](./README.md#same-issue-state-maintenance) rule:
+narrow ledger/current-state updates caused by this Coordinator decision are in
+scope for the same issue and same PR by default unless forbidden or unsafe. If
+the ledger and routing-critical docs are already correct, record the checkpoint
+in the issue, PR, or Linear report and no repository mutation or state-repair
+issue is needed. If an active PR already carries the state-changing closeout,
+first check whether the Review Agent recorded a valid narrow checkpoint-doc
+amendment with `ledger updated in this PR/issue`. Create or link an executable
+state-repair issue only when the same-issue/same-PR path is unavailable or
+unsafe, and explain why in the Coordinator report. The repair issue must be
+routeable to the Coordinator Agent, normally with `lane:state-repair`,
 `agent:coordinator`, and `agent:auto` when recurring automation should pick it.
 If the repair requires a ledger or workflow-doc repository update, the repair
 issue must explicitly authorize that workflow/docs mutation and PR workflow. A

@@ -107,16 +107,23 @@ If approved:
 3. re-fetch the PR before merge;
 4. confirm reviewed head SHA still matches and the PR is open, non-draft,
    mergeable, and evidence is sufficient;
-5. before merging, decide whether merge completion changes the allowed lane,
+5. confirm the target issue does not require unresolved human consultation; if
+   it does, follow the shared
+   [`Human Consultation Gates`](./README.md#human-consultation-gates) rule and
+   do not merge or close out until the human answer is recorded;
+6. before merging, decide whether merge completion changes the allowed lane,
    completed slice, active slice, next slice, or queue exposure; if so, verify
    or record the State Checkpoint;
-6. if that required State Checkpoint is missing, either use the narrow
+7. if that required State Checkpoint is missing, prefer the shared
+   [`Same-Issue State Maintenance`](./README.md#same-issue-state-maintenance)
+   path: use the narrow
    checkpoint-doc amendment path below before merge, then re-fetch and recheck
    the amended head, or create/link an executable Coordinator Agent
-   state-repair issue before merge closeout;
-7. merge with an expected-head guard where available;
-8. post a Linear closeout comment;
-9. move the target Coding Agent or Coordinator docs/workflow issue to `Done`
+   state-repair issue before merge closeout only when same-PR amendment is
+   unavailable or unsafe;
+8. merge with an expected-head guard where available;
+9. post a Linear closeout comment;
+10. move the target Coding Agent or Coordinator docs/workflow issue to `Done`
    only after merge and closeout evidence.
 
 Use the shared [`State Checkpoint`](./README.md#state-checkpoint) rule for the
@@ -138,6 +145,8 @@ Coordinator state-repair issue only when all of these are true:
 - the docs amendment can be committed to the same review target branch before
   merge, or handled through the smallest safe Review Agent docs-only path
   allowed by the repository workflow;
+- the amendment is the expected same-issue/same-PR state maintenance for the
+  current closeout, not a new product, roadmap, or queue-exposure decision;
 - after amendment, the Review Agent rechecks the amended diff, records the new
   reviewed head, and reruns or explicitly skips the relevant deterministic
   checks with a reason.
