@@ -1,7 +1,7 @@
 # Dispatcher Automation Prompt — Project Prompt Library
 
 Status: proposed dispatcher spec  
-Last updated: 2026-06-23
+Last updated: 2026-06-28
 Scope: Codex dispatcher runs for `Project Prompt Library`
 
 This file is the single executable prompt/spec for the lightweight dispatcher.
@@ -58,6 +58,27 @@ Preferred long-term shape:
 - If the wrapper dynamically loads this file, that bootstrap read is the
   deployment mechanism. Once dispatcher selection begins, the cheap preflight
   limits in the dispatcher prompt still apply.
+
+Thin wrapper complexity contract:
+
+- A steady-state scheduled wrapper should be short enough to audit quickly:
+  target at most 80 prompt lines or about 6,000 prompt characters. A longer
+  wrapper is allowed only as a clearly marked pinned snapshot or migration
+  workaround with recorded before/after evidence and a follow-up decision.
+- The wrapper may hardcode only deployment/configuration facts such as
+  automation id, cadence, status, target thread, policy source path/ref/head,
+  model/reasoning defaults, and tool availability. It must not hardcode current
+  lane details, role-specific operating procedures, merge-closeout procedures,
+  long state histories, or duplicated AI Automation Expert policy.
+- Role-agent prompts should receive a compact Role Run Packet plus required
+  doc pointers. They should not copy the full dispatcher prompt, full role
+  specs, review/merge procedure text, or a second workflow framework into each
+  role thread. A short issue-specific guardrail is acceptable when it prevents
+  unsafe scope expansion.
+- If dynamic loading cannot yet supply enough context for a fresh role thread,
+  prefer a generated Role Run Packet derived from this file, the current-state
+  ledger, and live Linear/GitHub evidence. Treat copied policy blocks in the
+  runtime artifact as temporary snapshot debt, not canonical behavior.
 
 Acceptable fallback when dynamic loading from a stable source is not proven:
 

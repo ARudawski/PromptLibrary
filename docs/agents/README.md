@@ -2,7 +2,7 @@
 
 Status: active workflow contract  
 Scope: Project Prompt Library agent behavior  
-Last updated: 2026-06-27
+Last updated: 2026-06-28
 
 This directory contains the durable operating specs for the agents used in Project Prompt Library. These files are not product architecture and do not authorize new runtime behavior. They define how agents select work, gather evidence, update Linear/GitHub, and stop when scope is unclear.
 
@@ -705,6 +705,28 @@ Historical milestone and gate records may stay in durable docs when useful, but
 they must not read as the current routing source. Ordinary phase movement should
 not require broad entry-doc updates unless a pointer is stale, a required-reading
 doc would misroute agents, or routing-critical facts are ambiguous.
+
+Compact ledger contract:
+
+- The ledger owns current routing facts, not project history. Its `Current
+  State` section should stay to the current milestone/gate/slice/lane, next
+  executable issue or `none`, and blockers/caveats that affect safe routing.
+- The checkpoint record should use compact pointers such as `PL-143 / PR #87 /
+  merge SHA` for the current and recent routing decisions. Older evidence
+  belongs in Linear reports, PR bodies, roadmap/history docs, or git history
+  unless it is still needed to decide the next handoff.
+- The ledger should not duplicate queue policy, role specs, review/merge
+  mechanics, issue label registries, or dispatcher decision procedures. Those
+  active rules live in this shared spec, the role specs, and
+  `docs/agents/dispatcher.md`.
+- As a maintenance target, keep the ledger short enough for an intake pass:
+  roughly one screen for current state and checkpoint pointers, and under about
+  120 lines unless a live ambiguity requires temporary extra context. If it
+  grows by appending evidence chains, compact it in the same issue/PR when in
+  scope or create the smallest workflow-doc follow-up.
+- PL-152-style separate state repair remains valid for exceptional stale-state
+  cases, but ordinary state movement should prefer same-issue/same-PR compact
+  ledger updates using the shared State Checkpoint outcomes below.
 
 ## Recurring Documentation State Repair
 
