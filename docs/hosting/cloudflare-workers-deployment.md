@@ -15,6 +15,9 @@ prompt changes, alias changes, or additional tools.
 - Public MCP path: `/mcp`.
 - Health path: `/health`.
 - Local stdio path: unchanged, `npm run dev` -> `src/mcp/server.ts`.
+- Worker compatibility: `wrangler.jsonc` enables `nodejs_compat` because the
+  Worker path still parses the approved Markdown prompt catalog through
+  `gray-matter`, which depends on Node-compatible APIs such as `Buffer`.
 - Prompt catalog packaging: `npm run build:worker:catalog` generates
   `src/mcp/workerPromptCatalog.generated.ts` from the three approved
   `prompts/*.md` files.
@@ -26,6 +29,9 @@ registered V1 tools as the local stdio server.
 ## Required Configuration
 
 `PPL_ALLOWED_ORIGINS` is required before `/mcp` is externally usable.
+`nodejs_compat` is also required in `wrangler.jsonc` for the current Worker
+runtime path, because prompt parsing still uses the Node-compatible Markdown
+parser shared with the local runtime.
 
 ```text
 PPL_ALLOWED_ORIGINS=https://chatgpt.com
@@ -80,6 +86,8 @@ Updated:
 - `src/prompt-source/StaticPromptSource.ts`
 - `scripts/generate-worker-prompt-catalog.ts`
 - `wrangler.jsonc`
+- `.gitignore`
+- `biome.json`
 - `package.json`
 - `docs/hosting/cloudflare-workers-deployment.md`
 

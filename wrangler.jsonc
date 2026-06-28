@@ -3,6 +3,7 @@
   "name": "project-prompt-library-mcp",
   "main": "src/mcp/worker.ts",
   "compatibility_date": "2026-06-28",
+  "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
   "vars": {
     "PPL_ALLOWED_ORIGINS": ""
