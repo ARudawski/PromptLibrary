@@ -6,6 +6,9 @@
   "compatibility_flags": ["nodejs_compat"],
   "workers_dev": true,
   "vars": {
-    "PPL_ALLOWED_ORIGINS": ""
+    "PPL_ALLOWED_ORIGINS": "",
+    "PPL_OAUTH_AUTHORIZATION_SERVERS": "",
+    "PPL_OAUTH_RESOURCE": "",
+    "PPL_OAUTH_SCOPES": ""
   }
 }
