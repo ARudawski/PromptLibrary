@@ -5,8 +5,8 @@ Date: 2026-06-29
 
 This document records the minimal no-paid Cloudflare Workers configuration path
 for Project Prompt Library. It does not authorize production deployment,
-ChatGPT hosted connection verification, private suites, auth/OAuth, a database,
-prompt changes, alias changes, or additional tools.
+ChatGPT hosted connection verification, private suites, broader auth/user
+accounts, a database, prompt changes, alias changes, or additional tools.
 
 ## Provider Path
 
@@ -49,35 +49,51 @@ OAuth-protected resource path separately:
 
 ```text
 PPL_OAUTH_AUTHORIZATION_SERVERS=https://auth.example.com
+PPL_OAUTH_TOKEN_INTROSPECTION_URL=https://auth.example.com/oauth/introspect
+PPL_OAUTH_ISSUER=https://auth.example.com
 PPL_OAUTH_RESOURCE=https://promptlibrary.example.com/mcp
 PPL_OAUTH_SCOPES=prompt-library.invoke
 ```
 
 `PPL_OAUTH_AUTHORIZATION_SERVERS` is required for no-Origin `/mcp` access. Use a
 comma-separated list only when multiple authorization servers are intentionally
-approved. `PPL_OAUTH_RESOURCE` is optional; when omitted, the Worker derives the
-resource from the incoming request origin and `/mcp`. `PPL_OAUTH_SCOPES` is
-optional and is advertised in protected-resource metadata when present.
+approved. `PPL_OAUTH_TOKEN_INTROSPECTION_URL` is required so the Worker can
+validate OAuth-issued access tokens with the configured authorization server.
+`PPL_OAUTH_ISSUER` should match the issuer claim in introspection responses;
+when omitted, the Worker uses the first configured authorization server.
+`PPL_OAUTH_RESOURCE` is optional; when omitted, the Worker derives the resource
+from the incoming request origin and `/mcp`. `PPL_OAUTH_SCOPES` is optional and
+is advertised in protected-resource metadata when present; when configured,
+every listed scope must be present on the introspected access token.
 
-Configure the accepted bearer token as a Cloudflare secret, never as a checked
-in value:
+If the introspection endpoint requires client authentication, configure the
+client identifier and secret without checking secret values into the repo:
 
 ```bash
-wrangler secret put PPL_OAUTH_BEARER_TOKEN
+wrangler secret put PPL_OAUTH_INTROSPECTION_CLIENT_SECRET
 ```
 
-No-Origin `/mcp` requests without `Authorization: Bearer <token>` return `401`
-with `WWW-Authenticate: Bearer resource_metadata="..."`. The metadata endpoint
-is public and returns the configured OAuth resource-server metadata:
+`PPL_OAUTH_INTROSPECTION_CLIENT_ID` may be set as a Wrangler variable or secret,
+depending on the authorization server policy. When both client ID and client
+secret are configured, the Worker authenticates introspection requests with
+HTTP Basic authentication. When only the client ID is configured, it is sent in
+the introspection form body.
+
+No-Origin `/mcp` requests without `Authorization: Bearer <OAuth access token>`
+return `401` with `WWW-Authenticate: Bearer ... resource_metadata="..."`. The
+metadata endpoint is public and returns the configured OAuth resource-server
+metadata:
 
 ```text
 /.well-known/oauth-protected-resource
 ```
 
 This is the narrow PL-156 resource-server gate for OpenAI server-to-server MCP
-requests. It does not add user accounts, private prompt suites, database-backed
-auth, prompt editing, draft management, cache/admin/debug tools, or additional
-ChatGPT-facing tools.
+requests. The Worker validates introspection responses for `active: true`,
+trusted issuer, unexpired `exp`, optional `nbf`, matching audience/resource,
+and configured scopes. It does not issue tokens or add user accounts, private
+prompt suites, database-backed auth, prompt editing, draft management,
+cache/admin/debug tools, or additional ChatGPT-facing tools.
 
 ## Commands
 
@@ -103,15 +119,16 @@ The hosted Worker path can prove:
 - the generated Worker prompt catalog matches the local `prompts/*.md` files;
 - local stdio behavior remains available.
 - no-Origin OpenAI MCP requests receive an OAuth Bearer challenge and can reach
-  the unchanged V1 tool surface only with the configured bearer token.
+  the unchanged V1 tool surface only with an OAuth-issued access token accepted
+  by the configured introspection endpoint.
 
 The hosted Worker path still does not prove:
 
 - a live Cloudflare deployment exists;
 - ChatGPT can connect to the hosted endpoint;
 - final ChatGPT production Origin values are complete;
-- broader remote authentication, user accounts, token introspection, or private
-  suite access control are implemented;
+- broader remote authentication, token issuance, user accounts, or private suite
+  access control are implemented;
 - private prompt suites, database behavior, or production observability exist.
 
 ## OAuth Smoke Commands
@@ -136,13 +153,14 @@ server and resource:
 curl -s https://promptlibrary.example.com/.well-known/oauth-protected-resource
 ```
 
-Authenticated no-Origin MCP smoke should use a redacted token supplied from a
-local secret manager or shell variable:
+Authenticated no-Origin MCP smoke should use a redacted OAuth access token
+issued by the configured authorization server and supplied from a local secret
+manager or shell variable:
 
 ```bash
 curl -i \
   -X POST \
-  -H "Authorization: Bearer $PPL_OAUTH_BEARER_TOKEN" \
+  -H "Authorization: Bearer $OAUTH_ACCESS_TOKEN" \
   -H "Content-Type: application/json" \
   --data '{"jsonrpc":"2.0","id":1,"method":"tools/list","params":{}}' \
   https://promptlibrary.example.com/mcp
