@@ -2,6 +2,12 @@
 
 Project Prompt Library is a small ChatGPT Apps / MCP connector for invoking exact, externally maintained prompt workflows from normal ChatGPT conversations using command-style requests such as `@pl grill-me`.
 
+## Project context
+
+PromptLibrary is first and foremost an early-2026 experiment in autonomous agentic software development. The prompt connector provides a practical test case for exploring agent-led implementation, review, QA, and coordination under human direction.
+
+Developing and evaluating that workflow is a central goal of the project. The code and extensive process documentation reflect the tools, capabilities, and assumptions of that period.
+
 This repository has passed the Slice 0 proof gate, Slice 1 invocation gate,
 M2 source/cache/validation gates through Slice 2.7, M3 read-only API
 completion/readiness through PL-80 after PL-79 QA, M4 local MVP
